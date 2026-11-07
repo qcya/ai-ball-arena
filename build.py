@@ -2,7 +2,7 @@
 from pathlib import Path
 import base64, json
 ROOT=Path(__file__).resolve().parent
-assets={p.stem:'data:image/svg+xml;base64,'+base64.b64encode(p.read_bytes()).decode() for p in (ROOT/'assets').glob('*.svg')}
+assets={p.stem:'data:image/svg+xml;base64,'+base64.b64encode(p.read_bytes()).decode() for p in sorted((ROOT/'assets').glob('*.svg'))}
 s=(ROOT/'src/index.html').read_text(encoding='utf-8')
 for token,path in [('CSS','src/style.css'),('ENGINE','src/engine.js'),('BOTS','src/bots.js'),('INPUT','src/input.js'),('SOUND','src/sound.js'),('RENDER','src/render.js'),('APP','src/app.js')]:
     s=s.replace('/*__'+token+'__*/',(ROOT/path).read_text(encoding='utf-8'))
