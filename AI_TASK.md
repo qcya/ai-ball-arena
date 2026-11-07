@@ -2,7 +2,15 @@
 
 你是参赛选手，不是游戏引擎维护者。请阅读这份完整任务书，再检查同目录的 `src/engine.js`、`src/agent-api.js` 与 `RULES_AND_INTERFACE.md`（能访问源码时）。用你当前可用的最强推理与编程能力，独立设计争胜策略，一次性交付 `solo.js`、`team.js`、`storm.js` 三个可直接下载的 JavaScript 文件。不要向主办人提问，不要要求 API 密钥，不要重做游戏，不要只描述思路。没有文件工具时，给三个清楚标明文件名的完整代码块。
 
-项目：https://github.com/qcya/ai-ball-arena 。本任务书对应引擎 0.5.0、策略 API 1.0。只收到本文件也足以完成任务。若仓库有不同版本，明确说明差异，不要混用规则。
+项目：https://github.com/qcya/ai-ball-arena 。本任务书对应引擎 0.6.0、策略 API 1.0。只收到本文件也足以完成任务。若仓库有不同版本，明确说明差异，不要混用规则。
+
+## 0. 胜利目标优先于发育
+
+**个人赛 solo、缩圈赛 storm：活到最后才获胜，不是质量最高获胜。** 全部分身消失才出局，不能复活。至少两位参赛时，消灭所有其他选手即可立即获胜；同帧出局并列。质量决定体积、吞噬能力、常规移速，并在界面展示，但不能作为个人名次或超时破平局的依据。
+**团队赛 team：** 到时比较全队总质量；敌队全部分身消失则提前胜利。队友尚存活时，死亡队员 3 秒后重生；整队同时无球则直接输，不等重生。
+吃刺、吃食物、分裂、吐球都是达成上述目标的手段，不设“吃刺次数分数”。不要把增加质量误当成个人赛最终胜利；选择哪种策略由你独立决定。
+
+这是主办方更新规则后的新版本任务，不是针对旧比赛成绩的策略修补。统一使用本版本重新生成三份文件，后续仍按首份可运行提交加最多一次技术修复执行。
 
 ## 1. 提交与重试
 
@@ -29,7 +37,7 @@ module.exports = {
 };
 ```
 
-必须同步返回 `{action, memory}`。不用 export/import、require、Promise、async/await、setTimeout、fetch 或第三方依赖。单文件最多 256 KiB；memory 为纯 JSON，最多 64 KiB，不得包含函数、循环引用、NaN、Infinity。act 单次墙钟时限 100ms，模块加载限时 2 秒。超时/异常停用该脚本，本局球停止主动操作但仍会碰撞、受毒圈影响和被吞噬；不是自动修复或自动替换为陪练。
+必须同步返回 `{action, memory}`。不用 export/import、require、Promise、async/await、setTimeout、fetch 或第三方依赖。单文件最多 256 KiB；memory 为纯 JSON，最多 64 KiB，不得包含函数、循环引用、NaN、Infinity。单次决策的运行器等待预算 100ms，模块加载预算 2 秒。100ms 包括 Worker 消息排队/传递、act 计算和结果校验，不等于单独的 CPU 用时；请留出余量，不要用满预算。超时/异常停用该脚本，本局球停止主动操作但仍会碰撞、受毒圈影响和被吞噬；不是自动修复或自动替换为陪练。
 
 `name` 为 1–80 字字符串。`mode` 决定分配到哪场；文件名建议固定为 solo.js/team.js/storm.js。首次导入会在隔离环境执行少量接口冒烟检查，不等于证明策略强弱。正式开局会创建全新脚本实例、清空 memory 和模块变量。
 
@@ -40,28 +48,33 @@ module.exports = {
 观察对象完整字段：
 
 ```text
-apiVersion:'1.0', engineVersion:'0.5.0'
+apiVersion:'1.0', engineVersion:'0.6.0'
 tick: 当前物理帧，time: 已过秒数，remaining: 剩余秒数
 mode:'solo'|'team'|'storm', playerId:0..5, team:0|1
 map:{width:2600,height:1800}
 actionInterval:0.05, actionDelay:0.05
 self: 与 players[playerId] 内容相同
 players: 固定长度6，索引就是playerId，包括未报名席位
-  每位:{id,team,active,nextSplit,nextEject,mass,deaths,respawnAt,cells}
+  每位:{id,team,active,nextSplit,nextEject,mass,deaths,eliminatedAt,eliminatedTick,respawnAt,cells}
   active=false 表示没有参加本局，绝不能当作可攻击或喂养的选手
   mass为所有分身总质量，nextSplit/nextEject是下次可操作的绝对游戏时间
-  respawnAt为重生时间或null，cells为空可能死亡、等待重生或未报名
+  eliminatedAt/eliminatedTick为本次淘汰时间/帧或null；同帧淘汰并列
+  respawnAt为重生时间或null；solo/storm淘汰无重生，team仅非团灭时可等待重生
   每颗分身:{id,owner,x,y,mass,r,vx,vy,mergeAt,shieldUntil,thornUntil}
 food: [{id,x,y,mass,color,shape,angle}]
 pellets: [{id,x,y,mass,owner,vx,vy,born}]
 thorns: [{id,x,y,r,vx,vy,fed}]
 zone: 非缩圈为null；缩圈时见后文
 rules: 当前引擎数值，包括分裂/吞噬/吐球/刺球等参数
+  objective: solo/storm 为 last-survivor，team 为 team-mass
+  ranking: solo/storm 为 survival-order，team 为 team-mass
+  respawn: 布尔；timeout: draw-survivors 或 team-mass
+  baseMoveSpeed:176.65175237370477, speedMassDoublingFactor:0.9, startMass:240
 ```
 
 `vx/vy` 是分裂等造成的附加冲量速度，不包含操作产生的步行速度。需要预测总运动时自行根据历史位置估计。全场信息相同公开，但不提供对手代码、memory 或动作。所有观察都是副本，修改它不能改变真实世界。每颗分身能不能吃谁，取决于该颗分身，不取决于整队或全体分身总质量。
 
-内置 `sdk` 在模块作用域可用：`sdk.norm(x,y)` 返回归一化 `[dx,dy]`；`sdk.radius(mass)`；`sdk.clamp(v,min,max)`；`sdk.random()` 为每位独立的种子随机数；`sdk.cellBounds(cell,map)`；`sdk.reachableTarget(cell,target,kind,map)`，kind 为 food/pellet/enemy，不可达返回 null，否则 `{x,y,reach}`。Math.random 也映射到此种子随机流。不要按品牌编号硬编码队友。
+内置 `sdk` 在模块作用域可用：`sdk.norm(x,y)` 返回归一化 `[dx,dy]`；`sdk.radius(mass)`；`sdk.moveSpeed(mass, observation.rules)` 返回该颗常规移速；`sdk.clamp(v,min,max)`；`sdk.random()` 为每位独立的种子随机数；`sdk.cellBounds(cell,map)`；`sdk.reachableTarget(cell,target,kind,map)`，kind 为 food/pellet/enemy，不可达返回 null，否则 `{x,y,reach}`。Math.random 也映射到此种子随机流。不要按品牌编号硬编码队友。
 
 ## 4. 返回动作
 
@@ -79,7 +92,7 @@ rules: 当前引擎数值，包括分裂/吞噬/吐球/刺球等参数
 }
 ```
 
-所有坐标必须成对提供且为有限数；布尔量必须是 true/false。throttle 钳制到[0,1]，dx=dy=0表示不主动移动（现有冲量仍会衰减滑行）。无需输出全部字段，`{}`为合法等待。**没有独立控制某一分身的接口**，但目标坐标会让各分身分别朝目标移动/攻击。
+所有坐标必须成对提供且为有限数；布尔量必须是 true/false。throttle 钳制到[0,1]；dx/dy 是方向而非速度，非零方向会归一化，变成很小的非零数不等于减速。需要减速请使用 throttle。dx=dy=0表示不主动移动（现有冲量仍会衰减滑行）。无需输出全部字段，`{}`为合法等待。**没有独立控制某一分身的接口**，但目标坐标会让各分身分别朝目标移动/攻击。
 
 移动优先级：显式 gatherAt + gather → tx/ty → gather向本方质量重心 → dx/dy。aimAt 优先于 aimX/Y，后者缺失时回退dx/dy，零向量安全回退向右。操作可组合，分裂先于吐球，均受冷却约束。聚拢不会跳过8秒合并冷却。
 
@@ -87,7 +100,19 @@ rules: 当前引擎数值，包括分裂/吞噬/吐球/刺球等参数
 
 半径 `r=3*sqrt(mass)`。每位初始质量240。普通食物质量2，没有音效。单颗质量严格大于食物/质量球才可吃；玩家球需至少目标单颗质量1.2倍。需要覆盖到目标圆心距离：食物 `<自己r`，质量球 `<自己r-0.25*对方r`，玩家分身 `<自己r-0.35*对方r`。新出生2秒保护；主动分裂会结束自己的出生保护。
 
-速度 `clamp(205*(100/max(mass,1))^0.17,65,280)`，每秒世界单位。圆心不能越出 `[r,width-r] × [r,height-r]`；球过大时沿对应轴居中。角落小点可见不一定可达，检查投影后的可吞距离，不可达就换目标；避墙距离随半径变化。持续受阻应放弃目标或绕行，不要永久追逐墙角一个食物。
+每颗分身的**基础移动速度**：
+
+```javascript
+const speed = rules.baseMoveSpeed * Math.pow(
+  Math.max(1, cell.mass / rules.startMass),
+  Math.log2(rules.speedMassDoublingFactor)
+);
+// 等价于 sdk.moveSpeed(cell.mass, rules)
+```
+
+初始质量240，初始速度176.65175237370477世界单位/秒（显示为100%）；更轻仍是100%。每次质量翻倍速度乘0.9，1.1倍约98.56%、2倍90%、4倍81%，非整数倍连续变化，没有固定速度下限。吐球或分裂后按减少后的单颗质量加速，但常规移速不超过初生速度；吃回质量或合并又会变慢。不是按所有分身总质量算。分裂、撞刺的瞬间冲量另行叠加；最高常规速度不是取消冲刺。
+
+圆心不能越出 `[r,width-r] × [r,height-r]`；球过大时沿对应轴居中。角落小点可见不一定可达，检查投影后的可吞距离，不可达就换目标；避墙距离随半径变化。持续受阻应放弃目标或绕行，不要永久追逐墙角一个食物。
 
 ## 6. 分裂、诱饵与团队转移
 
@@ -107,15 +132,19 @@ rules: 当前引擎数值，包括分裂/吞噬/吐球/刺球等参数
 
 ## 8. 三场独立规则
 
-solo：180秒，死亡3秒后重生；按当前总质量排名，无累计刷分。
-team：只在本场已导入的席位中随机均衡分队，两人1V1、四人2V2、六人3V3。180秒，死亡3秒后重生；按全队当前总质量判胜。不预设固定队友，按 observation.team / player.team 判断。没有额外通讯API；可通过观察、位置与喂球协调。
-storm：180秒、不重生，所有分身都消失才出局。>=2名选手时只剩一位就胜；到时按剩余质量。每颗球中心在圈外时按 `max(2,质量*zone.damage)` 每秒扣质量，扣完归零死亡。圈外食物、质量球和刺球清除，不能在外囤粮。圈内食物仍按区域预算补充。
+solo：180秒上限，无复活。所有分身消失才淘汰，最后存活者立即胜。按淘汰帧先后排名，越晚出局越靠前；同帧淘汰并列。到时仍存活多人则显示未分胜负，存活者并列，不按质量、击杀或席位破平局。
+team：只在本场已导入的席位中随机均衡分队，两人1V1、四人2V2、六人3V3。180秒；按全队当前总质量判胜。队友尚有球时死亡3秒后重生；若某队所有队员都无分身，则另一支仍存活队伍立即胜，不能靠待重生拖延。双方同帧全灭或到时两队质量相同为平局。不预设固定队友，按 observation.team / player.team 判断。没有额外通讯API；可通过观察、位置与喂球协调。
+storm：180秒、不重生，所有分身都消失才出局。>=2名选手时只剩一位立即胜；排名/同帧并列/超时未分胜负与solo相同，不按剩余质量。每颗球中心在圈外时按 `max(2,质量*zone.damage)` 每秒扣质量，扣完归零死亡。圈外食物、质量球和刺球清除，不能在外囤粮。圈内食物仍按区域预算补充。
+
+个人赛和缩圈赛全员死亡则无冠军，最后同帧死亡者并列。只有零或一位参赛属于机制测试，不自动授予冠军。质量数值仍显示，但不是胜负裁判。
 
 `zone` 来自引擎，包含 `x,y,r,damage,phase,shrinking,remaining,next`。next 为下一圈 `{x,y,r,...}` 或 null；remaining 为当前等待/收缩阶段剩余秒数。请根据当前/下一圈安排路线，不要假设一直同心或跟随现实时间。
 
 ## 9. 自查清单与交付
 
 认真推演边界、分裂后体量、刺球四分收益、团队最后一球保护、跑圈和诱饵，不要把上面的建议拼成一个无优先级条件堆。只要遵守接口，可以使用状态机、搜索、局面评分、轨迹预测等自己的方法。
+
+请在最终交付前自查连续行动是否稳定、目标消失后是否更换、循环是否有上限、减速是否正确使用throttle。默认地图有1050个食物与18个刺球，另需考虑多分身/大量质量球的开销。不要仅凭几条小数据判定100ms预算合格。
 
 有执行环境时可运行 `node tools/check-agent.cjs /path/to/solo.js /path/to/team.js /path/to/storm.js` 做可信代码的契约检查。没有工具时自行检查语法和字段；不要声称运行过未实际运行的测试。这个Node检查器不是恶意代码安全沙盒，不用于运行来源不明文件。
 

@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict');
 const A=require('../src/engine.js');
-function fixture(m=400){const w=new A.World({foodCount:0,thornCount:0,respawn:false});w.time=5;for(const p of w.players){p.cells=[];p.respawnAt=Infinity;}const c=w.makeCell(0,1000,800,m);w.players[0].cells=[c];return{w,c};}
+function fixture(m=400){const w=new A.World({foodCount:0,thornCount:0,respawn:false,activeIds:[0]});w.time=5;for(const p of w.players){p.cells=[];p.respawnAt=Infinity;}const c=w.makeCell(0,1000,800,m);w.players[0].cells=[c];return{w,c};}
 test('thorn rewards +20 percent and exactly four equal fragments',()=>{const{w,c}=fixture();w.addThorn(c.x,c.y);w.consume();assert.equal(w.players[0].cells.length,4);assert.equal(w.mass(0),480);assert(w.players[0].cells.every(x=>x.mass===120));assert.equal(w.thorns.length,0);assert(w.players[0].cells.every(x=>x.mergeAt===13));assert.equal(w.events.find(e=>e.type==='burst').gain,80);});
 test('thorn reward applies only to the touching cell',()=>{const{w,c}=fixture();w.players[0].cells.push(w.makeCell(0,1900,1500,300));w.addThorn(c.x,c.y);w.consume();assert.equal(w.mass(0),780);assert.equal(w.players[0].cells.length,5);});
 test('too few fragment slots means no thorn consumption or reward',()=>{for(const count of [14,15,16]){const{w,c}=fixture();for(let i=1;i<count;i++)w.players[0].cells.push(w.makeCell(0,2000,1600,20));const before=w.mass(0);w.addThorn(c.x,c.y);w.consume();assert.equal(w.mass(0),before);assert.equal(w.players[0].cells.length,count);assert.equal(w.thorns.length,1);}});

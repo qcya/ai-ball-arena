@@ -1,11 +1,17 @@
 /* Ball Arena deterministic simulation. No browser or network dependencies. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.Arena=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
-const CFG={width:2600,height:1800,startMass:240,foodMass:2,ejectMass:10,ejectMin:30,splitMin:80,maxCells:16,mergeDelay:8,splitCooldown:.35,ejectCooldown:.12,eatRatio:1.2,thornMin:120,thornReward:.20,thornPieces:4,pelletOwnerGrace:.5,thornRadius:27,teamFeedFragments:true,teamProtectLastCell:true,duration:180};
+const CFG={width:2600,height:1800,startMass:240,baseMoveSpeed:176.65175237370477,speedMassDoublingFactor:.9,foodMass:2,ejectMass:10,ejectMin:30,splitMin:80,maxCells:16,mergeDelay:8,splitCooldown:.35,ejectCooldown:.12,eatRatio:1.2,thornMin:120,thornReward:.20,thornPieces:4,pelletOwnerGrace:.5,thornRadius:27,teamFeedFragments:true,teamProtectLastCell:true,duration:180};
 const BRANDS=[{name:'GPT',color:'#191b20',tint:'#f3f4f5',icon:'openai'},{name:'DeepSeek',color:'#4d6bfe',tint:'#eff3ff',icon:'deepseek-color'},{name:'Claude',color:'#d97757',tint:'#fff1e9',icon:'claude-color'},{name:'Grok',color:'#565a65',tint:'#f1f2f4',icon:'grok'},{name:'豆包',color:'#7969e6',tint:'#f4efff',icon:'doubao-color'},{name:'Gemini',color:'#4285f4',tint:'#eef6ff',icon:'gemini-color'}];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
 const radius=m=>Math.sqrt(Math.max(0,m))*3;
+// Base locomotion only. Split/burst impulses are independent and remain unchanged.
+// The starting cell is fastest; each mass doubling continuously multiplies speed by 0.9.
+function moveSpeed(mass){
+ if(!Number.isFinite(mass)||mass<=0)return 0;
+ return CFG.baseMoveSpeed*Math.pow(Math.max(1,mass/CFG.startMass),Math.log2(CFG.speedMassDoublingFactor));
+}
 function rng(seed){let s=seed>>>0;const f=()=>{s+=0x6D2B79F5;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};return f;}
 function norm(x,y){x=finite(x);y=finite(y);const d=Math.hypot(x,y);return d>1e-8?[x/d,y/d]:[0,0];}
 // Use each cell as the origin. Legacy vector-only actions remain supported.
@@ -25,7 +31,7 @@ class World{
   this.options={mode:'solo',seed:20261107,foodCount:1050,thornCount:18,respawn:true,duration:180,...options};
   this.activeIds=options.activeIds===undefined?[0,1,2,3,4,5]:[...new Set(options.activeIds.filter(id=>Number.isInteger(id)&&id>=0&&id<6))].sort((a,b)=>a-b);this.options.activeIds=this.activeIds.slice();
   this.mode=this.options.mode;this.seed=this.options.seed>>>0;this.random=rng(this.seed);this.time=0;this.tick=0;this.uid=1;this.food=[];this.pellets=[];this.thorns=[];this.events=[];this.finished=false;this.result=null;this.spawnClock=0;this.thornClock=0;this.zoneOverride=null;
-  this.players=BRANDS.map((b,id)=>({...b,id,active:this.activeIds.includes(id),team:id%2,cells:[],nextSplit:0,nextEject:0,deaths:0,kills:0,respawnAt:Infinity,eliminatedAt:null}));
+  this.players=BRANDS.map((b,id)=>({...b,id,active:this.activeIds.includes(id),team:id%2,cells:[],nextSplit:0,nextEject:0,deaths:0,kills:0,respawnAt:Infinity,eliminatedAt:null,eliminatedTick:null}));
   if(this.mode==='team'){const ids=this.activeIds.slice();for(let i=ids.length-1;i>0;i--){const j=Math.floor(this.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]];}ids.forEach((id,k)=>this.players[id].team=k<Math.ceil(ids.length/2)?0:1);}
   this.buildZones();this.updateZone();
   for(const p of this.players)if(p.active)this.spawn(p.id,true);
@@ -38,7 +44,7 @@ class World{
  mass(id){return this.players[id].cells.reduce((s,c)=>s+c.mass,0);}
  center(id){const cs=this.players[id].cells;let m=0,x=0,y=0;for(const c of cs){m+=c.mass;x+=c.x*c.mass;y+=c.y*c.mass;}return m?{x:x/m,y:y/m}:{x:CFG.width/2,y:CFG.height/2};}
  spawn(id,initial=false){const p=this.players[id];if(!p.active)return;let x,y;if(initial){const a=(this.activeIds.indexOf(id)/Math.max(1,this.activeIds.length))*Math.PI*2-Math.PI/2;x=1300+Math.cos(a)*780;y=900+Math.sin(a)*530;}else{let best=-Infinity;for(let k=0;k<24;k++){const pt=this.randomPoint(100);let d=Infinity;for(const q of this.players)if(q.id!==id)for(const c of q.cells)d=Math.min(d,Math.hypot(c.x-pt[0],c.y-pt[1])-radius(c.mass));if(d>best){best=d;[x,y]=pt;}}}
-  const c=this.makeCell(id,x,y,CFG.startMass);c.shieldUntil=this.time+2;p.cells=[c];p.nextSplit=0;p.nextEject=0;p.respawnAt=Infinity;p.eliminatedAt=null;if(!initial)this.emit('respawn',{player:id});
+  const c=this.makeCell(id,x,y,CFG.startMass);c.shieldUntil=this.time+2;p.cells=[c];p.nextSplit=0;p.nextEject=0;p.respawnAt=Infinity;p.eliminatedAt=null;p.eliminatedTick=null;if(!initial)this.emit('respawn',{player:id});
  }
  addFood(x,y){const f={id:this.uid++,x,y,mass:CFG.foodMass,color:Math.floor(this.random()*7),shape:Math.floor(this.random()*4),angle:this.random()*Math.PI*2};this.food.push(f);return f;}
  addPellet(x,y,mass=10,owner=0,vx=0,vy=0){const p={id:this.uid++,x,y,mass,owner,vx,vy,born:this.time};this.pellets.push(p);return p;}
@@ -77,18 +83,53 @@ class World{
   cells=this.players.flatMap(p=>p.cells).filter(c=>c.mass>0).sort((a,b)=>b.mass-a.mass||a.id-b.id);const dead=new Set(),remaining=this.players.map(p=>p.cells.length);for(const a of cells){if(dead.has(a.id)||this.time<a.shieldUntil)continue;for(const b of cells){const friendly=a.owner!==b.owner&&this.mode==='team'&&this.players[a.owner].team===this.players[b.owner].team;if(a===b||a.owner===b.owner||dead.has(b.id)||(!this.isEnemy(a.owner,b.owner)&&!(friendly&&remaining[b.owner]>1))||this.time<b.shieldUntil||a.mass<b.mass*CFG.eatRatio)continue;const r=radius(a.mass),r2=radius(b.mass);if(Math.hypot(a.x-b.x,a.y-b.y)<r-r2*.35){a.mass+=b.mass;dead.add(b.id);remaining[b.owner]--;this.emit(friendly?'teamFeed':'eat',{player:a.owner,victim:b.owner,mass:b.mass,x:b.x,y:b.y});}}}
   for(const p of this.players){const before=p.cells.length;p.cells=p.cells.filter(c=>!dead.has(c.id));if(before&&!p.cells.length){const e=[...this.events].reverse().find(e=>e.type==='eat'&&e.victim===p.id);if(e)this.players[e.player].kills++;this.markDeath(p,e?e.player:null);}}
  }
- markDeath(p,killer=null){if(p.eliminatedAt!==null)return;p.deaths++;p.eliminatedAt=this.time;p.respawnAt=this.mode!=='storm'&&this.options.respawn?this.time+3:Infinity;this.emit('death',{player:p.id,killer});}
- step(dt,actions={}){if(this.finished||!Number.isFinite(dt)||dt<=0)return;dt=Math.min(dt,.1);this.time+=dt;this.tick++;this.updateZone();for(const p of this.players){if(!p.active)continue;if(!p.cells.length&&this.time>=p.respawnAt)this.spawn(p.id);const a=actions[p.id]||{};const[nx,ny]=norm(a.dx,a.dy);const [aimX,aimY]=(Number.isFinite(a.aimX)&&Number.isFinite(a.aimY))?norm(a.aimX,a.aimY):[nx,ny];if(a.split)this.split(p.id,aimX,aimY,a.aimAtX,a.aimAtY);if(a.eject)this.eject(p.id,aimX,aimY,a.aimAtX,a.aimAtY);const ctr=this.center(p.id);for(const c of p.cells){let dx=nx,dy=ny,throttle=clamp(finite(a.throttle,1),0,1);if(a.gather&&Number.isFinite(a.gatherAtX)&&Number.isFinite(a.gatherAtY)){[dx,dy]=norm(a.gatherAtX-c.x,a.gatherAtY-c.y);throttle=clamp(Math.hypot(a.gatherAtX-c.x,a.gatherAtY-c.y)/40,0,1);}else if(Number.isFinite(a.tx)&&Number.isFinite(a.ty)){[dx,dy]=norm(a.tx-c.x,a.ty-c.y);throttle*=clamp(Math.hypot(a.tx-c.x,a.ty-c.y)/50,0,1);}else if(a.gather){[dx,dy]=norm(ctr.x-c.x,ctr.y-c.y);throttle=clamp(Math.hypot(ctr.x-c.x,ctr.y-c.y)/40,0,1);}const speed=clamp(205*Math.pow(100/Math.max(c.mass,1),.17),65,280);c.x+=(dx*speed*throttle+c.vx)*dt;c.y+=(dy*speed*throttle+c.vy)*dt;c.vx*=Math.exp(-4*dt);c.vy*=Math.exp(-4*dt);constrainCell(c);}}
+ markDeath(p,killer=null){if(p.eliminatedAt!==null)return;p.deaths++;p.eliminatedAt=this.time;p.eliminatedTick=this.tick;p.respawnAt=this.matchRules().respawn?this.time+3:Infinity;this.emit('death',{player:p.id,killer});}
+ step(dt,actions={}){if(this.finished||!Number.isFinite(dt)||dt<=0)return;dt=Math.min(dt,.1);this.time+=dt;this.tick++;this.updateZone();for(const p of this.players){if(!p.active)continue;if(!p.cells.length&&this.time>=p.respawnAt)this.spawn(p.id);const a=actions[p.id]||{};const[nx,ny]=norm(a.dx,a.dy);const [aimX,aimY]=(Number.isFinite(a.aimX)&&Number.isFinite(a.aimY))?norm(a.aimX,a.aimY):[nx,ny];if(a.split)this.split(p.id,aimX,aimY,a.aimAtX,a.aimAtY);if(a.eject)this.eject(p.id,aimX,aimY,a.aimAtX,a.aimAtY);const ctr=this.center(p.id);for(const c of p.cells){let dx=nx,dy=ny,throttle=clamp(finite(a.throttle,1),0,1);if(a.gather&&Number.isFinite(a.gatherAtX)&&Number.isFinite(a.gatherAtY)){[dx,dy]=norm(a.gatherAtX-c.x,a.gatherAtY-c.y);throttle=clamp(Math.hypot(a.gatherAtX-c.x,a.gatherAtY-c.y)/40,0,1);}else if(Number.isFinite(a.tx)&&Number.isFinite(a.ty)){[dx,dy]=norm(a.tx-c.x,a.ty-c.y);throttle*=clamp(Math.hypot(a.tx-c.x,a.ty-c.y)/50,0,1);}else if(a.gather){[dx,dy]=norm(ctr.x-c.x,ctr.y-c.y);throttle=clamp(Math.hypot(ctr.x-c.x,ctr.y-c.y)/40,0,1);}const speed=moveSpeed(c.mass);c.x+=(dx*speed*throttle+c.vx)*dt;c.y+=(dy*speed*throttle+c.vy)*dt;c.vx*=Math.exp(-4*dt);c.vy*=Math.exp(-4*dt);constrainCell(c);}}
   for(const q of [...this.pellets,...this.thorns]){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=Math.exp(-3.2*dt);q.vy*=Math.exp(-3.2*dt);const r=q.r||radius(q.mass);q.x=clamp(q.x,r,CFG.width-r);q.y=clamp(q.y,r,CFG.height-r);}
   if(this.mode==='storm'){this.food=this.food.filter(f=>!this.outside(f.x,f.y));this.pellets=this.pellets.filter(f=>!this.outside(f.x,f.y));this.thorns=this.thorns.filter(t=>!this.outside(t.x,t.y));for(const p of this.players){const before=p.cells.length;for(const c of p.cells)if(this.outside(c.x,c.y))c.mass=Math.max(0,c.mass-Math.max(2,c.mass*this.zone.damage)*dt);p.cells=p.cells.filter(c=>c.mass>0);if(before&&!p.cells.length)this.markDeath(p);}}
   this.resolveOwnCells();this.consume();for(const p of this.players)for(const c of p.cells)constrainCell(c);
   this.spawnClock+=dt;if(this.spawnClock>=.15){this.spawnClock=0;const foodBudget=this.mode==='storm'?Math.floor(this.options.foodCount*Math.min(1,Math.PI*this.zone.r*this.zone.r/(CFG.width*CFG.height))):this.options.foodCount;const missing=foodBudget-this.food.length;for(let i=0;i<Math.min(10,missing);i++){let pt;if(this.mode==='storm'){if(this.zone.r<30)break;const a=this.random()*Math.PI*2,r=Math.sqrt(this.random())*(this.zone.r-10);pt=[this.zone.x+Math.cos(a)*r,this.zone.y+Math.sin(a)*r];if(pt[0]<15||pt[0]>CFG.width-15||pt[1]<15||pt[1]>CFG.height-15)continue;}else pt=this.randomPoint(25);this.addFood(...pt);}}
   this.thornClock+=dt;if(this.thornClock>6){this.thornClock=0;if(this.thorns.length<this.options.thornCount){const pt=this.randomPoint(70);if((this.mode!=='storm'||!this.outside(...pt))&&this.players.every(p=>p.cells.every(c=>Math.hypot(c.x-pt[0],c.y-pt[1])>radius(c.mass)+100)))this.addThorn(...pt);}}
-  if(this.time>=this.options.duration||(this.mode==='storm'&&this.activeIds.length>=2&&this.time>3&&this.players.filter(p=>p.active&&p.cells.length).length<=1))this.finish();
+  const reason=this.endReason();if(reason)this.finish(reason);
  }
- finish(){this.finished=true;const ranking=this.players.filter(p=>p.active).map(p=>({id:p.id,mass:this.mass(p.id),alive:p.cells.length>0,kills:p.kills})).sort((a,b)=>b.mass-a.mass);const teamMass=[0,0];for(const p of this.players)teamMass[p.team]+=this.mass(p.id);this.result={ranking,teamMass,winner:ranking.length&&ranking[0].mass>0?ranking[0].id:null,teamWinner:teamMass[0]===teamMass[1]?null:(teamMass[0]>teamMass[1]?0:1)};this.emit('finish',this.result);}
+ // Match objectives are separate from physical mass. All ranking consumers use these methods.
+ matchRules(){return{objective:this.mode==='team'?'team-mass':'last-survivor',ranking:this.mode==='team'?'team-mass':'survival-order',respawn:this.mode==='team'&&!!this.options.respawn,timeout:this.mode==='team'?'team-mass':'draw-survivors',eliminateAllWins:true};}
+ teamTotals(){const totals=[0,0];for(const p of this.players)if(p.active)totals[p.team]+=this.mass(p.id);return totals;}
+ standings(){
+  const teams=this.teamTotals(),teamMode=this.mode==='team';
+  const rows=this.players.filter(p=>p.active).map(p=>({id:p.id,team:p.team,mass:this.mass(p.id),alive:p.cells.length>0,kills:p.kills,eliminatedAt:p.eliminatedAt,eliminatedTick:p.eliminatedTick}));
+  // id only stabilizes the display of a tie. It NEVER breaks a tie or decides a winner.
+  const key=p=>teamMode?teams[p.team]:(p.alive?Infinity:(p.eliminatedTick??-1));
+  rows.sort((a,b)=>{const ka=key(a),kb=key(b);return ka===kb?a.id-b.id:ka>kb?-1:1;});
+  let rank=1;for(let i=0;i<rows.length;i++){
+   if(i&&key(rows[i])!==key(rows[i-1]))rank=teamMode?2:i+1;
+   rows[i].rank=rank;
+  }
+  return rows;
+ }
+ endReason(){
+  const active=this.players.filter(p=>p.active),alive=active.filter(p=>p.cells.length);
+  if(this.mode==='team'){
+   const teams=new Set(active.map(p=>p.team)),livingTeams=new Set(alive.map(p=>p.team));
+   if(teams.size>=2&&livingTeams.size<=1)return livingTeams.size?'team-eliminated':'mutual-elimination';
+  }else if(active.length>=2&&alive.length<=1)return alive.length?'last-survivor':'mutual-elimination';
+  return this.time>=this.options.duration?'time-limit':null;
+ }
+ finish(reason='time-limit'){
+  if(this.finished)return;
+  this.finished=true;const ranking=this.standings(),teamMass=this.teamTotals(),alive=ranking.filter(p=>p.alive);
+  const teamMode=this.mode==='team',teamCount=new Set(ranking.map(p=>p.team)).size;
+  const practice=teamMode?teamCount<2:ranking.length<2;
+  let winner=null,teamWinner=null,status=practice?'practice':'draw';
+  if(!practice){
+   if(teamMode){teamWinner=teamMass[0]===teamMass[1]?null:(teamMass[0]>teamMass[1]?0:1);status=teamWinner===null?'draw':'win';}
+   else if(alive.length===1){winner=alive[0].id;status='win';}
+   else if(alive.length>1)status='undecided';
+  }
+  this.result={ranking,teamMass,winner,teamWinner,status,reason,objective:this.matchRules().objective};this.emit('finish',this.result);
+ }
  snapshot(){return JSON.parse(JSON.stringify({time:this.time,tick:this.tick,players:this.players,food:this.food,pellets:this.pellets,thorns:this.thorns,zone:this.zone,finished:this.finished,result:this.result}));}
- observation(id){return{tick:this.tick,time:this.time,mode:this.mode,playerId:id,team:this.players[id].team,map:{width:CFG.width,height:CFG.height},players:this.players.map(p=>({id:p.id,team:p.team,active:p.active,nextSplit:p.nextSplit,nextEject:p.nextEject,mass:this.mass(p.id),deaths:p.deaths,respawnAt:Number.isFinite(p.respawnAt)?p.respawnAt:null,cells:p.cells.map(c=>({...c,r:radius(c.mass)}))})),food:this.food.map(f=>({...f})),pellets:this.pellets.map(f=>({...f})),thorns:this.thorns.map(t=>({...t})),zone:this.mode==='storm'?JSON.parse(JSON.stringify(this.zone)):null,rules:{...CFG}};}
+ observation(id){return{tick:this.tick,time:this.time,mode:this.mode,playerId:id,team:this.players[id].team,map:{width:CFG.width,height:CFG.height},players:this.players.map(p=>({id:p.id,team:p.team,active:p.active,nextSplit:p.nextSplit,nextEject:p.nextEject,mass:this.mass(p.id),deaths:p.deaths,eliminatedAt:p.eliminatedAt,eliminatedTick:p.eliminatedTick,respawnAt:Number.isFinite(p.respawnAt)?p.respawnAt:null,cells:p.cells.map(c=>({...c,r:radius(c.mass)}))})),food:this.food.map(f=>({...f})),pellets:this.pellets.map(f=>({...f})),thorns:this.thorns.map(t=>({...t})),zone:this.mode==='storm'?JSON.parse(JSON.stringify(this.zone)):null,rules:{...CFG,...this.matchRules()}};}
 }
-return{World,CFG,BRANDS,radius,norm,rng,clamp,cellBounds,reachableTarget,constrainCell,cellAim};
+return{World,CFG,BRANDS,radius,moveSpeed,norm,rng,clamp,cellBounds,reachableTarget,constrainCell,cellAim};
 });

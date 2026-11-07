@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "HUD has a base locomotion readout",
+    "mass 120: readable relative base speed",
+    "mass 120: real WASD speed matches curve",
+    "mass 240: readable relative base speed",
+    "mass 240: real WASD speed matches curve",
+    "mass 264: readable relative base speed",
+    "mass 264: real WASD speed matches curve",
+    "mass 480: readable relative base speed",
+    "mass 480: real WASD speed matches curve",
+    "mass 960: readable relative base speed",
+    "mass 960: real WASD speed matches curve",
+    "mixed fragments show a speed range, not aggregate speed",
+    "team wipe still ends match",
+    "ended team result never promises a respawn",
+    "ended team result labels eliminated members",
+    "no page JavaScript errors"
+  ]
+}

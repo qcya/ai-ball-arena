@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "HUD says survival, not mass",
+    "HUD is stable among survivors, even if mass differs",
+    "living players have no false live rank",
+    "solo elimination banner",
+    "no solo respawn countdown",
+    "eliminated player falls below survivors",
+    "timeout not awarded to mass leader",
+    "result explains no mass tiebreak",
+    "small last survivor still wins immediately",
+    "result first row is survivor",
+    "no waiting until mass deadline",
+    "team sum beats largest individual",
+    "team HUD objective",
+    "team result uses aggregate wording",
+    "existing API 1.0 three-script entries accepted",
+    "API 1.0 starts solo",
+    "API 1.0 starts team",
+    "API 1.0 starts storm",
+    "all original code hashes and retry ledger preserved across modes",
+    "updated engine version",
+    "no browser exceptions"
+  ]
+}

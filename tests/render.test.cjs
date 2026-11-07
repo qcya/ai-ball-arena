@@ -1,7 +1,7 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const A=require('../src/engine.js');
 function moduleUnderTest(){assert(fs.existsSync('src/render.js'),'renderer interpolation module must exist');return require('../src/render.js');}
-function world(){const w=new A.World({foodCount:0,thornCount:0,respawn:false});for(const p of w.players)p.cells=[];w.players[0].cells=[w.makeCell(0,700,800,240)];return w;}
+function world(){const w=new A.World({foodCount:0,thornCount:0,respawn:false,activeIds:[0]});for(const p of w.players)p.cells=[];w.players[0].cells=[w.makeCell(0,700,800,240)];return w;}
 for(const hz of [60,120,144,165,240,260])test(`continuous motion at ${hz}Hz without stair-step holds`,()=>{
  const {Timeline}=moduleUnderTest(),w=world(),t=new Timeline();t.reset(w);let acc=0,last=null,deltas=[],raw=[],rawLast=null;
  for(let f=0;f<hz*2;f++){
