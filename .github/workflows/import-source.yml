@@ -1,0 +1,47 @@
+name: Import verified initial source
+on:
+  push:
+    branches: [main]
+    paths: ['.bootstrap/manifest.json']
+permissions:
+  contents: write
+concurrency:
+  group: initial-source-upload
+  cancel-in-progress: false
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Verify and unpack the source bundle
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, io, json, pathlib, tarfile
+          root = pathlib.Path('.bootstrap')
+          manifest = json.loads((root / 'manifest.json').read_text())
+          expected = 'fefa3b9652f7e540e928ea16fbe03d096912aa964457d6e93492b95c12f9e7d8'
+          assert manifest['sha256'] == expected, 'Unexpected source archive'
+          data = base64.b64decode(''.join((root / name).read_text() for name in manifest['parts']))
+          assert hashlib.sha256(data).hexdigest() == expected, 'Archive checksum mismatch'
+          with tarfile.open(fileobj=io.BytesIO(data), mode='r:xz') as archive:
+              archive.extractall('.', filter='data')
+          PY
+      - name: Run rules and input regression tests
+        run: npm test
+      - name: Test full rounds and corner escape
+        run: npm run soak
+      - name: Build offline HTML
+        run: python3 build.py
+      - name: Commit the verified project
+        run: |
+          python3 - <<'PY'
+          import pathlib, shutil
+          p = pathlib.Path('docs/superpowers/plans/2026-11-07-v03.md')
+          p.write_text(p.read_text().replace('- [ ] Upload', '- [x] Upload'))
+          shutil.rmtree('.bootstrap')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: publish v0.3 playable arena, per-cell aiming and mouse gathering'
+          git push origin HEAD:main
