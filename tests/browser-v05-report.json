@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "registration lobby exists",
+    "zero players before imports",
+    "0 solo registered",
+    "0 team registered",
+    "0 storm registered",
+    "1 solo registered",
+    "1 team registered",
+    "1 storm registered",
+    "only two imported competitors spawn",
+    "missing slots do not secretly spawn",
+    "both scripts drive match",
+    "default is spectator, not disguised human",
+    "two competitors balance to 1v1",
+    "mode switches to corresponding independent module",
+    "replay preserves actual roster",
+    "replay does not execute imported scripts",
+    "optional human adds exactly one selected slot",
+    "manual WASD remains available",
+    "no page JavaScript errors: []"
+  ],
+  "errors": []
+}

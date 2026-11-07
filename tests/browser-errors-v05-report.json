@@ -1,0 +1,14 @@
+[
+  "invalid action fails smoke validation",
+  "one code correction accepted",
+  "second correction is blocked",
+  "cannot optimize a valid first submission",
+  "infinite act rejected without freezing page",
+  "unpaired aim coordinates rejected",
+  "async API disallowed",
+  "untrusted metadata never becomes HTML",
+  "one imported solo can practice",
+  "missing mode opens empty lobby, not previous mode gameplay",
+  "actual multi-file import control reads uploaded JS",
+  "mobile registration no horizontal overflow"
+]

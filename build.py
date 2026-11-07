@@ -4,8 +4,9 @@ import base64, json
 ROOT=Path(__file__).resolve().parent
 assets={p.stem:'data:image/svg+xml;base64,'+base64.b64encode(p.read_bytes()).decode() for p in sorted((ROOT/'assets').glob('*.svg'))}
 s=(ROOT/'src/index.html').read_text(encoding='utf-8')
-for token,path in [('CSS','src/style.css'),('ENGINE','src/engine.js'),('BOTS','src/bots.js'),('INPUT','src/input.js'),('SOUND','src/sound.js'),('RENDER','src/render.js'),('APP','src/app.js')]:
+for token,path in [('CSS','src/style.css'),('ENGINE','src/engine.js'),('AGENT_API','src/agent-api.js'),('AGENT_RUNNER','src/agent-runner.js'),('AGENT_LOBBY','src/agent-lobby.js'),('INPUT','src/input.js'),('SOUND','src/sound.js'),('RENDER','src/render.js'),('APP','src/app.js')]:
     s=s.replace('/*__'+token+'__*/',(ROOT/path).read_text(encoding='utf-8'))
+s=s.replace('/*__BRIEF__*/','const AI_BRIEF='+json.dumps((ROOT/'AI_TASK.md').read_text(encoding='utf-8'),ensure_ascii=False).replace('</','<\\/')+';')
 s=s.replace('/*__ASSETS__*/','const ASSETS='+json.dumps(assets,ensure_ascii=False)+';')
 # Preserve attribution inside the standalone artifact as well as the source package.
 notice=(ROOT/'assets/LOBE-ICONS-LICENSE.txt').read_text(encoding='utf-8')

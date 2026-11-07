@@ -1,0 +1,45 @@
+{
+  "checks": [
+    "manual practice has no invisible opponent",
+    "per-cell aim retained",
+    "Space only gathers",
+    "food remains silent",
+    "thorn reward +20 percent",
+    "thorn exactly four fragments",
+    "bait recovery followed by enemy eating still works",
+    "smooth simulated 60Hz",
+    "smooth simulated 120Hz",
+    "smooth simulated 144Hz",
+    "smooth simulated 165Hz",
+    "smooth simulated 240Hz",
+    "smooth simulated 260Hz",
+    "manual v0.5 replay exact state",
+    "no browser errors"
+  ],
+  "motion": [
+    {
+      "hz": 60,
+      "screen_delta_std_px": 0.00042635302312417356
+    },
+    {
+      "hz": 120,
+      "screen_delta_std_px": 0.00023247854591166512
+    },
+    {
+      "hz": 144,
+      "screen_delta_std_px": 0.0001965954127850828
+    },
+    {
+      "hz": 165,
+      "screen_delta_std_px": 0.00017313044876994524
+    },
+    {
+      "hz": 240,
+      "screen_delta_std_px": 0.00012135996988211283
+    },
+    {
+      "hz": 260,
+      "screen_delta_std_px": 0.00011240506839520774
+    }
+  ]
+}
