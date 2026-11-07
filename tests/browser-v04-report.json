@@ -1,0 +1,111 @@
+{
+  "checks": [
+    "six offline logos load",
+    "sound unlocks after click",
+    "left-click still aims from each cell toward mouse",
+    "Space gathers only, independent target recorded",
+    "Space release stops gathering",
+    "WASD works at high refresh",
+    "food stays silent",
+    "no food audition button",
+    "thorn visibly grants +20 percent",
+    "thorn creates exactly four fragments",
+    "fragments have correct mass and merge cooldown",
+    "thorn toast describes reward, not damage",
+    "thorn SFX kept",
+    "leaderboard SVG nodes not recreated on HUD ticks",
+    "eat eight cached pellets then swallow 150-mass opponent in one step",
+    "cached pellets removed once",
+    "new replay version is 0.4.0",
+    "replay and original authoritative states identical",
+    "old-physics replay rejected explicitly",
+    "team starts",
+    "storm starts",
+    "solo starts",
+    "focus loss clears controls and pauses",
+    "smooth camera + ball at 60 Hz",
+    "smooth camera + ball at 120 Hz",
+    "smooth camera + ball at 144 Hz",
+    "smooth camera + ball at 165 Hz",
+    "smooth camera + ball at 240 Hz",
+    "smooth camera + ball at 260 Hz",
+    "no browser exceptions"
+  ],
+  "passed": 30,
+  "errors": [],
+  "motion": [
+    {
+      "version": "v0.3",
+      "hz": 60,
+      "screen_delta_std_px": 0.335538,
+      "max_screen_step_px": 2.517892
+    },
+    {
+      "version": "v0.3",
+      "hz": 120,
+      "screen_delta_std_px": 1.371925,
+      "max_screen_step_px": 1.445364
+    },
+    {
+      "version": "v0.3",
+      "hz": 144,
+      "screen_delta_std_px": 1.360022,
+      "max_screen_step_px": 1.631073
+    },
+    {
+      "version": "v0.3",
+      "hz": 165,
+      "screen_delta_std_px": 1.329086,
+      "max_screen_step_px": 1.775961
+    },
+    {
+      "version": "v0.3",
+      "hz": 240,
+      "screen_delta_std_px": 1.203418,
+      "max_screen_step_px": 2.089146
+    },
+    {
+      "version": "v0.3",
+      "hz": 260,
+      "screen_delta_std_px": 1.172044,
+      "max_screen_step_px": 2.155194
+    },
+    {
+      "version": "v0.4",
+      "hz": 60,
+      "screen_delta_std_px": 0.000426,
+      "max_screen_step_px": 0.002294
+    },
+    {
+      "version": "v0.4",
+      "hz": 120,
+      "screen_delta_std_px": 0.000232,
+      "max_screen_step_px": 0.001289
+    },
+    {
+      "version": "v0.4",
+      "hz": 144,
+      "screen_delta_std_px": 0.000197,
+      "max_screen_step_px": 0.001095
+    },
+    {
+      "version": "v0.4",
+      "hz": 165,
+      "screen_delta_std_px": 0.000173,
+      "max_screen_step_px": 0.000968
+    },
+    {
+      "version": "v0.4",
+      "hz": 240,
+      "screen_delta_std_px": 0.000121,
+      "max_screen_step_px": 0.000683
+    },
+    {
+      "version": "v0.4",
+      "hz": 260,
+      "screen_delta_std_px": 0.000112,
+      "max_screen_step_px": 0.000633
+    }
+  ],
+  "note": "Synthetic refresh clocks test synchronization, not actual monitor FPS. Browser/headless hardware differs from the user device."
+}

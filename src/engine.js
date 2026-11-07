@@ -1,7 +1,7 @@
 /* Ball Arena deterministic simulation. No browser or network dependencies. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.Arena=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
-const CFG={width:2600,height:1800,startMass:240,foodMass:2,ejectMass:10,ejectMin:30,splitMin:80,maxCells:16,mergeDelay:8,splitCooldown:.35,ejectCooldown:.12,eatRatio:1.2,thornMin:120,thornLoss:.15,thornRadius:27,duration:180};
+const CFG={width:2600,height:1800,startMass:240,foodMass:2,ejectMass:10,ejectMin:30,splitMin:80,maxCells:16,mergeDelay:8,splitCooldown:.35,ejectCooldown:.12,eatRatio:1.2,thornMin:120,thornReward:.20,thornPieces:4,pelletOwnerGrace:.5,thornRadius:27,duration:180};
 const BRANDS=[{name:'GPT',color:'#191b20',tint:'#f3f4f5',icon:'openai'},{name:'DeepSeek',color:'#4d6bfe',tint:'#eff3ff',icon:'deepseek-color'},{name:'Claude',color:'#d97757',tint:'#fff1e9',icon:'claude-color'},{name:'Grok',color:'#565a65',tint:'#f1f2f4',icon:'grok'},{name:'豆包',color:'#7969e6',tint:'#f4efff',icon:'doubao-color'},{name:'Gemini',color:'#4285f4',tint:'#eef6ff',icon:'gemini-color'}];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const finite=(v,f=0)=>Number.isFinite(v)?v:f;
@@ -53,11 +53,23 @@ class World{
  advanceZone(){if(this.mode!=='storm')return;const end=this.zoneStages.find(s=>s.end>this.time)?.end;if(end)this.time=Math.min(end+.001,this.options.duration-1);this.zoneOverride=null;this.updateZone();}
  isEnemy(a,b){return a!==b&&(this.mode!=='team'||this.players[a].team!==this.players[b].team);}
  resolveOwnCells(){for(const p of this.players){for(let i=0;i<p.cells.length;i++){const a=p.cells[i];for(let j=i+1;j<p.cells.length;j++){const b=p.cells[j];let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),ra=radius(a.mass),rb=radius(b.mass);if(this.time>=a.mergeAt&&this.time>=b.mergeAt&&d<Math.max(ra,rb)+Math.min(ra,rb)*.55){const m=a.mass+b.mass;a.x=(a.x*a.mass+b.x*b.mass)/m;a.y=(a.y*a.mass+b.y*b.mass)/m;a.vx=(a.vx*a.mass+b.vx*b.mass)/m;a.vy=(a.vy*a.mass+b.vy*b.mass)/m;a.mass=m;a.thornUntil=Math.max(a.thornUntil,b.thornUntil);p.cells.splice(j--,1);this.emit('merge',{player:p.id});continue;}const sum=ra+rb;if(d<sum*.9){if(d<.001){dx=1;dy=0;d=1;}const push=(sum*.9-d)*.24;a.x-=dx/d*push*b.mass/(a.mass+b.mass);a.y-=dy/d*push*b.mass/(a.mass+b.mass);b.x+=dx/d*push*a.mass/(a.mass+b.mass);b.y+=dy/d*push*a.mass/(a.mass+b.mass);}}}}}
- burst(c,t){const p=this.players[c.owner];c.mass*=1-CFG.thornLoss;c.shieldUntil=0;c.thornUntil=this.time+1;c.mergeAt=this.time+CFG.mergeDelay;const count=Math.min(4,CFG.maxCells-p.cells.length+1,Math.max(1,Math.floor(c.mass/20)));const part=c.mass/count;c.mass=part;for(let i=1;i<count;i++){const a=Math.PI*2*i/count+this.random()*.3;const b=this.makeCell(c.owner,c.x+Math.cos(a)*10,c.y+Math.sin(a)*10,part);b.vx=Math.cos(a)*380;b.vy=Math.sin(a)*380;b.mergeAt=c.mergeAt;b.thornUntil=c.thornUntil;p.cells.push(b);}c.vx=300;c.vy=0;this.emit('burst',{player:c.owner,x:t.x,y:t.y});}
+ canEatThorn(c){return c.mass>=CFG.thornMin&&this.time>=c.thornUntil&&this.players[c.owner].cells.length+CFG.thornPieces-1<=CFG.maxCells;}
+ burst(c,t){
+  if(!this.canEatThorn(c))return false;
+  const p=this.players[c.owner],before=c.mass,gain=before*CFG.thornReward,part=(before+gain)/CFG.thornPieces;
+  c.mass=part;c.shieldUntil=0;c.thornUntil=this.time+1;c.mergeAt=this.time+CFG.mergeDelay;
+  const rotation=this.random()*Math.PI*2;
+  for(let i=0;i<CFG.thornPieces;i++){
+   const a=rotation+Math.PI*2*i/CFG.thornPieces,b=i===0?c:this.makeCell(c.owner,c.x,c.y,part);
+   b.vx=Math.cos(a)*340;b.vy=Math.sin(a)*340;b.mergeAt=c.mergeAt;b.thornUntil=c.thornUntil;
+   if(i>0)p.cells.push(b);
+  }
+  this.emit('burst',{player:c.owner,x:t.x,y:t.y,before,gain,after:before+gain,pieces:CFG.thornPieces});return true;
+ }
  consume(){let cells=this.players.flatMap(p=>p.cells).filter(c=>c.mass>0).sort((a,b)=>b.mass-a.mass||a.id-b.id);const foodDead=new Set(),pelletDead=new Set(),thornDead=new Set();for(const c of cells){let r=radius(c.mass),foodCount=0;for(const f of this.food){if(foodDead.has(f.id)||c.mass<=f.mass)continue;if(Math.abs(c.x-f.x)>r||Math.abs(c.y-f.y)>r)continue;if(Math.hypot(c.x-f.x,c.y-f.y)<r){c.mass+=f.mass;foodDead.add(f.id);foodCount++;}}
    if(foodCount)this.emit('foodEat',{player:c.owner,count:foodCount,x:c.x,y:c.y});
-   r=radius(c.mass);for(const f of this.pellets){if(pelletDead.has(f.id)||c.mass<=f.mass||(f.owner===c.owner&&this.time-f.born<.5))continue;if(Math.hypot(c.x-f.x,c.y-f.y)<r-radius(f.mass)*.25){c.mass+=f.mass;pelletDead.add(f.id);this.emit('pelletEat',{player:c.owner,donor:f.owner,x:c.x,y:c.y});}}
-   for(const t of this.thorns){if(thornDead.has(t.id)||c.mass<CFG.thornMin||this.time<c.thornUntil)continue;if(Math.hypot(c.x-t.x,c.y-t.y)<radius(c.mass)+t.r*.15){this.burst(c,t);thornDead.add(t.id);break;}}
+   r=radius(c.mass);for(const f of this.pellets){if(pelletDead.has(f.id)||c.mass<=f.mass||(f.owner===c.owner&&this.time-f.born<CFG.pelletOwnerGrace))continue;if(Math.hypot(c.x-f.x,c.y-f.y)<r-radius(f.mass)*.25){c.mass+=f.mass;r=radius(c.mass);pelletDead.add(f.id);this.emit('pelletEat',{player:c.owner,donor:f.owner,x:c.x,y:c.y});}}
+   for(const t of this.thorns){if(thornDead.has(t.id)||!this.canEatThorn(c))continue;if(Math.hypot(c.x-t.x,c.y-t.y)<radius(c.mass)+t.r*.15){if(this.burst(c,t))thornDead.add(t.id);break;}}
   }
   for(const f of this.pellets){if(pelletDead.has(f.id))continue;for(const t of this.thorns){if(thornDead.has(t.id))continue;if(Math.hypot(f.x-t.x,f.y-t.y)<t.r){const[nx,ny]=norm(f.vx||t.x-f.x,f.vy||t.y-f.y);t.vx+=nx*65;t.vy+=ny*65;t.fed+=f.mass;pelletDead.add(f.id);break;}}}
   this.food=this.food.filter(f=>!foodDead.has(f.id));this.pellets=this.pellets.filter(f=>!pelletDead.has(f.id));this.thorns=this.thorns.filter(t=>!thornDead.has(t.id));
