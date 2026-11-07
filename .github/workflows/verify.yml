@@ -1,0 +1,21 @@
+name: Verify Ball Arena
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Rules, controls, sound and replay tests
+        run: npm test
+      - name: Full matches and corner escape
+        run: npm run soak
+      - name: Build standalone offline game
+        run: python3 build.py
