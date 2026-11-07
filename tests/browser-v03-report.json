@@ -1,0 +1,24 @@
+{
+  "checks": [
+    "six logos load offline",
+    "audio unlocks",
+    "mouse between cells produces converging eject vectors",
+    "Space neither splits nor ejects",
+    "all cells gather toward mouse on the right, not centroid",
+    "gather point recorded in replay",
+    "releasing Space stops gathering",
+    "right-click still splits",
+    "split SFX remains",
+    "food is still consumed",
+    "ordinary food produces no SFX",
+    "food audition removed",
+    "WASD preserved",
+    "focus loss clears gathering and pauses",
+    "team mode starts",
+    "storm mode starts",
+    "solo mode starts",
+    "no browser exceptions"
+  ],
+  "passed": 18,
+  "errors": []
+}

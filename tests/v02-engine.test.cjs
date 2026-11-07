@@ -1,0 +1,9 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const A=require('../src/engine.js');
+function isolated(m=240,x=600,y=600){const w=new A.World({seed:1,foodCount:0,thornCount:0,respawn:false});for(const p of w.players)p.cells=[];w.players[0].cells=[w.makeCell(0,x,y,m)];return w;}
+test('moving right can eject upward without changing movement',()=>{const w=isolated();w.step(1/60,{0:{dx:1,dy:0,aimX:0,aimY:-1,eject:true}});const c=w.players[0].cells[0],p=w.pellets[0];assert(c.x>600);assert.equal(c.y,600);assert(p.vy<0);assert.equal(p.vx,0);});
+test('stationary split uses explicit aim instead of default right',()=>{const w=isolated();w.step(1/60,{0:{dx:0,dy:0,aimX:0,aimY:-1,split:true}});assert(w.players[0].cells.some(c=>c.vy<0));assert(w.players[0].cells.every(c=>c.vx===0));});
+test('food events record real consumption only once',()=>{const w=isolated();w.addFood(600,600);w.addFood(601,600);w.step(1/60,{});const es=w.events.filter(e=>e.type==='foodEat');assert.equal(es.length,1);assert.equal(es[0].count,2);w.step(1/60,{});assert.equal(w.events.filter(e=>e.type==='foodEat').length,1);});
+test('corner target is unreachable to large circle but a wall-side target is reachable',()=>{assert.equal(typeof A.reachableTarget,'function');const c={x:150,y:150,mass:2500};assert.equal(A.reachableTarget(c,{x:25,y:25,mass:2}),null);const t=A.reachableTarget(c,{x:25,y:600,mass:2});assert(t&&t.x>=150&&t.x<=2450);});
+test('growth cannot leave the larger circle outside map bounds',()=>{const w=isolated(100,30,600);for(let i=0;i<15;i++)w.addFood(30,600);w.step(1/60,{});const c=w.players[0].cells[0];assert(c.x>=A.radius(c.mass)-1e-8);});
+test('merging at a wall is constrained using the new radius',()=>{const w=isolated(100,30,600);w.players[0].cells.push(w.makeCell(0,30,600,100));w.step(1/60,{});const c=w.players[0].cells[0];assert.equal(w.players[0].cells.length,1);assert(c.x>=A.radius(c.mass)-1e-8);});

@@ -1,0 +1,11 @@
+{
+  "name": "ball-arena-lab",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "build": "python3 build.py",
+    "soak": "node tests/soak.cjs && node tests/corner-soak.cjs"
+  },
+  "description": "Offline ball arena prototype with keyboard controls, synthesized SFX and deterministic replays"
+}

@@ -1,0 +1,8 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+global.Arena=require('../src/engine.js');require('../src/bots.js');
+test('test bot avoids exhaustive food-by-thorn distance scan',()=>{const w=new Arena.World({seed:19});let calls=0;const orig=Math.hypot;try{Math.hypot=(...a)=>{calls++;return orig(...a);};const a=ArenaBots.act(w,0);assert(Number.isFinite(a.dx)&&Number.isFinite(a.dy));}finally{Math.hypot=orig;}assert(calls<2500,`too many distance calls: ${calls}`);});
+function cornerWorld(x=150,y=150){const w=new Arena.World({seed:1,foodCount:0,thornCount:0,respawn:false});w.players.forEach(p=>p.cells=[]);w.players[0].cells=[w.makeCell(0,x,y,2500)];return w;}
+test('bot abandons unreachable corner food and moves inward',()=>{const w=cornerWorld();w.addFood(25,25);const a=ArenaBots.act(w,0);assert(a.dx>0&&a.dy>0,JSON.stringify(a));});
+test('radius-aware boundary avoids outward steering in all four corners',()=>{for(const [x,y,sx,sy] of [[150,150,1,1],[2450,150,-1,1],[150,1650,1,-1],[2450,1650,-1,-1]]){const w=cornerWorld(x,y);w.addFood(sx>0?25:2575,sy>0?25:1775);const a=ArenaBots.act(w,0);assert(a.dx*sx>0&&a.dy*sy>0,JSON.stringify(a));}});
+test('bot consumes reachable food next to a straight wall',()=>{const w=cornerWorld(150,500);const f=w.addFood(25,700);for(let n=0;n<240&&w.food.some(x=>x.id===f.id);n++)w.step(1/60,{0:ArenaBots.act(w,0)});assert(!w.food.some(x=>x.id===f.id));});
+test('bot never targets food heavier than its only remaining cell',()=>{const w=cornerWorld(150,500);w.players[0].cells[0].mass=1;w.addFood(100,500);const a=ArenaBots.act(w,0);assert(a.dx>0,'cannot repeatedly pursue inedible food to the left');});
