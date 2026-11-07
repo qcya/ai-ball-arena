@@ -1,0 +1,5 @@
+{
+  "version": "0.3.0",
+  "sha256": "fefa3b9652f7e540e928ea16fbe03d096912aa964457d6e93492b95c12f9e7d8",
+  "parts": ["part-0.b64", "part-1.b64", "part-2.b64", "part-3.b64"]
+}
