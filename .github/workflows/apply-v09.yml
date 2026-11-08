@@ -1,0 +1,66 @@
+name: Publish verified v0.9 model labels
+on:
+  push:
+    paths: ['.updates/v09.ready']
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Verify source versions and apply exact validated changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import base64,hashlib,json,lzma
+          parts=sorted(Path('.updates').glob('v09.part-*.b64'))
+          assert len(parts)==6, 'Missing v09 transfer part'
+          payload=''.join(p.read_text().strip() for p in parts)
+          assert hashlib.sha256(payload.encode()).hexdigest()=='530ee026ae4f2c4e85d6d55df35d51a7430748324e09f58f69f339a582e33656', 'Payload digest mismatch'
+          raw=lzma.decompress(base64.b64decode(payload,validate=True))
+          assert hashlib.sha256(raw).hexdigest()=='62ed1564e671f70306f5a8349f78bd779ed945f6dcd9831b9cba30ea537fc7c8','Source digest mismatch'
+          files=json.loads(raw)['files']
+          allowed={'src/director.js','src/app.js','src/style.css','README.md','CHANGELOG.md','tests/broadcast_v09.test.cjs'}
+          assert len(files)==len(allowed)==6 and set(x['path'] for x in files)==allowed
+          update=[]
+          for item in files:
+              path=Path(item['path'])
+              assert not path.is_absolute() and '..' not in path.parts
+              if item['base'] is None:
+                  assert not path.exists(),f'New path exists: {path}'
+              else:
+                  b=path.read_bytes()
+                  h=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+                  assert h==item['base'],f'Concurrent edit: {path}'
+              out=item['text'].encode('utf-8')
+              assert hashlib.sha256(out).hexdigest()==item['sha256'],f'Mismatch: {path}'
+              update.append((path,out))
+          for path,b in update:
+              path.parent.mkdir(parents=True,exist_ok=True)
+              path.write_bytes(b)
+          print('Verified',len(update),'updated files')
+          PYCODE
+      - name: Test whole game, long rounds and build offline page
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test
+          npm run soak
+          python3 build.py
+          git diff --check
+          test -s index.html
+          test -s '球球竞技场.html'
+      - name: Publish and remove temporary payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .updates/v09.part-*.b64 .updates/v09.ready
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: show full model stage names without contestant numbers'
+          git push origin HEAD:main
