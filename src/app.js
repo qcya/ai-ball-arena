@@ -163,10 +163,8 @@ function updateBroadcast(){
  const w=state.world;if(!w)return;
  const modeNames={solo:'个人赛',team:'团队赛',storm:'大逃杀'};
  $('broadcastMode').textContent=modeNames[w.mode];
- $('broadcastObjective').textContent={solo:'最后存活者获胜',team:'团队对抗',storm:'缩圈生存'}[w.mode];
  const left=Math.max(0,Math.ceil(w.options.duration-w.time));
  $('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
- $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length+' 存活';
  $('broadcastFps').textContent=state.performance.fps?state.performance.fps+' FPS':'—';
  $('broadcastFaults').textContent=String(state.agentErrors.length);
  const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';
@@ -174,7 +172,7 @@ function updateBroadcast(){
  const list=$('broadcastRows');
  if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<span class="broadcast-rank"></span><img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
  const active=w.players.filter(p=>p.active).map(p=>({...p,mass:w.mass(p.id)}));
- const order=ArenaDirector.sortDisplayPlayers(active);
+ const order=ArenaDirector.fixedBroadcastPlayers(active);
  const high=Math.max(240,...active.map(p=>p.mass));
  for(let ix=0;ix<order.length;ix++){
   const p=order[ix],row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!row)continue;

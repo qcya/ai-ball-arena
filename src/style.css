@@ -100,3 +100,17 @@
 .entry-mode-choice label{font-weight:700;font-size:12px}.entry-mode-choice select{font-size:13px;border:1px solid #cbded0;padding:7px 12px;border-radius:7px;background:white}
 .entry-mode-choice span{margin-left:auto;font-size:10px;color:#889a8c}
 @media(max-width:900px){:root{--broadcastWidth:27vw}#broadcastPanel{position:fixed;top:0;right:0;width:var(--broadcastWidth);height:100dvh;overflow:hidden;padding:1.4vh 1vw}#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:100dvh}#broadcastPanel .broadcast-entry{min-height:7vh;padding:.6vh .6vw}#broadcastPanel .broadcast-entry>img{width:2.6vh;height:2.6vh}#broadcastPanel .broadcast-entry-detail{font-size:.95vh}#broadcastPanel .broadcast-countdown b{font-size:2.5vh}}
+
+
+/* v0.8 video-clean HUD: fixed lineup, concise clock, larger edge-to-edge overview. */
+#broadcastPanel .broadcast-clock{min-height:7.2vh;align-items:center;margin-bottom:2vh;padding:1vh 0 1.8vh}
+#broadcastPanel .broadcast-clock strong{font-size:2.8vh;line-height:1.2}
+#broadcastPanel .broadcast-countdown b{font-size:3.75vh;line-height:1.18}
+#broadcastPanel>.broadcast-section-head{margin-bottom:1vh}
+#broadcastPanel .broadcast-section-head strong{font-size:1.58vh}
+#broadcastPanel .broadcast-rows{gap:.57vh}
+#broadcastPanel .broadcast-entry{min-height:6.8vh;padding:.7vh .75vw}
+#broadcastPanel .broadcast-map-area{margin-top:auto;border-top:1px solid #e5ece7;padding-top:.85vh;min-height:0;display:flex;flex-direction:column;justify-content:flex-end}
+#broadcastPanel .broadcast-map-slot{width:100%;display:flex;flex:0 1 auto;min-height:0}
+#broadcastPanel .broadcast-map-slot .minimap{display:block!important;position:static!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;background:#fff;border:1px solid #dce7df;border-radius:.75vh;box-shadow:none!important;overflow:hidden}
+#broadcastPanel .broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;display:block;aspect-ratio:13/9;border-radius:0}

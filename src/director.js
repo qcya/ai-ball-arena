@@ -8,6 +8,11 @@
    return liveB-liveA || b.mass-a.mass || a.id-b.id;
   });
  }
+ const BROADCAST_ORDER=Object.freeze([2,0,5,4,3,1]); // Claude, GPT, Gemini, 豆包, Grok, DeepSeek
+ function fixedBroadcastPlayers(players){
+  const byId=new Map(players.filter(p=>p.active).map(p=>[p.id,p]));
+  return BROADCAST_ORDER.map(id=>byId.get(id)).filter(Boolean);
+ }
  function shotForCells(cells,{width,height,mapWidth=2600,mapHeight=1800,zoom=1}={}){
   width=Math.max(1,width||1400);height=Math.max(1,height||900);
   if(!cells.length){return {x:mapWidth/2,y:mapHeight/2,zoom:Math.min(width/mapWidth,height/mapHeight)*.96*zoom};}
@@ -25,5 +30,5 @@
   return {x:halfW<mapWidth/2?clamp(midX,halfW,mapWidth-halfW):mapWidth/2,
           y:halfH<mapHeight/2?clamp(midY,halfH,mapHeight-halfH):mapHeight/2,zoom:targetZoom};
  }
- return{sortDisplayPlayers,shotForCells};
+ return{sortDisplayPlayers,fixedBroadcastPlayers,shotForCells,BROADCAST_ORDER};
 });
