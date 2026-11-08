@@ -170,7 +170,7 @@ function updateBroadcast(){
  const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';
  if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
  const list=$('broadcastRows');
- if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<span class="broadcast-rank"></span><img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
+ if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
  const active=w.players.filter(p=>p.active).map(p=>({...p,mass:w.mass(p.id)}));
  const order=ArenaDirector.fixedBroadcastPlayers(active);
  const high=Math.max(240,...active.map(p=>p.mass));
@@ -178,9 +178,8 @@ function updateBroadcast(){
   const p=order[ix],row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!row)continue;
   if(list.children[ix]!==row)list.insertBefore(row,list.children[ix]||null);
   row.hidden=false;row.classList.toggle('is-dead',!p.cells.length);row.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
-  row.querySelector('.broadcast-rank').textContent=String(ix+1).padStart(2,'0');
   const img=row.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
-  row.querySelector('.broadcast-entry-name').textContent=p.name;
+  row.querySelector('.broadcast-entry-name').textContent=ArenaDirector.broadcastName(p.id);
   row.querySelector('.broadcast-entry-detail').textContent=!p.cells.length?(w.mode==='team'?'等待重生':'已淘汰'):'分身 '+p.cells.length+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):'')+' · 击杀 '+p.kills;
   row.querySelector('b').textContent=Math.round(p.mass).toLocaleString('en-US');
   row.querySelector('.broadcast-entry-bar').style.width=clamp(p.mass/high*100,0,100)+'%';

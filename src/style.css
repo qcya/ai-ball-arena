@@ -114,3 +114,10 @@
 #broadcastPanel .broadcast-map-slot{width:100%;display:flex;flex:0 1 auto;min-height:0}
 #broadcastPanel .broadcast-map-slot .minimap{display:block!important;position:static!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;background:#fff;border:1px solid #dce7df;border-radius:.75vh;box-shadow:none!important;overflow:hidden}
 #broadcastPanel .broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;display:block;aspect-ratio:13/9;border-radius:0}
+
+/* v0.9 broadcast identity: no numeric rank and full contestant stage labels. */
+#broadcastPanel .broadcast-entry{gap:.57vw;padding-left:.68vw;padding-right:.57vw}
+#broadcastPanel .broadcast-entry-body{min-width:0;flex:1 1 0}
+#broadcastPanel .broadcast-entry-name{font-size:clamp(10px,1.22vh,14px);font-weight:750;line-height:1.24;display:block;white-space:normal;overflow-wrap:anywhere;word-break:normal;letter-spacing:-.018em}
+#broadcastPanel .broadcast-entry-numeric{flex:none;min-width:3.6vw}
+@media (max-width:1050px){#broadcastPanel .broadcast-entry-name{font-size:clamp(10px,1.25vh,13px)}}

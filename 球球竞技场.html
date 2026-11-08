@@ -114,6 +114,13 @@
 #broadcastPanel .broadcast-map-slot{width:100%;display:flex;flex:0 1 auto;min-height:0}
 #broadcastPanel .broadcast-map-slot .minimap{display:block!important;position:static!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;background:#fff;border:1px solid #dce7df;border-radius:.75vh;box-shadow:none!important;overflow:hidden}
 #broadcastPanel .broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;display:block;aspect-ratio:13/9;border-radius:0}
+
+/* v0.9 broadcast identity: no numeric rank and full contestant stage labels. */
+#broadcastPanel .broadcast-entry{gap:.57vw;padding-left:.68vw;padding-right:.57vw}
+#broadcastPanel .broadcast-entry-body{min-width:0;flex:1 1 0}
+#broadcastPanel .broadcast-entry-name{font-size:clamp(10px,1.22vh,14px);font-weight:750;line-height:1.24;display:block;white-space:normal;overflow-wrap:anywhere;word-break:normal;letter-spacing:-.018em}
+#broadcastPanel .broadcast-entry-numeric{flex:none;min-width:3.6vw}
+@media (max-width:1050px){#broadcastPanel .broadcast-entry-name{font-size:clamp(10px,1.25vh,13px)}}
 </style><!--
 Brand icon assets: LobeHub lobe-icons.
 MIT License
@@ -669,6 +676,18 @@ return{Timeline};
   });
  }
  const BROADCAST_ORDER=Object.freeze([2,0,5,4,3,1]); // Claude, GPT, Gemini, 豆包, Grok, DeepSeek
+ // These are on-screen contestant stage labels, not model provenance claims.
+ // Keep IDs and all game-engine BRANDS short names unchanged.
+ const BROADCAST_NAMES=Object.freeze({
+  0:'GPT-6 Astra',
+  1:'DeepSeek V4.1 Flash 1017',
+  2:'Claude Opus 5.5',
+  3:'Grok 4.7',
+  4:'Doubao Seed 2.0 Code',
+  5:'Gemini 4 Argon'
+ });
+ const broadcastName=id=>BROADCAST_NAMES[id]||'';
+
  function fixedBroadcastPlayers(players){
   const byId=new Map(players.filter(p=>p.active).map(p=>[p.id,p]));
   return BROADCAST_ORDER.map(id=>byId.get(id)).filter(Boolean);
@@ -690,7 +709,7 @@ return{Timeline};
   return {x:halfW<mapWidth/2?clamp(midX,halfW,mapWidth-halfW):mapWidth/2,
           y:halfH<mapHeight/2?clamp(midY,halfH,mapHeight-halfH):mapHeight/2,zoom:targetZoom};
  }
- return{sortDisplayPlayers,fixedBroadcastPlayers,shotForCells,BROADCAST_ORDER};
+ return{sortDisplayPlayers,fixedBroadcastPlayers,shotForCells,BROADCAST_ORDER,BROADCAST_NAMES,broadcastName};
 });
 </script><script>(function(){'use strict';
 const $=id=>document.getElementById(id),{CFG,BRANDS,radius,clamp,norm}=Arena;
@@ -864,7 +883,7 @@ function updateBroadcast(){
  const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';
  if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
  const list=$('broadcastRows');
- if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<span class="broadcast-rank"></span><img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
+ if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
  const active=w.players.filter(p=>p.active).map(p=>({...p,mass:w.mass(p.id)}));
  const order=ArenaDirector.fixedBroadcastPlayers(active);
  const high=Math.max(240,...active.map(p=>p.mass));
@@ -872,9 +891,8 @@ function updateBroadcast(){
   const p=order[ix],row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!row)continue;
   if(list.children[ix]!==row)list.insertBefore(row,list.children[ix]||null);
   row.hidden=false;row.classList.toggle('is-dead',!p.cells.length);row.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
-  row.querySelector('.broadcast-rank').textContent=String(ix+1).padStart(2,'0');
   const img=row.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
-  row.querySelector('.broadcast-entry-name').textContent=p.name;
+  row.querySelector('.broadcast-entry-name').textContent=ArenaDirector.broadcastName(p.id);
   row.querySelector('.broadcast-entry-detail').textContent=!p.cells.length?(w.mode==='team'?'等待重生':'已淘汰'):'分身 '+p.cells.length+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):'')+' · 击杀 '+p.kills;
   row.querySelector('b').textContent=Math.round(p.mass).toLocaleString('en-US');
   row.querySelector('.broadcast-entry-bar').style.width=clamp(p.mass/high*100,0,100)+'%';

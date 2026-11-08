@@ -9,6 +9,18 @@
   });
  }
  const BROADCAST_ORDER=Object.freeze([2,0,5,4,3,1]); // Claude, GPT, Gemini, 豆包, Grok, DeepSeek
+ // These are on-screen contestant stage labels, not model provenance claims.
+ // Keep IDs and all game-engine BRANDS short names unchanged.
+ const BROADCAST_NAMES=Object.freeze({
+  0:'GPT-6 Astra',
+  1:'DeepSeek V4.1 Flash 1017',
+  2:'Claude Opus 5.5',
+  3:'Grok 4.7',
+  4:'Doubao Seed 2.0 Code',
+  5:'Gemini 4 Argon'
+ });
+ const broadcastName=id=>BROADCAST_NAMES[id]||'';
+
  function fixedBroadcastPlayers(players){
   const byId=new Map(players.filter(p=>p.active).map(p=>[p.id,p]));
   return BROADCAST_ORDER.map(id=>byId.get(id)).filter(Boolean);
@@ -30,5 +42,5 @@
   return {x:halfW<mapWidth/2?clamp(midX,halfW,mapWidth-halfW):mapWidth/2,
           y:halfH<mapHeight/2?clamp(midY,halfH,mapHeight-halfH):mapHeight/2,zoom:targetZoom};
  }
- return{sortDisplayPlayers,fixedBroadcastPlayers,shotForCells,BROADCAST_ORDER};
+ return{sortDisplayPlayers,fixedBroadcastPlayers,shotForCells,BROADCAST_ORDER,BROADCAST_NAMES,broadcastName};
 });
