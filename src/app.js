@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id),{CFG,BRANDS,radius,clamp,norm}=Arena;
 const canvas=$('arena'),ctx=canvas.getContext('2d'),mini=$('mini'),mc=mini.getContext('2d');
 const colors=['#e6b35b','#e98083','#7ca9e3','#a38ad2','#79bea7','#dc9bc4','#96b97a'];
 const controller=new ArenaInput.Controller(),sfx=new ArenaSound.SoundBank(),timeline=new ArenaRender.Timeline();
-const state={world:null,human:0,humanEnabled:false,starting:false,started:false,paused:true,freeze:false,showGuides:true,clean:false,speed:1,mode:'solo',seed:20261107,view:'follow',zoom:1,camera:{x:1300,y:900,z:.6},pointer:{x:0,y:0,active:false},keys:controller.keys,input:controller,sfx,splitQueued:false,mouseEject:false,sound:true,audio:null,images:[],eventsSeen:new Set(),fx:[],record:[],pendingCommands:[],replay:null,replayIndex:0,testTools:0,frameCount:0};
+const state={world:null,human:0,humanEnabled:false,starting:false,started:false,paused:true,freeze:false,showGuides:false,clean:false,speed:1,mode:'solo',seed:20261107,view:'follow',zoom:1,camera:{x:1300,y:900,z:.6},pointer:{x:0,y:0,active:false},keys:controller.keys,input:controller,sfx,splitQueued:false,mouseEject:false,sound:true,audio:null,images:[],eventsSeen:new Set(),fx:[],record:[],pendingCommands:[],replay:null,replayIndex:0,testTools:0,frameCount:0};
 window.game=state;state.render=timeline;state.performance={fps:0,frameMs:0};
 const pool=new ArenaAgents.Pool(error=>{state.agentErrors.push(error);lobby.runtimeError(state.mode,error);toast(`${BRANDS[error.player].name} 脚本停止：${error.message.split('\n')[0]}`);});
 state.agents=pool;state.agentErrors=[];
@@ -15,7 +15,7 @@ function logoHTML(id,cls=''){return `<img class="${cls}" src="${ASSETS[BRANDS[id
 function initPicker(){
  const select=$('humanSeat');select.innerHTML=BRANDS.map((b,i)=>`<option value="${i}">${b.name}</option>`).join('');select.value=String(state.human);
 }
-function updateEntrySummary(){const mode=state.mode,human=$('humanEnabled').checked,id=+$('humanSeat').value,entries=lobby.entries(mode,human,id);$('entrySummary').textContent=`${{solo:'个人赛',team:'团队赛',storm:'缩圈赛'}[mode]}：${entries.length} 位已导入 AI${human?' + 你':''}。未导入的席位不生成球。${mode==='team'?'两位时 1V1，四位 2V2，六位 3V3。':''}`;}
+function updateEntrySummary(){const mode=state.mode,human=$('humanEnabled').checked,id=+$('humanSeat').value,entries=lobby.entries(mode,human,id);$('entrySummary').textContent=`${{solo:'个人赛',team:'团队赛',storm:'大逃杀'}[mode]}：${entries.length} 位已导入 AI${human?' + 你':''}。未导入的席位不生成球。${mode==='team'?'两位时 1V1，四位 2V2，六位 3V3。':''}`;}
 function openEntries(){state.paused=true;clearControls();sfx.stopAll();$('welcome').classList.remove('hidden');lobby.render();updateEntrySummary();updateHUD();}
 async function startMatch(mode=state.mode,seed=state.seed){
  if(lobby.busy||state.starting)return;state.starting=true;
@@ -26,7 +26,7 @@ async function startMatch(mode=state.mode,seed=state.seed){
  state.agentErrors=[];newGame(mode,seed,true,{activeIds});state.paused=true;
  $('welcome').classList.add('hidden');$('startGame').disabled=true;await unlockAudio();
  await pool.start(entries,state.world);state.starting=false;$('startGame').disabled=false;
- state.paused=false;state.view=state.humanEnabled?'follow':'all';last=performance.now();accumulator=0;updateHUD();
+ state.paused=false;state.view=state.humanEnabled?'follow':'auto';last=performance.now();accumulator=0;updateHUD();
  toast(`${activeIds.length} 位选手已入场；${entries.length} 份 ${mode}.js 已加载`);
 }
 state.startMatch=startMatch;
@@ -36,12 +36,28 @@ function saveAudioSettings(){try{localStorage.setItem('ball-arena-audio-v02',JSO
 async function unlockAudio(){const ok=await sfx.unlock();state.audio=sfx.context;return ok;}
 function clearControls(){controller.clear();state.pointer.active=false;state.splitQueued=false;state.mouseEject=false;}
 function canControl(){return state.humanEnabled&&state.started&&!state.paused&&!state.world.finished&&state.world.players[state.human].cells.length>0&&!state.replay&&$('help').classList.contains('hidden')&&$('welcome').classList.contains('hidden')&&$('resultOverlay').classList.contains('hidden');}
-function newGame(mode=state.mode,seed=state.seed,start=state.started,extra={}){pool.stop();state.mode=mode;state.seed=(Number(seed)||20261107)>>>0;recordOptions={mode,seed:state.seed,foodCount:1050,thornCount:18,respawn:true,duration:180,activeIds:[],...extra};state.world=new Arena.World(recordOptions);timeline.reset(state.world);state.record=[];state.pendingCommands=[];state.replay=null;state.replayIndex=0;state.eventsSeen.clear();state.fx=[];state.started=start;state.paused=!start;clearControls();state.testTools=0;state.freeze=false;$('freezeBots').checked=false;state.speed=1;$('speedSelect').value='1';resultShown=false;accumulator=0;$('seedInput').value=state.seed;$('resultOverlay').classList.add('hidden');$('centerMessage').classList.add('hidden');$('pausedBadge').classList.add('hidden');$('welcome').classList.toggle('hidden',start);document.querySelectorAll('.modes [data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const c=state.world.center(state.human);state.camera={x:start?c.x:1300,y:start?c.y:900,z:start?.92:Math.min(W/2600,H/1800)*.9};state.view=start?'follow':'all';state.zoom=1;updateEntrySummary();updateHUD();}
+function newGame(mode=state.mode,seed=state.seed,start=state.started,extra={}){pool.stop();state.mode=mode;state.seed=(Number(seed)||20261107)>>>0;recordOptions={mode,seed:state.seed,foodCount:1050,thornCount:18,respawn:true,duration:180,activeIds:[],...extra};state.world=new Arena.World(recordOptions);timeline.reset(state.world);state.record=[];state.pendingCommands=[];state.replay=null;state.replayIndex=0;state.eventsSeen.clear();state.fx=[];state.started=start;state.paused=!start;clearControls();state.testTools=0;state.freeze=false;$('freezeBots').checked=false;state.speed=1;$('speedSelect').value='1';resultShown=false;accumulator=0;$('seedInput').value=state.seed;$('resultOverlay').classList.add('hidden');$('centerMessage').classList.add('hidden');$('pausedBadge').classList.add('hidden');$('welcome').classList.toggle('hidden',start);document.querySelectorAll('.modes [data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const c=state.world.center(state.human);const shot=start&&!state.humanEnabled?ArenaDirector.shotForCells(state.world.players.filter(q=>q.active).flatMap(q=>q.cells),{width:W,height:H,mapWidth:CFG.width,mapHeight:CFG.height}):null;state.camera=shot?{x:shot.x,y:shot.y,z:shot.zoom}:{x:start?c.x:1300,y:start?c.y:900,z:start?.92:Math.min(W/2600,H/1800)*.9};state.view=start?(state.humanEnabled?'follow':'auto'):'all';state.zoom=1;$('victoryBanner').classList.add('hidden');$('setupMode').value=mode;updateEntrySummary();updateHUD();}
 function resize(){const r=canvas.getBoundingClientRect();W=Math.max(1,r.width);H=Math.max(1,r.height);DPR=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);}
 function screen(x,y){return{x:(x-state.camera.x)*state.camera.z+W/2,y:(y-state.camera.y)*state.camera.z+H/2};}
 function worldPoint(x,y){return{x:(x-W/2)/state.camera.z+state.camera.x,y:(y-H/2)/state.camera.z+state.camera.y};}
-function updateCamera(dt){let tx,ty,tz;const w=state.world,cells=w.players[state.human].cells;if(state.view==='all'||!state.started||!cells.length){tx=1300;ty=900;tz=Math.min((W-90)/2600,(H-80)/1800)*state.zoom;}else{const c=timeline.center(w,state.human);tx=c.x;ty=c.y;let extentX=160,extentY=160;for(const raw of cells){const b=timeline.cell(raw);extentX=Math.max(extentX,Math.abs(b.x-c.x)+radius(b.mass)+60);extentY=Math.max(extentY,Math.abs(b.y-c.y)+radius(b.mass)+60);}tz=Math.min(.96*Math.pow(240/Math.max(240,w.mass(state.human)),.08),Math.max(250,W-360)/(extentX*2),Math.max(230,H-180)/(extentY*2))*state.zoom;tz=clamp(tz,.22,2.3);const hx=W/2/tz,hy=H/2/tz;tx=hx<1300?clamp(tx,hx,2600-hx):1300;ty=hy<900?clamp(ty,hy,1800-hy):900;}
- const a=1-Math.exp(-dt*7);state.camera.x+=(tx-state.camera.x)*a;state.camera.y+=(ty-state.camera.y)*a;state.camera.z+=(tz-state.camera.z)*a;
+function updateCamera(dt){
+ const w=state.world,players=w.players,activeCells=players.filter(p=>p.active).flatMap(p=>p.cells.map(c=>timeline.cell(c)));
+ let shot;
+ if(state.view==='all'||!state.started||!activeCells.length){
+  shot={x:CFG.width/2,y:CFG.height/2,zoom:Math.min((W-12)/CFG.width,(H-12)/CFG.height)*state.zoom};
+ }else if(state.view==='follow'&&state.humanEnabled&&players[state.human].cells.length){
+  const cells=players[state.human].cells.map(c=>timeline.cell(c));
+  shot=ArenaDirector.shotForCells(cells,{width:W,height:H,mapWidth:CFG.width,mapHeight:CFG.height,zoom:state.zoom});
+ }else{
+  shot=ArenaDirector.shotForCells(activeCells,{width:W,height:H,mapWidth:CFG.width,mapHeight:CFG.height,zoom:state.zoom});
+ }
+ // Ease zoom-out faster than zoom-in: a split or a new distant target must remain visible.
+ const targetZoom=clamp(shot.zoom,.16,2.3),out=targetZoom<state.camera.z;
+ const az=1-Math.exp(-(out?6.5:1.75)*Math.max(0,dt));
+ const ap=1-Math.exp(-(out?5.5:2.7)*Math.max(0,dt));
+ state.camera.z+=(targetZoom-state.camera.z)*az;
+ state.camera.x+=(shot.x-state.camera.x)*ap;
+ state.camera.y+=(shot.y-state.camera.y)*ap;
 }
 function humanAction(){const w=state.world,p=w.players[state.human];if(!p.cells.length)return{};const c=w.center(state.human),a=controller.sample(screen(c.x,c.y),performance.now());state.aimSource=a.aimSource;delete a.aimSource;for(const prefix of ['aimAt','gatherAt']){if(Number.isFinite(a[prefix+'X'])&&Number.isFinite(a[prefix+'Y'])){const pt=worldPoint(a[prefix+'X'],a[prefix+'Y']);a[prefix+'X']=pt.x;a[prefix+'Y']=pt.y;}}return a;}
 function step(){
@@ -94,10 +110,36 @@ function draw(dt){ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);ctx.f
  }
  const cells=w.players.flatMap(p=>p.cells.map(c=>({p,c}))).sort((a,b)=>a.c.mass-b.c.mass);for(const{p,c}of cells)drawCell(c,p,z);
  for(const f of state.fx){f.life-=dt;const s=screen(f.x,f.y),u=1-f.life/f.max;ctx.globalAlpha=Math.max(0,1-u);circle(s.x,s.y,(f.r+u*45)*z,null,f.type==='burst'?'#9b9c93':'#76be9e',2);ctx.globalAlpha=1;}state.fx=state.fx.filter(f=>f.life>0);
- // Subtle arena coordinates help identify map edges without adding a grid.
- if(state.view==='all'){ctx.fillStyle='#b4c2b7';ctx.font=`9px ${getFont()}`;ctx.textAlign='left';ctx.fillText('0, 0',a.x+8,a.y+15);ctx.textAlign='right';ctx.fillText('2600, 1800',b.x-8,b.y-9);}
+ // Clean broadcast: no map-coordinate labels overlay the playfield.
  drawMini();}
-function drawMini(){const w=state.world,s=330/2600;mc.clearRect(0,0,330,228);mc.fillStyle='#f5f8f5';mc.fillRect(0,0,330,228);mc.strokeStyle='#e4ebe4';mc.strokeRect(.5,.5,329,227);if(state.mode==='storm'){mc.beginPath();mc.rect(0,0,330,228);mc.arc(w.zone.x*s,w.zone.y*s,w.zone.r*s,0,Math.PI*2,true);mc.fillStyle='#c5b9e33d';mc.fill('evenodd');mc.beginPath();mc.arc(w.zone.x*s,w.zone.y*s,w.zone.r*s,0,Math.PI*2);mc.strokeStyle='#a99ccb';mc.lineWidth=2;mc.stroke();}for(const p of w.players)for(const raw of p.cells){const c=timeline.cell(raw);mc.beginPath();mc.arc(c.x*s,c.y*s,Math.max(p.id===state.human?4:2.5,radius(c.mass)*s*.5),0,Math.PI*2);mc.fillStyle=p.color;mc.fill();if(p.id===state.human){mc.lineWidth=2;mc.strokeStyle='#60b28a';mc.stroke();}}const cam=state.camera;mc.strokeStyle='#86ae9555';mc.lineWidth=1;mc.strokeRect((cam.x-W/2/cam.z)*s,(cam.y-H/2/cam.z)*s,W/cam.z*s,H/cam.z*s);}
+function drawMini(){
+ const w=state.world,mw=mini.width,mh=mini.height,s=mw/CFG.width;
+ mc.clearRect(0,0,mw,mh);mc.fillStyle='#ffffff';mc.fillRect(0,0,mw,mh);
+ mc.strokeStyle='#dde8e0';mc.lineWidth=2;mc.strokeRect(1,1,mw-2,mh-2);
+ if(state.mode==='storm'&&w.zone){
+  const z=timeline.zone(w.zone);
+  mc.beginPath();mc.rect(0,0,mw,mh);mc.arc(z.x*s,z.y*s,z.r*s,0,Math.PI*2,true);
+  mc.fillStyle='#a89add36';mc.fill('evenodd');
+  mc.beginPath();mc.arc(z.x*s,z.y*s,z.r*s,0,Math.PI*2);mc.strokeStyle='#9e8acb';mc.lineWidth=3;mc.stroke();
+ }
+ // Thorns only. Ordinary food dots and ejected pellets are intentionally absent.
+ for(const t of w.thorns){const pt=timeline.entity(t),x=pt.x*s,y=pt.y*s,r=8;
+  mc.beginPath();for(let k=0;k<12;k++){const a=k*Math.PI/6,rr=k%2?r*.67:r;
+   const px=x+Math.cos(a)*rr,py=y+Math.sin(a)*rr;k?mc.lineTo(px,py):mc.moveTo(px,py);}
+  mc.closePath();mc.fillStyle='#a4b3a8';mc.fill();mc.strokeStyle='#7e9684';mc.lineWidth=1.2;mc.stroke();
+ }
+ // Every individual surviving fragment is visible with its own player emblem.
+ for(const p of w.players){if(!p.active)continue;for(const raw of p.cells){
+  const c=timeline.cell(raw),x=c.x*s,y=c.y*s,r=Math.min(22,Math.max(10,3*Math.sqrt(c.mass)*s*.64));
+  mc.beginPath();mc.arc(x,y,r,0,Math.PI*2);mc.fillStyle='#ffffff';mc.fill();
+  mc.strokeStyle=p.color;mc.lineWidth=2;mc.stroke();
+  const icon=imgs[p.id];if(icon.complete&&icon.naturalWidth){mc.save();mc.beginPath();mc.arc(x,y,r-1,0,Math.PI*2);mc.clip();mc.drawImage(icon,x-r*.82,y-r*.82,r*1.64,r*1.64);mc.restore();}
+ }}
+ const cam=state.camera;
+ mc.strokeStyle='#61a18599';mc.lineWidth=2;mc.setLineDash([6,5]);
+ mc.strokeRect((cam.x-W/(2*cam.z))*s,(cam.y-H/(2*cam.z))*s,W/cam.z*s,H/cam.z*s);
+ mc.setLineDash([]);
+}
 function rankText(entry){return state.world.mode!=='team'&&!state.world.finished&&entry.alive?'●':String(entry.rank);}
 function rankStatus(entry){return entry.alive?Math.round(entry.mass).toLocaleString('en-US'):(state.world.mode==='team'&&!state.world.finished?'待重生':'已淘汰');}
 function rankingHTML(){const w=state.world,rows=w.result?.ranking||w.standings();return rows.map(entry=>{const p=w.players[entry.id];return `<div data-player="${p.id}" class="rank-row ${state.humanEnabled&&p.id===state.human?'you':''} ${!entry.alive?'dead':''}"><span class="rank-num">${rankText(entry)}</span>${logoHTML(p.id)}<span class="rank-name">${p.name}${state.humanEnabled&&p.id===state.human?'<em>你</em>':''}</span>${w.mode==='team'?`<i class="team-dot" style="background:${p.team===0?'#79aeda':'#e6a55e'}"></i>`:''}<span class="rank-score">${rankStatus(entry)}</span></div>`;}).join('');}
@@ -119,33 +161,36 @@ function updateRanking(){
 
 function updateBroadcast(){
  const w=state.world;if(!w)return;
- const modeNames={solo:'个人赛',team:'团队赛',storm:'缩圈生存'},objectives={solo:'最后存活者获胜',team:'总质量 / 团灭获胜',storm:'跑圈生存到最后'};
- $('broadcastMode').textContent=modeNames[w.mode];$('broadcastObjective').textContent=objectives[w.mode];
- const left=Math.max(0,Math.ceil(w.options.duration-w.time));$('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
- $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length;
+ const modeNames={solo:'个人赛',team:'团队赛',storm:'大逃杀'};
+ $('broadcastMode').textContent=modeNames[w.mode];
+ $('broadcastObjective').textContent={solo:'最后存活者获胜',team:'团队对抗',storm:'缩圈生存'}[w.mode];
+ const left=Math.max(0,Math.ceil(w.options.duration-w.time));
+ $('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+ $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length+' 存活';
  $('broadcastFps').textContent=state.performance.fps?state.performance.fps+' FPS':'—';
  $('broadcastFaults').textContent=String(state.agentErrors.length);
- const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
- const list=$('broadcastRows');if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small></small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
- const active=w.players.filter(p=>p.active),high=Math.max(240,...active.map(p=>w.mass(p.id)));
- const order=w.result?.ranking||w.standings();for(const [ix,item] of order.entries()){
-  const p=w.players[item.id],r=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!r)continue;
-  const stateAlive=p.cells.length>0,m=w.mass(p.id);if(list.children[ix]!==r)list.insertBefore(r,list.children[ix]);
-  r.hidden=!p.active;r.classList.toggle('is-dead',!stateAlive);r.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
-  const img=r.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
-  r.querySelector('.broadcast-entry-name').textContent=p.name;
-  r.querySelector('.broadcast-entry-detail').textContent=!stateAlive?(w.mode==='team'?'待重生 / 已淘汰':'已淘汰'):('分身 '+p.cells.length+' · 击杀 '+p.kills+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):''));
-  r.querySelector('b').textContent=Math.round(m).toLocaleString('en-US');r.querySelector('small').textContent='质量';
-  r.querySelector('.broadcast-entry-bar').style.width=clamp(m/high*100,0,100)+'%';r.querySelector('.broadcast-entry-bar').style.background=p.color;
+ const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';
+ if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
+ const list=$('broadcastRows');
+ if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<span class="broadcast-rank"></span><img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
+ const active=w.players.filter(p=>p.active).map(p=>({...p,mass:w.mass(p.id)}));
+ const order=ArenaDirector.sortDisplayPlayers(active);
+ const high=Math.max(240,...active.map(p=>p.mass));
+ for(let ix=0;ix<order.length;ix++){
+  const p=order[ix],row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!row)continue;
+  if(list.children[ix]!==row)list.insertBefore(row,list.children[ix]||null);
+  row.hidden=false;row.classList.toggle('is-dead',!p.cells.length);row.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
+  row.querySelector('.broadcast-rank').textContent=String(ix+1).padStart(2,'0');
+  const img=row.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
+  row.querySelector('.broadcast-entry-name').textContent=p.name;
+  row.querySelector('.broadcast-entry-detail').textContent=!p.cells.length?(w.mode==='team'?'等待重生':'已淘汰'):'分身 '+p.cells.length+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):'')+' · 击杀 '+p.kills;
+  row.querySelector('b').textContent=Math.round(p.mass).toLocaleString('en-US');
+  row.querySelector('.broadcast-entry-bar').style.width=clamp(p.mass/high*100,0,100)+'%';
+  row.querySelector('.broadcast-entry-bar').style.background=p.color;
  }
- for(const p of w.players.filter(p=>!p.active)){
-  const row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(row)row.hidden=true;
- }
- const ev=w.events.filter(e=>['death','burst','respawn','teamFeed'].includes(e.type)).slice(-3);
- $('broadcastEvents').textContent=ev.length?ev.map(e=>e.type==='death'?(BRANDS[e.player]?.name+' 出局'):e.type==='burst'?(BRANDS[e.player]?.name+' 吃刺四分'):e.type==='teamFeed'?'队友吞噬分身':'重新入场').join(' · '):'等待比赛开始';
- $('broadcastStatus').textContent=state.paused?'当前已暂停':state.agentErrors.length?'有脚本异常，查看选手导入报告':'视觉匀速 '+((state.simulationRate||1)*100).toFixed(0)+'% · 慢决策 '+pool.slowDecisions+' 次 · 等待帧 '+pool.waitFrames;
+ for(const p of w.players.filter(p=>!p.active)){const row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(row)row.hidden=true;}
 }
-function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hidden',!state.humanEnabled);document.querySelector('.controls-bar').classList.toggle('hidden',!state.humanEnabled);const w=state.world,p=w.players[state.human],m=w.mass(state.human),remain=Math.max(0,Math.ceil(w.options.duration-w.time));if($('humanIcon').dataset.brand!==p.icon){$('humanIcon').src=ASSETS[p.icon];$('humanIcon').dataset.brand=p.icon;}$('humanName').textContent=p.name;$('humanTeam').textContent=w.mode==='team'?(p.team===0?'蓝队 · 最后一球保护':'橙队 · 最后一球保护'):(state.replay?'回放中的玩家':'手动操作');$('massValue').textContent=Math.round(m).toLocaleString('en-US');$('cellCount').textContent=`${p.cells.length} / 16`;const cooldown=Math.max(0,...p.cells.map(c=>c.mergeAt-w.time));$('mergeInfo').textContent=p.cells.length>1?(cooldown>0?`${cooldown.toFixed(1)}s 可合并`:'按空格聚拢合并'):'完整球体';$('massMeter').style.width=`${clamp(m/1000*100,0,100)}%`;$('timerValue').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;$('modeLabel').textContent={solo:'个人赛',team:'随机团队赛',storm:'缩圈生存'}[w.mode];$('aliveCount').textContent=`${w.players.filter(p=>p.cells.length).length} 位${w.mode!=='team'?'存活':'选手'}`;updateRanking();$('teamScores').classList.toggle('hidden',w.mode!=='team');if(w.mode==='team'){$('teamScores').innerHTML=[0,1].map(t=>`<span>${t===0?'蓝队':'橙队'} <b>${Math.round(w.players.filter(p=>p.team===t).reduce((s,p)=>s+w.mass(p.id),0))}</b></span>`).join('');}
+function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hidden',!state.humanEnabled);document.querySelector('.controls-bar').classList.toggle('hidden',!state.humanEnabled);const w=state.world,p=w.players[state.human],m=w.mass(state.human),remain=Math.max(0,Math.ceil(w.options.duration-w.time));if($('humanIcon').dataset.brand!==p.icon){$('humanIcon').src=ASSETS[p.icon];$('humanIcon').dataset.brand=p.icon;}$('humanName').textContent=p.name;$('humanTeam').textContent=w.mode==='team'?(p.team===0?'蓝队 · 最后一球保护':'橙队 · 最后一球保护'):(state.replay?'回放中的玩家':'手动操作');$('massValue').textContent=Math.round(m).toLocaleString('en-US');$('cellCount').textContent=`${p.cells.length} / 16`;const cooldown=Math.max(0,...p.cells.map(c=>c.mergeAt-w.time));$('mergeInfo').textContent=p.cells.length>1?(cooldown>0?`${cooldown.toFixed(1)}s 可合并`:'按空格聚拢合并'):'完整球体';$('massMeter').style.width=`${clamp(m/1000*100,0,100)}%`;$('timerValue').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;$('modeLabel').textContent={solo:'个人赛',team:'随机团队赛',storm:'大逃杀'}[w.mode];$('aliveCount').textContent=`${w.players.filter(p=>p.cells.length).length} 位${w.mode!=='team'?'存活':'选手'}`;updateRanking();$('teamScores').classList.toggle('hidden',w.mode!=='team');if(w.mode==='team'){$('teamScores').innerHTML=[0,1].map(t=>`<span>${t===0?'蓝队':'橙队'} <b>${Math.round(w.players.filter(p=>p.team===t).reduce((s,p)=>s+w.mass(p.id),0))}</b></span>`).join('');}
  $('zoneStatus').classList.toggle('hidden',w.mode!=='storm');if(w.mode==='storm'){const danger=p.cells.some(c=>w.outside(c.x,c.y));$('zoneStatus').classList.toggle('danger',danger);$('zoneStatus').textContent=danger?'你有分身在圈外，正在损失质量':`第 ${w.zone.phase} 圈 · ${w.zone.shrinking?'正在收缩':'下一次收缩'} ${Math.ceil(w.zone.remaining)}s`;}
  const speeds=p.cells.map(c=>Arena.moveSpeed(c.mass)/CFG.baseMoveSpeed*100);$('speedInfo').textContent=speeds.length?'基础移速 · '+(Math.max(...speeds)-Math.min(...speeds)<.05?Math.min(...speeds).toFixed(1):Math.min(...speeds).toFixed(1)+'–'+Math.max(...speeds).toFixed(1))+'%':'基础移速 · —';
  const aim=controller.sample(screen(w.center(state.human).x,w.center(state.human).y),performance.now(),false);$('aimStatus').textContent=state.replay?'正在回放':aim.gather?'聚拢 · '+(controller.pointer.inside?'鼠标位置':'移动方向前方'):aim.aimSource==='mouse'?'瞄准 · 每颗球 → 鼠标':'瞄准 · '+(aim.aimSource==='keys'?'WASD 八向':'最后移动方向');
@@ -168,10 +213,12 @@ function showResult(){
   detail=r.status==='undecided'?'仍存活的选手并列，总质量不决定冠军；其余按淘汰先后排名。':'按存活顺序排名，同帧淘汰并列；总质量仅用于体量和展示。';
  }
  $('resultTitle').textContent=title;$('resultSub').textContent=detail+(state.replay?' 当前为回放。':'')+(state.testTools?' 本局使用过测试工具。':'');
- $('resultRanks').innerHTML=rankingHTML();$('resultOverlay').classList.remove('hidden');
+ $('resultRanks').innerHTML=rankingHTML();
+ if(!state.humanEnabled){$('victoryLabel').textContent=w.mode==='team'?'TEAM MATCH · FULL TIME':w.mode==='storm'?'BATTLE ROYALE · FINAL':'SOLO MATCH · FINAL';$('victoryTitle').textContent=title;$('victoryDetail').textContent=detail;$('victoryBanner').classList.remove('hidden');return;}
+ $('resultOverlay').classList.remove('hidden');
 }
 function togglePause(){if(!state.started||state.world.finished||!$('welcome').classList.contains('hidden'))return;state.paused=!state.paused;clearControls();sfx.stopAll();accumulator=0;timeline.reset(state.world);updateHUD();}
-function toggleView(){state.view=state.view==='all'?'follow':'all';state.zoom=1;updateHUD();}
+function toggleView(){state.view=state.view==='all'?(state.humanEnabled?'follow':'auto'):'all';state.zoom=1;updateHUD();}
 function toggleTools(){$('tools').classList.toggle('hidden');}
 function toolParams(){const c=state.world.center(state.human),a=controller.sample(screen(c.x,c.y),performance.now(),false);return{human:state.human,dx:a.aimX,dy:a.aimY};}
 const allowedTools=new Set(['massPlus','massMinus','food','thorn','prey','predator','merge','respawn','zone','stormOutside']);
@@ -191,10 +238,11 @@ function replayData(){return state.replay||{format:'ball-arena-replay',version:1
 state.exportReplay=replayData;
 function saveReplay(){download(`球球回放_${state.mode}_${state.seed}.json`,JSON.stringify(replayData()));toast('已导出回放文件；可在本测试版中导入播放。');}
 function importReplay(data){if(!data||data.format!=='ball-arena-replay'||data.version!==1||data.engine!=='0.6.0'||!Array.isArray(data.frames)||data.frames.length>60000||!data.options||!['solo','team','storm'].includes(data.options.mode))throw Error('不是此版本支持的回放文件');if(!Number.isInteger(data.human)||data.human<0||data.human>5)throw Error('回放角色编号不合法');const checkCommands=commands=>{if(!Array.isArray(commands)||commands.length>100)throw Error('回放工具命令不合法');for(const cmd of commands){const p=cmd?.[1];if(!Array.isArray(cmd)||!allowedTools.has(cmd[0])||!p||typeof p!=='object'||!Number.isInteger(p.human)||p.human<0||p.human>5||!Number.isFinite(p.dx)||!Number.isFinite(p.dy))throw Error('回放工具命令不合法');}};checkCommands(data.finalCommands||[]);for(const f of data.frames){if(!f||!f.actions||typeof f.actions!=='object'||Array.isArray(f.actions))throw Error('回放帧格式不正确');checkCommands(f.commands||[]);for(const [id,a] of Object.entries(f.actions)){if(!/^[0-5]$/.test(id)||!a||typeof a!=='object')throw Error('回放行动格式不正确');for(const k of ['dx','dy','aimX','aimY','aimAtX','aimAtY','gatherAtX','gatherAtY','tx','ty','throttle'])if(a[k]!==undefined&&!Number.isFinite(a[k]))throw Error('回放行动包含无效数字');}}
- if(!Array.isArray(data.options.activeIds)||data.options.activeIds.some(id=>!Number.isInteger(id)||id<0||id>5))throw Error('回放名单不合法');state.human=data.human;state.humanEnabled=!!data.humanEnabled;newGame(data.options.mode,data.options.seed,true,{activeIds:data.options.activeIds});pool.stop();state.replay=data;state.testTools=data.testTools||0;state.replayIndex=0;state.view='all';state.freeze=true;$('freezeBots').checked=true;$('replayStatus').textContent='正在播放回放';state.paused=false;toast('回放已载入。操作键不会改变记录中的比赛。');}
+ if(!Array.isArray(data.options.activeIds)||data.options.activeIds.some(id=>!Number.isInteger(id)||id<0||id>5))throw Error('回放名单不合法');state.human=data.human;state.humanEnabled=!!data.humanEnabled;newGame(data.options.mode,data.options.seed,true,{activeIds:data.options.activeIds});pool.stop();state.replay=data;state.testTools=data.testTools||0;state.replayIndex=0;state.view='auto';state.freeze=true;$('freezeBots').checked=true;$('replayStatus').textContent='正在播放回放';state.paused=false;toast('回放已载入。操作键不会改变记录中的比赛。');}
 state.importReplay=importReplay;
 function openHelp(){helpPaused=state.paused;state.paused=true;clearControls();sfx.stopAll();$('help').classList.remove('hidden');updateHUD();}function closeHelp(){$('help').classList.add('hidden');state.paused=helpPaused;accumulator=0;updateHUD();}
 $('startGame').onclick=()=>startMatch();
+$('setupMode').onchange=e=>newGame(e.target.value,state.seed,false);
 $('entriesToggle').onclick=openEntries;$('lobbyClose').onclick=()=>{if(state.started){$('welcome').classList.add('hidden');state.paused=false;last=performance.now();accumulator=0;}else toast('先导入选手或选择手动测试');};
 $('humanEnabled').onchange=updateEntrySummary;$('humanSeat').onchange=updateEntrySummary;
 $('exportAgentReport').onclick=()=>download('选手错误与提交记录.json',JSON.stringify(lobby.audit(),null,2));
@@ -224,12 +272,12 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*.001),.45,2.3);},{passive:false});
 window.addEventListener('keydown',e=>{
  if(['SELECT','TEXTAREA'].includes(document.activeElement.tagName)||(document.activeElement.tagName==='INPUT'&&!['checkbox','button'].includes(document.activeElement.type)))return;
- const code=e.code||e.key,k=e.key.toLowerCase(),shortcuts=['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD','KeyE','KeyP','KeyV','KeyT','KeyH'];
+ const code=e.code||e.key,k=e.key.toLowerCase(),shortcuts=['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD','KeyE','KeyP','KeyV','KeyT','KeyH','KeyL'];
  if(shortcuts.includes(code))e.preventDefault();
  if(!$('help').classList.contains('hidden')){if(k==='escape'||k==='?')closeHelp();return;}
  if(!$('welcome').classList.contains('hidden')){if(k==='enter')$('startGame').click();return;}
  if(k==='escape'){$('tools').classList.add('hidden');return;}
- if(!e.repeat){if(code==='KeyP')togglePause();if(code==='KeyV')toggleView();if(code==='KeyT')toggleTools();if(code==='KeyH'){$('cleanView').checked=!$('cleanView').checked;$('cleanView').dispatchEvent(new Event('change'));}}
+ if(!e.repeat){if(code==='KeyP')togglePause();if(code==='KeyV')toggleView();if(code==='KeyT')toggleTools();if(code==='KeyL')openEntries();if(code==='KeyH'){$('cleanView').checked=!$('cleanView').checked;$('cleanView').dispatchEvent(new Event('change'));}}
  if(canControl()){controller.key(code,true);unlockAudio();}
 });
 window.addEventListener('keyup',e=>controller.key(e.code||e.key,false));

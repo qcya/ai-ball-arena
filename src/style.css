@@ -52,3 +52,51 @@
 .clean #broadcastPanel{display:none}.clean #arenaWrap{width:100vw}
 @media(max-width:1050px){:root{--broadcastWidth:320px}#broadcastPanel{padding:14px 12px}.broadcast-brand h2{font-size:18px}.broadcast-clock{margin:13px 0}.broadcast-countdown b{font-size:26px}.broadcast-numbers{margin-bottom:9px}.broadcast-entry{min-height:53px;padding:7px}}
 @media(max-width:700px){#arenaWrap{width:100vw;height:55dvh}#broadcastPanel{position:relative;top:auto;right:auto;bottom:auto;width:100vw;height:calc(45dvh - 66px);border-left:0;border-top:1px solid #edf1ed}#arenaWrap>.camera-controls{display:none}body{overflow:auto}.broadcast-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.broadcast-entry{min-width:0}}
+
+/* v0.7 recording broadcast. Only the game is visible while a match is underway. */
+:root{--broadcastWidth:21vw}
+.topbar{display:none!important}
+#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:100dvh!important;}
+#arena{cursor:default}
+#arenaWrap>.player-card,#arenaWrap>.match-top,#arenaWrap>.leaderboard,#arenaWrap>.event-feed,#arenaWrap>.camera-controls,#arenaWrap>.controls-bar,#arenaWrap>.touch-controls,#arenaWrap>.paused-badge{display:none!important}
+#broadcastPanel{top:0;bottom:0;right:0;width:var(--broadcastWidth);height:100dvh;padding:2.2vh 1.3vw 1.8vh;background:#fcfdfc;border-left:1px solid #e4ece7;overflow:hidden;box-shadow:none;display:flex;flex-direction:column;}
+#broadcastPanel .broadcast-clock{margin:0 0 2vh;align-items:center;padding:0 0 1.8vh;border-bottom:1px solid #e5ece7;gap:10px}
+#broadcastPanel .broadcast-clock strong{font-size:2.6vh;font-weight:750;letter-spacing:.04em;color:#253d31}
+#broadcastPanel .broadcast-field-label{font-size:1.06vh;letter-spacing:.16em;margin-bottom:.7vh;color:#81958a}
+#broadcastPanel .broadcast-clock small{font-size:1vh;margin-top:.5vh;color:#8aa094}
+#broadcastPanel .broadcast-countdown{text-align:right;flex-shrink:0}
+#broadcastPanel .broadcast-countdown b{display:block;font-size:3.45vh;font-weight:760;font-variant-numeric:tabular-nums;line-height:1.13;color:#22382b}
+#broadcastPanel .broadcast-survivors{display:block;font-size:1vh;color:#85998b;margin-top:.4vh;white-space:nowrap}
+#broadcastPanel .on-air-dot{display:inline-block;width:.55vh;height:.55vh;border-radius:50%;background:#35ad83;vertical-align:middle;margin-left:.4vw}
+#broadcastPanel>.broadcast-section-head{margin:0 0 1.2vh}
+#broadcastPanel .broadcast-section-head strong,#broadcastPanel .broadcast-map-heading strong{font-size:1.5vh;color:#34463b;font-weight:760;letter-spacing:.04em}
+#broadcastPanel .broadcast-section-head span,#broadcastPanel .broadcast-map-heading span{font-size:.92vh;color:#9aa99d}
+#broadcastPanel .broadcast-rows{display:flex;flex-direction:column;gap:.63vh}
+#broadcastPanel .broadcast-entry{min-height:7.45vh;border-radius:1vh;padding:.9vh .8vw;gap:.7vw;background:#fff;border:1px solid #e7eee9;box-shadow:0 .2vh .8vh #39534404}
+#broadcastPanel .broadcast-entry>img{width:3.1vh;height:3.1vh}
+#broadcastPanel .broadcast-entry-name{font-size:1.44vh}
+#broadcastPanel .broadcast-entry-detail{font-size:1.04vh;margin-top:.4vh}
+#broadcastPanel .broadcast-entry-numeric{min-width:4.2vw}
+#broadcastPanel .broadcast-entry-numeric b{font-size:1.5vh}
+#broadcastPanel .broadcast-entry-numeric small{font-size:.9vh;margin-top:.1vh}
+#broadcastPanel .broadcast-entry-bar{height:.28vh}
+#broadcastPanel .broadcast-entry.is-dead{opacity:.46;background:#f6f7f6}
+#broadcastPanel .broadcast-team{margin:0 0 1.2vh;gap:.55vw}
+#broadcastPanel .broadcast-team>div{font-size:1.1vh;padding:.85vh .6vw}
+#broadcastPanel .broadcast-team b{font-size:1.5vh;margin-top:.4vh}
+#broadcastPanel .broadcast-map-area{margin-top:auto;padding-top:1.3vh;border-top:1px solid #e5ece7;min-height:0}
+#broadcastPanel .broadcast-map-heading{display:flex;align-items:center;justify-content:space-between;margin:0 0 .9vh}
+#broadcastPanel .broadcast-map-slot .minimap{display:block!important;width:100%!important;padding:.55vh;position:static;box-shadow:none;border:1px solid #dfeae3;border-radius:.85vh;background:#f6faf7}
+#broadcastPanel .broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;aspect-ratio:13/9;border-radius:.6vh}
+#broadcastPanel .technical-telemetry{display:none!important}
+#arenaWrap .victory-banner{z-index:25;position:absolute;left:50%;top:10%;transform:translateX(-50%);min-width:min(40vw,600px);padding:1.9vh 2.1vw;text-align:center;border-radius:1.2vh;background:#fffef8ec;box-shadow:0 1vh 4vh #27392a21;border:1px solid #f0e9d8;pointer-events:none}
+.victory-banner small{font-size:1.2vh;letter-spacing:.19em;display:block;color:#9f926c}
+.victory-banner strong{display:block;font-size:3.3vh;line-height:1.5;color:#34483a}
+.victory-banner span{display:block;font-size:1.2vh;color:#718375}
+#toast{display:none!important}
+.overlay{inset:0!important}
+.clean #broadcastPanel{display:flex!important}.clean #arenaWrap{width:calc(100vw - var(--broadcastWidth))!important}
+.entry-mode-choice{display:flex;align-items:center;gap:12px;margin:0 0 18px;background:#f4f8f5;border:1px solid #e4ece6;padding:12px 15px;border-radius:11px}
+.entry-mode-choice label{font-weight:700;font-size:12px}.entry-mode-choice select{font-size:13px;border:1px solid #cbded0;padding:7px 12px;border-radius:7px;background:white}
+.entry-mode-choice span{margin-left:auto;font-size:10px;color:#889a8c}
+@media(max-width:900px){:root{--broadcastWidth:27vw}#broadcastPanel{position:fixed;top:0;right:0;width:var(--broadcastWidth);height:100dvh;overflow:hidden;padding:1.4vh 1vw}#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:100dvh}#broadcastPanel .broadcast-entry{min-height:7vh;padding:.6vh .6vw}#broadcastPanel .broadcast-entry>img{width:2.6vh;height:2.6vh}#broadcastPanel .broadcast-entry-detail{font-size:.95vh}#broadcastPanel .broadcast-countdown b{font-size:2.5vh}}

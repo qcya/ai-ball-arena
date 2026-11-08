@@ -52,6 +52,54 @@
 .clean #broadcastPanel{display:none}.clean #arenaWrap{width:100vw}
 @media(max-width:1050px){:root{--broadcastWidth:320px}#broadcastPanel{padding:14px 12px}.broadcast-brand h2{font-size:18px}.broadcast-clock{margin:13px 0}.broadcast-countdown b{font-size:26px}.broadcast-numbers{margin-bottom:9px}.broadcast-entry{min-height:53px;padding:7px}}
 @media(max-width:700px){#arenaWrap{width:100vw;height:55dvh}#broadcastPanel{position:relative;top:auto;right:auto;bottom:auto;width:100vw;height:calc(45dvh - 66px);border-left:0;border-top:1px solid #edf1ed}#arenaWrap>.camera-controls{display:none}body{overflow:auto}.broadcast-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.broadcast-entry{min-width:0}}
+
+/* v0.7 recording broadcast. Only the game is visible while a match is underway. */
+:root{--broadcastWidth:21vw}
+.topbar{display:none!important}
+#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:100dvh!important;}
+#arena{cursor:default}
+#arenaWrap>.player-card,#arenaWrap>.match-top,#arenaWrap>.leaderboard,#arenaWrap>.event-feed,#arenaWrap>.camera-controls,#arenaWrap>.controls-bar,#arenaWrap>.touch-controls,#arenaWrap>.paused-badge{display:none!important}
+#broadcastPanel{top:0;bottom:0;right:0;width:var(--broadcastWidth);height:100dvh;padding:2.2vh 1.3vw 1.8vh;background:#fcfdfc;border-left:1px solid #e4ece7;overflow:hidden;box-shadow:none;display:flex;flex-direction:column;}
+#broadcastPanel .broadcast-clock{margin:0 0 2vh;align-items:center;padding:0 0 1.8vh;border-bottom:1px solid #e5ece7;gap:10px}
+#broadcastPanel .broadcast-clock strong{font-size:2.6vh;font-weight:750;letter-spacing:.04em;color:#253d31}
+#broadcastPanel .broadcast-field-label{font-size:1.06vh;letter-spacing:.16em;margin-bottom:.7vh;color:#81958a}
+#broadcastPanel .broadcast-clock small{font-size:1vh;margin-top:.5vh;color:#8aa094}
+#broadcastPanel .broadcast-countdown{text-align:right;flex-shrink:0}
+#broadcastPanel .broadcast-countdown b{display:block;font-size:3.45vh;font-weight:760;font-variant-numeric:tabular-nums;line-height:1.13;color:#22382b}
+#broadcastPanel .broadcast-survivors{display:block;font-size:1vh;color:#85998b;margin-top:.4vh;white-space:nowrap}
+#broadcastPanel .on-air-dot{display:inline-block;width:.55vh;height:.55vh;border-radius:50%;background:#35ad83;vertical-align:middle;margin-left:.4vw}
+#broadcastPanel>.broadcast-section-head{margin:0 0 1.2vh}
+#broadcastPanel .broadcast-section-head strong,#broadcastPanel .broadcast-map-heading strong{font-size:1.5vh;color:#34463b;font-weight:760;letter-spacing:.04em}
+#broadcastPanel .broadcast-section-head span,#broadcastPanel .broadcast-map-heading span{font-size:.92vh;color:#9aa99d}
+#broadcastPanel .broadcast-rows{display:flex;flex-direction:column;gap:.63vh}
+#broadcastPanel .broadcast-entry{min-height:7.45vh;border-radius:1vh;padding:.9vh .8vw;gap:.7vw;background:#fff;border:1px solid #e7eee9;box-shadow:0 .2vh .8vh #39534404}
+#broadcastPanel .broadcast-entry>img{width:3.1vh;height:3.1vh}
+#broadcastPanel .broadcast-entry-name{font-size:1.44vh}
+#broadcastPanel .broadcast-entry-detail{font-size:1.04vh;margin-top:.4vh}
+#broadcastPanel .broadcast-entry-numeric{min-width:4.2vw}
+#broadcastPanel .broadcast-entry-numeric b{font-size:1.5vh}
+#broadcastPanel .broadcast-entry-numeric small{font-size:.9vh;margin-top:.1vh}
+#broadcastPanel .broadcast-entry-bar{height:.28vh}
+#broadcastPanel .broadcast-entry.is-dead{opacity:.46;background:#f6f7f6}
+#broadcastPanel .broadcast-team{margin:0 0 1.2vh;gap:.55vw}
+#broadcastPanel .broadcast-team>div{font-size:1.1vh;padding:.85vh .6vw}
+#broadcastPanel .broadcast-team b{font-size:1.5vh;margin-top:.4vh}
+#broadcastPanel .broadcast-map-area{margin-top:auto;padding-top:1.3vh;border-top:1px solid #e5ece7;min-height:0}
+#broadcastPanel .broadcast-map-heading{display:flex;align-items:center;justify-content:space-between;margin:0 0 .9vh}
+#broadcastPanel .broadcast-map-slot .minimap{display:block!important;width:100%!important;padding:.55vh;position:static;box-shadow:none;border:1px solid #dfeae3;border-radius:.85vh;background:#f6faf7}
+#broadcastPanel .broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;aspect-ratio:13/9;border-radius:.6vh}
+#broadcastPanel .technical-telemetry{display:none!important}
+#arenaWrap .victory-banner{z-index:25;position:absolute;left:50%;top:10%;transform:translateX(-50%);min-width:min(40vw,600px);padding:1.9vh 2.1vw;text-align:center;border-radius:1.2vh;background:#fffef8ec;box-shadow:0 1vh 4vh #27392a21;border:1px solid #f0e9d8;pointer-events:none}
+.victory-banner small{font-size:1.2vh;letter-spacing:.19em;display:block;color:#9f926c}
+.victory-banner strong{display:block;font-size:3.3vh;line-height:1.5;color:#34483a}
+.victory-banner span{display:block;font-size:1.2vh;color:#718375}
+#toast{display:none!important}
+.overlay{inset:0!important}
+.clean #broadcastPanel{display:flex!important}.clean #arenaWrap{width:calc(100vw - var(--broadcastWidth))!important}
+.entry-mode-choice{display:flex;align-items:center;gap:12px;margin:0 0 18px;background:#f4f8f5;border:1px solid #e4ece6;padding:12px 15px;border-radius:11px}
+.entry-mode-choice label{font-weight:700;font-size:12px}.entry-mode-choice select{font-size:13px;border:1px solid #cbded0;padding:7px 12px;border-radius:7px;background:white}
+.entry-mode-choice span{margin-left:auto;font-size:10px;color:#889a8c}
+@media(max-width:900px){:root{--broadcastWidth:27vw}#broadcastPanel{position:fixed;top:0;right:0;width:var(--broadcastWidth);height:100dvh;overflow:hidden;padding:1.4vh 1vw}#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:100dvh}#broadcastPanel .broadcast-entry{min-height:7vh;padding:.6vh .6vw}#broadcastPanel .broadcast-entry>img{width:2.6vh;height:2.6vh}#broadcastPanel .broadcast-entry-detail{font-size:.95vh}#broadcastPanel .broadcast-countdown b{font-size:2.5vh}}
 </style><!--
 Brand icon assets: LobeHub lobe-icons.
 MIT License
@@ -78,8 +126,8 @@ SOFTWARE.
 </head>
 <body>
 <header class="topbar">
- <div class="brand"><div class="brandmark"><i></i><i></i><i></i></div><div><h1>球球竞技场</h1><span>BALL ARENA <b>/</b> TEST LAB</span></div><em class="version">v0.6.1 · 观战版</em></div>
- <nav class="modes" aria-label="比赛模式"><button class="mode active" data-mode="solo"><span>01</span>个人赛</button><button class="mode" data-mode="team"><span>02</span>团队赛</button><button class="mode" data-mode="storm"><span>03</span>缩圈生存</button></nav>
+ <div class="brand"><div class="brandmark"><i></i><i></i><i></i></div><div><h1>球球竞技场</h1><span>BALL ARENA <b>/</b> TEST LAB</span></div><em class="version">v0.7 · 录制观战版</em></div>
+ <nav class="modes" aria-label="比赛模式"><button class="mode active" data-mode="solo"><span>01</span>个人赛</button><button class="mode" data-mode="team"><span>02</span>团队赛</button><button class="mode" data-mode="storm"><span>03</span>大逃杀</button></nav>
  <div class="top-actions"><button id="entriesToggle" class="tools-button">选手 / 导入</button><button id="soundToggle" class="icon-btn" title="音效开关" aria-label="音效开关">♪</button><button id="helpToggle" class="icon-btn" title="操作和规则">?</button><button id="toolsToggle" class="tools-button">⚙ <span>测试工具</span><kbd>T</kbd></button></div>
 </header>
 <main id="arenaWrap">
@@ -89,35 +137,33 @@ SOFTWARE.
  <section class="leaderboard glass"><div class="section-heading"><h2>存活与质量</h2><span id="rankKind">按存活顺序</span></div><div id="teamScores" class="team-scores hidden"></div><div id="rankList"></div><div class="leaderboard-foot" id="rankFoot">质量仅展示，不决定个人赛名次</div></section>
  <div id="events" class="event-feed"></div><div id="toast" class="toast hidden"></div>
  <div class="camera-controls glass"><button id="cameraToggle" title="跟随 / 全场 V">◎ 跟随</button><i></i><button id="zoomOut" title="缩小">−</button><span id="zoomLabel">100%</span><button id="zoomIn" title="放大">＋</button><i></i><button id="pauseToggle" title="暂停 P">Ⅱ</button><button id="fullscreenToggle" title="全屏">⛶</button></div>
- <div class="minimap glass"><div><span>全场地图</span><span id="mapSize">2600 × 1800</span></div><canvas id="mini" width="330" height="228"></canvas></div>
+ <div class="minimap glass"><div><span>全场地图</span><span id="mapSize">2600 × 1800</span></div><canvas id="mini" width="780" height="540"></canvas></div>
  <div class="controls-bar glass"><span><kbd>WASD</kbd>移动</span><span><kbd>左键</kbd>吐球</span><span><kbd>右键</kbd>分裂</span><span><kbd>空格</kbd>聚拢</span><span><kbd>P</kbd>暂停</span><span><kbd>V</kbd>全场</span><small>鼠标瞄准</small></div>
  <div id="centerMessage" class="center-message hidden"></div>
+ <div id="victoryBanner" class="victory-banner hidden" aria-live="polite"><small id="victoryLabel">比赛结束</small><strong id="victoryTitle">本局结束</strong><span id="victoryDetail"></span></div>
  <div id="pausedBadge" class="paused-badge hidden">已暂停 <small>按 P 继续</small></div>
  <div class="touch-controls"><button id="touchSplit">分裂</button><button id="touchEject">吐球</button><button id="touchGather">聚拢</button></div>
 </main>
-<aside id="broadcastPanel" aria-label="赛事直播信息">
- <div class="broadcast-brand"><div><span class="broadcast-kicker">AI BALL ARENA / SPECTATOR</span><h2>赛事控制台</h2></div><span class="broadcast-live"><i></i> LIVE</span></div>
- <div class="broadcast-clock"><div><span class="broadcast-field-label">当前模式</span><strong id="broadcastMode">个人赛</strong><small id="broadcastObjective">最后存活者获胜</small></div><div class="broadcast-countdown"><span class="broadcast-field-label">剩余时间</span><b id="broadcastTime">03:00</b></div></div>
- <div class="broadcast-numbers"><div><span>存活 / 入场</span><strong id="broadcastAlive">0 / 0</strong></div><div><span>画面刷新率</span><strong id="broadcastFps">—</strong></div><div><span>脚本异常</span><strong id="broadcastFaults">0</strong></div></div>
+<aside id="broadcastPanel" aria-label="直播选手列表">
+ <div class="broadcast-clock"><div class="broadcast-match"><span class="broadcast-field-label">AI BALL ARENA <i class="on-air-dot"></i></span><strong id="broadcastMode">个人赛</strong><small id="broadcastObjective">最后存活者获胜</small></div><div class="broadcast-countdown"><span class="broadcast-field-label">剩余时间</span><b id="broadcastTime">03:00</b><span id="broadcastAlive" class="broadcast-survivors">0 / 6 存活</span></div></div>
  <div id="broadcastTeam" class="broadcast-team" hidden></div>
- <div class="broadcast-section-head"><strong>选手状态</strong><span>质量仅作参考 · 按存活显示</span></div>
+ <div class="broadcast-section-head"><strong>选手列表</strong><span>存活优先 · 按当前质量排序</span></div>
  <div id="broadcastRows" class="broadcast-rows"></div>
- <div class="broadcast-bottom"><section class="broadcast-news"><div class="broadcast-section-head"><strong>比赛事件</strong><span>最近发生</span></div><div id="broadcastEvents" class="broadcast-events">还没有比赛事件</div></section><div class="broadcast-map-heading"><strong>全场分布</strong><span>2600 × 1800</span></div><div id="broadcastMapSlot" class="broadcast-map-slot"></div></div>
- <div class="broadcast-footer"><button id="broadcastEntries">选手 / 导入</button><button id="broadcastCamera">切换镜头</button><button id="broadcastPause">暂停 / 继续</button></div>
- <div class="broadcast-fine" id="broadcastStatus">脚本与引擎保持隔离 · 本面板仅显示数据</div>
+ <section class="broadcast-map-area"><div class="broadcast-map-heading"><strong>全场地图</strong><span>选手分身 · 刺球 · 安全区</span></div><div id="broadcastMapSlot" class="broadcast-map-slot"></div></section>
+ <div class="technical-telemetry" hidden><strong id="broadcastFps">—</strong><strong id="broadcastFaults">0</strong><div id="broadcastEvents"></div><div id="broadcastStatus"></div><button id="broadcastEntries">导入</button><button id="broadcastCamera">切镜头</button><button id="broadcastPause">暂停</button></div>
 </aside>
-<aside id="tools" class="tools-panel hidden"><div class="panel-head"><div><span>DEVELOPER TOOLS</span><h2>机制试验台</h2></div><button id="closeTools" class="icon-btn">×</button></div><p>这些按钮只用于测机制；使用后会在回放中记录。</p><label class="switch-row"><span>冻结已导入 AI<small>毒圈和碰撞仍然生效</small></span><input id="freezeBots" type="checkbox"></label><label class="switch-row"><span>显示攻击方向辅助线</span><input id="showGuides" type="checkbox" checked></label><label class="switch-row"><span>纯净画面<small>H 键也可以切换</small></span><input id="cleanView" type="checkbox"></label><div class="tool-grid"><button data-tool="massPlus">＋ 250 质量</button><button data-tool="massMinus">− 100 质量</button><button data-tool="food">生成一圈食物</button><button data-tool="thorn">前方生成刺球</button><button data-tool="prey">放一个小陪练</button><button data-tool="predator">放一个大陪练</button><button data-tool="merge">立即合并</button><button data-tool="respawn">测试重生</button><button data-tool="zone">跳到下个圈</button><button data-tool="stormOutside">移到圈外</button></div><div class="tool-divider"></div><div class="audio-heading">音效 <span>原创合成 · 无背景音乐</span></div><label class="audio-volume">音量 <input id="volumeSlider" type="range" min="0" max="100" value="35" aria-label="音效音量"><output id="volumeValue">35%</output></label><div class="tool-grid sound-grid"><button data-sfx="pelletEat">试听 · 吃质量球</button><button data-sfx="eat">试听 · 吞球</button><button data-sfx="eject">试听 · 吐球</button><button data-sfx="split">试听 · 分裂</button><button data-sfx="burst">试听 · 扎刺</button><button data-sfx="merge">试听 · 合并</button></div><div class="tool-divider"></div><label class="select-row">模拟速度<select id="speedSelect"><option value="0.5">0.5 × 慢放</option><option value="1" selected>1 × 正常</option><option value="2">2 × 加速</option></select></label><label class="select-row">地图种子<input id="seedInput" type="number" value="20261107"></label><div class="tool-grid"><button id="restartGame">↻ 同种子重开</button><button id="shuffleGame">随机新一局</button><button id="saveReplay">导出回放</button><button id="loadReplay">导入回放</button><button id="saveState">导出问题快照</button><button id="saveImage">截取游戏画面</button></div><input type="file" id="replayInput" accept=".json" hidden><div id="performanceStatus" class="replay-status">平滑插值开启 · 物理 60 Hz</div><div id="replayStatus" class="replay-status">正在记录行动 · 脚本离线运行</div><p class="tools-fine">本地运行，不上传任何文件。回放记录动作与工具操作，不是视频文件。</p></aside>
+<aside id="tools" class="tools-panel hidden"><div class="panel-head"><div><span>DEVELOPER TOOLS</span><h2>机制试验台</h2></div><button id="closeTools" class="icon-btn">×</button></div><p>这些按钮只用于测机制；使用后会在回放中记录。</p><label class="switch-row"><span>冻结已导入 AI<small>毒圈和碰撞仍然生效</small></span><input id="freezeBots" type="checkbox"></label><label class="switch-row"><span>显示攻击方向辅助线</span><input id="showGuides" type="checkbox"></label><label class="switch-row"><span>纯净画面<small>H 键也可以切换</small></span><input id="cleanView" type="checkbox"></label><div class="tool-grid"><button data-tool="massPlus">＋ 250 质量</button><button data-tool="massMinus">− 100 质量</button><button data-tool="food">生成一圈食物</button><button data-tool="thorn">前方生成刺球</button><button data-tool="prey">放一个小陪练</button><button data-tool="predator">放一个大陪练</button><button data-tool="merge">立即合并</button><button data-tool="respawn">测试重生</button><button data-tool="zone">跳到下个圈</button><button data-tool="stormOutside">移到圈外</button></div><div class="tool-divider"></div><div class="audio-heading">音效 <span>原创合成 · 无背景音乐</span></div><label class="audio-volume">音量 <input id="volumeSlider" type="range" min="0" max="100" value="35" aria-label="音效音量"><output id="volumeValue">35%</output></label><div class="tool-grid sound-grid"><button data-sfx="pelletEat">试听 · 吃质量球</button><button data-sfx="eat">试听 · 吞球</button><button data-sfx="eject">试听 · 吐球</button><button data-sfx="split">试听 · 分裂</button><button data-sfx="burst">试听 · 扎刺</button><button data-sfx="merge">试听 · 合并</button></div><div class="tool-divider"></div><label class="select-row">模拟速度<select id="speedSelect"><option value="0.5">0.5 × 慢放</option><option value="1" selected>1 × 正常</option><option value="2">2 × 加速</option></select></label><label class="select-row">地图种子<input id="seedInput" type="number" value="20261107"></label><div class="tool-grid"><button id="restartGame">↻ 同种子重开</button><button id="shuffleGame">随机新一局</button><button id="saveReplay">导出回放</button><button id="loadReplay">导入回放</button><button id="saveState">导出问题快照</button><button id="saveImage">截取游戏画面</button></div><input type="file" id="replayInput" accept=".json" hidden><div id="performanceStatus" class="replay-status">平滑插值开启 · 物理 60 Hz</div><div id="replayStatus" class="replay-status">正在记录行动 · 脚本离线运行</div><p class="tools-fine">本地运行，不上传任何文件。回放记录动作与工具操作，不是视频文件。</p></aside>
 <div id="welcome" class="overlay"><section class="welcome-card entry-card">
 <div class="panel-head"><span class="eyebrow"><i></i> AI BALL ARENA / 参赛准备</span><button id="lobbyClose" class="icon-btn" title="返回比赛">×</button></div>
 <h2>选手自己交卷，<br>场上见真章。</h2><p>每个模型，一次会话生成三份独立脚本。初次打开没有陪练，也没有内置选手。</p>
-<div id="agentRows" class="agent-rows"></div>
+<div class="entry-mode-choice"><label for="setupMode">本次比赛</label><select id="setupMode"><option value="solo">个人赛</option><option value="team">团队赛</option><option value="storm">大逃杀</option></select><span>导入选手后开始录制画面；按 L 重新打开此页面</span></div><div id="agentRows" class="agent-rows"></div>
 <div class="entry-bottom"><label><input type="checkbox" id="humanEnabled"> 我也入场（手动测试）</label><select id="humanSeat" aria-label="手动角色"></select><span>WASD 移动 · 左吐 · 右分 · 空格聚拢</span></div>
 <div id="entrySummary" class="entry-summary"></div>
 <button id="startGame" class="primary-button">开始当前模式 <span>↗</span></button>
 <div class="entry-links"><button id="downloadBrief">下载统一 AI 任务书</button><button id="exportAgentReport">导出错误 / 提交报告</button><button id="resetEntries">新建测试批次</button></div>
 <div class="welcome-bottom">只导入你信任的模型生成文件 · 纯本地执行，不需要 API 密钥 · 文件仅保留在本页内存</div>
 </section></div>
-<div id="help" class="overlay hidden"><section class="help-card"><div class="panel-head"><h2>怎么玩 & 这版的规则</h2><button id="closeHelp" class="icon-btn">×</button></div><div class="help-cols"><div><h3>操作</h3><p><kbd>WASD</kbd> / 方向键移动，斜向速度相同。鼠标不控制走路。</p><p><kbd>左键</kbd> 按住连续吐球。<kbd>右键</kbd> 每点一次分裂。空格不会吐球或分裂。</p><p>每颗分身以自身圆心瞄准鼠标。鼠标最近 0.8 秒有移动则朝指针攻击；鼠标静止超时或离开游戏区域，改用当前 WASD 八向，没有移动时保持最后移动方向。</p><p><kbd>空格</kbd> 按住向鼠标位置聚拢，不是向分身重心；8 秒冷却结束后靠近合并。鼠标离开画布时使用最后移动方向前方。</p><p><kbd>♪</kbd> 开关音效；普通彩色食物静音。测试工具中可调音量、分别试听。</p><p><kbd>P</kbd> 暂停　<kbd>V</kbd> 全场镜头　<kbd>T</kbd> 工具</p><p><kbd>H</kbd> 纯净画面　滚轮缩放</p></div><div><h3>吞噬与质量</h3><p>每颗分身独立判断：比食物 / 吐出球大才能吃。吃敌方分身需要至少 1.2 倍质量，并充分覆盖。</p><p>每颗分身按自身质量计算常规移速：初始质量 240 及以下为 100%，480 为 90%，960 为 81%；中间连续变化，无固定最低速度。分裂冲刺另算。</p><p>主动分裂至少 80 质量；分裂不损失质量。吐球每颗 10，自己的分身至少 30 才能吐。</p><p>分裂后等待 8 秒，靠拢才能合并。团队赛可吞队友多余分身（仍需 1.2 倍质量）；被吃方只剩最后一颗时受保护。吐球同样可以喂队友。</p><p>质量至少 120 且有 3 个空分身名额的球吃刺四分，总质量增加 20%（每颗为原球的 30%）。危险在于碎片可能被敌人吞噬。吐球能推动刺球。新出生有 2 秒保护，主动分裂结束保护。</p></div></div><div class="mode-rules"><p><b>个人赛：</b>不复活，最后存活者立即胜；全部分身消失才淘汰。质量帮助吞噬，但不决定名次。</p><p><b>缩圈生存：</b>同样按存活顺序排名；圈外持续掉质量，食物和吐出球清除。最后存活者立即胜。</p><p><b>个人 / 缩圈超时：</b>保留 3 分钟上限，到时仍有多人存活则未分胜负、存活者并列；同帧淘汰并列，不用质量或击杀破平局。</p><p><b>团队赛：</b>到时比较全队当前总质量；整队被消灭立即输给另一队。非团灭时队员死亡 3 秒后重生，队友最后一颗保护保留。</p></div><p class="help-note">这是按讨论制作的自定义测试规则，不是商业手游的精确复刻。正式比赛将让每个模型分别提交个人、团队、生存三份脚本；本版已支持按模式导入 .js 脚本。</p></section></div>
+<div id="help" class="overlay hidden"><section class="help-card"><div class="panel-head"><h2>怎么玩 & 这版的规则</h2><button id="closeHelp" class="icon-btn">×</button></div><div class="help-cols"><div><h3>操作</h3><p><kbd>WASD</kbd> / 方向键移动，斜向速度相同。鼠标不控制走路。</p><p><kbd>左键</kbd> 按住连续吐球。<kbd>右键</kbd> 每点一次分裂。空格不会吐球或分裂。</p><p>每颗分身以自身圆心瞄准鼠标。鼠标最近 0.8 秒有移动则朝指针攻击；鼠标静止超时或离开游戏区域，改用当前 WASD 八向，没有移动时保持最后移动方向。</p><p><kbd>空格</kbd> 按住向鼠标位置聚拢，不是向分身重心；8 秒冷却结束后靠近合并。鼠标离开画布时使用最后移动方向前方。</p><p><kbd>♪</kbd> 开关音效；普通彩色食物静音。测试工具中可调音量、分别试听。</p><p><kbd>P</kbd> 暂停　<kbd>V</kbd> 全场镜头　<kbd>T</kbd> 工具</p><p><kbd>H</kbd> 纯净画面　滚轮缩放</p></div><div><h3>吞噬与质量</h3><p>每颗分身独立判断：比食物 / 吐出球大才能吃。吃敌方分身需要至少 1.2 倍质量，并充分覆盖。</p><p>每颗分身按自身质量计算常规移速：初始质量 240 及以下为 100%，480 为 90%，960 为 81%；中间连续变化，无固定最低速度。分裂冲刺另算。</p><p>主动分裂至少 80 质量；分裂不损失质量。吐球每颗 10，自己的分身至少 30 才能吐。</p><p>分裂后等待 8 秒，靠拢才能合并。团队赛可吞队友多余分身（仍需 1.2 倍质量）；被吃方只剩最后一颗时受保护。吐球同样可以喂队友。</p><p>质量至少 120 且有 3 个空分身名额的球吃刺四分，总质量增加 20%（每颗为原球的 30%）。危险在于碎片可能被敌人吞噬。吐球能推动刺球。新出生有 2 秒保护，主动分裂结束保护。</p></div></div><div class="mode-rules"><p><b>个人赛：</b>不复活，最后存活者立即胜；全部分身消失才淘汰。质量帮助吞噬，但不决定名次。</p><p><b>大逃杀：</b>同样按存活顺序排名；圈外持续掉质量，食物和吐出球清除。最后存活者立即胜。</p><p><b>个人 / 缩圈超时：</b>保留 3 分钟上限，到时仍有多人存活则未分胜负、存活者并列；同帧淘汰并列，不用质量或击杀破平局。</p><p><b>团队赛：</b>到时比较全队当前总质量；整队被消灭立即输给另一队。非团灭时队员死亡 3 秒后重生，队友最后一颗保护保留。</p></div><p class="help-note">这是按讨论制作的自定义测试规则，不是商业手游的精确复刻。正式比赛将让每个模型分别提交个人、团队、生存三份脚本；本版已支持按模式导入 .js 脚本。</p></section></div>
 <div id="resultOverlay" class="overlay hidden"><section class="result-card"><span class="eyebrow">ROUND COMPLETE</span><h2 id="resultTitle">本局结束</h2><p id="resultSub"></p><div id="resultRanks"></div><div class="result-actions"><button id="resultAgain" class="primary-button">再来一局 ↗</button><button id="resultReplay" class="secondary-button">保存本局回放</button><button id="resultClose" class="secondary-button">查看场面</button></div></section></div>
 <script>const ASSETS={"claude-color": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiPjx0aXRsZT5DbGF1ZGU8L3RpdGxlPjxwYXRoIGQ9Ik00LjcwOSAxNS45NTVsNC43Mi0yLjY0Ny4wOC0uMjMtLjA4LS4xMjhIOS4ybC0uNzktLjA0OC0yLjY5OC0uMDczLTIuMzM5LS4wOTctMi4yNjYtLjEyMi0uNTcxLS4xMjFMMCAxMS43ODRsLjA1NS0uMzUyLjQ4LS4zMjEuNjg2LjA2IDEuNTIuMTAzIDIuMjc4LjE1OCAxLjY1Mi4wOTcgMi40NDkuMjU1aC4zODlsLjA1NS0uMTU3LS4xMzQtLjA5OC0uMTAzLS4wOTctMi4zNTgtMS41OTYtMi41NTItMS42ODgtMS4zMzYtLjk3Mi0uNzI0LS40OTEtLjM2NC0uNDYyLS4xNTgtMS4wMDguNjU2LS43MjIuODgxLjA2LjIyNS4wNjEuODkzLjY4NiAxLjkwOCAxLjQ3NiAyLjQ5MSAxLjgzMy4zNjUuMzA0LjE0NS0uMTAzLjAxOS0uMDczLS4xNjQtLjI3NC0xLjM1NS0yLjQ0Ni0xLjQ0Ni0yLjQ5LS42NDQtMS4wMzItLjE3LS42MTlhMi45NyAyLjk3IDAgMDEtLjEwNC0uNzI5TDYuMjgzLjEzNCA2LjY5NiAwbC45OTYuMTM0LjQyLjM2NC42MiAxLjQxNCAxLjAwMiAyLjIyOSAxLjU1NSAzLjAzLjQ1Ni44OTguMjQzLjgzMi4wOTEuMjU1aC4xNThWOS4wMWwuMTI4LTEuNzA2LjIzNy0yLjA5NS4yMy0yLjY5NS4wOC0uNzYuMzc2LS45MS43NDctLjQ5Mi41ODQuMjguNDguNjg1LS4wNjcuNDQ0LS4yODYgMS44NTEtLjU1OSAyLjkwMy0uMzY0IDEuOTQyaC4yMTJsLjI0My0uMjQyLjk4NS0xLjMwNiAxLjY1Mi0yLjA2NC43My0uODIuODUtLjkwNC41NDctLjQzMWgxLjAzM2wuNzYgMS4xMjktLjM0IDEuMTY2LTEuMDY0IDEuMzQ3LS44ODEgMS4xNDItMS4yNjQgMS43LS43OSAxLjM2LjA3My4xMS4xODgtLjAyIDIuODU2LS42MDYgMS41NDMtLjI4IDEuODQxLS4zMTUuODMzLjM4OC4wOTEuMzk1LS4zMjguODA3LTEuOTY5LjQ4Ni0yLjMwOS40NjItMy40MzkuODEzLS4wNDIuMDMuMDQ5LjA2MSAxLjU0OS4xNDYuNjYyLjAzNmgxLjYyMmwzLjAyLjIyNS43OS41MjIuNDc0LjYzOC0uMDc5LjQ4NS0xLjIxNS42Mi0xLjY0LS4zODktMy44MjktLjkxLTEuMzEyLS4zMjloLS4xODJ2LjExbDEuMDkzIDEuMDY4IDIuMDA2IDEuODEgMi41MDkgMi4zMy4xMjcuNTc4LS4zMjIuNDU1LS4zNC0uMDQ5LTIuMjA1LTEuNjU3LS44NTEtLjc0Ny0xLjkyNi0xLjYyaC0uMTI4di4xN2wuNDQ0LjY0OSAyLjM0NSAzLjUyMS4xMjIgMS4wOC0uMTcuMzUzLS42MDguMjEzLS42NjgtLjEyMi0xLjM3NC0xLjkyNS0xLjQxNS0yLjE2Ny0xLjE0My0xLjk0My0uMTQuMDgtLjY3NCA3LjI1NC0uMzE2LjM3LS43MjkuMjgtLjYwNy0uNDYxLS4zMjItLjc0Ny4zMjItMS40NzYuMzg5LTEuOTI0LjMxNS0xLjUzLjI4Ni0xLjkuMTctLjYzMi0uMDEyLS4wNDItLjE0LjAxOC0xLjQzNCAxLjk2Ny0yLjE4IDIuOTQ1LTEuNzI2IDEuODQ1LS40MTQuMTY0LS43MTctLjM3LjA2Ny0uNjYyLjQwMS0uNTg5IDIuMzg4LTMuMDM2IDEuNDQtMS44ODIuOTMtMS4wODYtLjAwNi0uMTU4aC0uMDU1TDQuMTMyIDE4LjU2bC0xLjEzLjE0Ni0uNDg3LS40NTYuMDYxLS43NDYuMjMxLS4yNDMgMS45MDgtMS4zMTItLjAwNi4wMDZ6IiBmaWxsPSIjRDk3NzU3Ii8+PC9zdmc+Cg==", "deepseek-color": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiPjx0aXRsZT5EZWVwU2VlazwvdGl0bGU+PHBhdGggZD0iTTIzLjc0OCA0LjQ4MmMtLjI1NC0uMTI0LS4zNjQuMTEzLS41MTIuMjM0LS4wNTEuMDM5LS4wOTQuMDktLjEzNy4xMzYtLjM3Mi4zOTctLjgwNi42NTctMS4zNzMuNjI2LS44MjktLjA0Ni0xLjUzNy4yMTQtMi4xNjMuODQ4LS4xMzMtLjc4Mi0uNTc1LTEuMjQ4LTEuMjQ3LTEuNTQ4LS4zNTItLjE1Ni0uNzA4LS4zMTEtLjk1NS0uNjUtLjE3Mi0uMjQxLS4yMTktLjUxLS4zMDUtLjc3NC0uMDU1LS4xNi0uMTEtLjMyMy0uMjkzLS4zNS0uMi0uMDMxLS4yNzguMTM2LS4zNTYuMjc2LS4zMTMuNTcyLS40MzQgMS4yMDItLjQyMiAxLjg0LjAyNyAxLjQzNi42MzMgMi41OCAxLjgzOCAzLjM5My4xMzcuMDkzLjE3Mi4xODcuMTI5LjMyMy0uMDgyLjI4LS4xOC41NTItLjI2Ni44MzMtLjA1NS4xNzktLjEzNy4yMTctLjMyOS4xNGE1LjUyNiA1LjUyNiAwIDAxLTEuNzM2LTEuMThjLS44NTctLjgyOC0xLjYzMS0xLjc0Mi0yLjU5Ny0yLjQ1OGExMS4zNjUgMTEuMzY1IDAgMDAtLjY4OS0uNDcxYy0uOTg1LS45NTcuMTMtMS43NDMuMzg4LTEuODM2LjI3LS4wOTguMDkzLS40MzItLjc3OS0uNDI4LS44NzIuMDA0LTEuNjcuMjk1LTIuNjg3LjY4NGEzLjA1NSAzLjA1NSAwIDAxLS40NjUuMTM3IDkuNTk3IDkuNTk3IDAgMDAtMi44ODMtLjEwMmMtMS44ODUuMjEtMy4zOSAxLjEwMi00LjQ5NyAyLjYyM0MuMDgyIDguNjA2LS4yMzEgMTAuNjg0LjE1MiAxMi44NWMuNDAzIDIuMjg0IDEuNTY5IDQuMTc1IDMuMzYgNS42NTMgMS44NTggMS41MzMgMy45OTcgMi4yODQgNi40MzggMi4xNCAxLjQ4Mi0uMDg1IDMuMTMzLS4yODQgNC45OTQtMS44Ni40Ny4yMzQuOTYyLjMyNyAxLjc4LjM5Ny42My4wNTkgMS4yMzYtLjAzIDEuNzA1LS4xMjguNzM1LS4xNTYuNjg0LS44MzcuNDE5LS45NjEtMi4xNTUtMS4wMDQtMS42ODItLjU5NS0yLjExMy0uOTI2IDEuMDk2LTEuMjk2IDIuNzQ2LTIuNjQyIDMuMzkyLTcuMDAzLjA1LS4zNDcuMDA3LS41NjUgMC0uODQ1LS4wMDQtLjE3LjAzNS0uMjM3LjIzLS4yNTZhNC4xNzMgNC4xNzMgMCAwMDEuNTQ1LS40NzVjMS4zOTYtLjc2MyAxLjk2LTIuMDE1IDIuMDkzLTMuNTE3LjAyLS4yMy0uMDA0LS40NjctLjI0Ny0uNTg4ek0xMS41ODEgMThjLTIuMDg5LTEuNjQyLTMuMTAyLTIuMTgzLTMuNTItMi4xNi0uMzkyLjAyNC0uMzIxLjQ3MS0uMjM1Ljc2My4wOS4yODguMjA3LjQ4Ni4zNzEuNzM5LjExNC4xNjcuMTkyLjQxNi0uMTEzLjYwMy0uNjczLjQxNi0xLjg0Mi0uMTQtMS44OTctLjE2Ny0xLjM2MS0uODAyLTIuNS0xLjg2LTMuMzAxLTMuMzA3LS43NzQtMS4zOTMtMS4yMjQtMi44ODctMS4yOTgtNC40ODItLjAyLS4zODYuMDkzLS41MjIuNDc3LS41OTJhNC42OTYgNC42OTYgMCAwMTEuNTI5LS4wMzljMi4xMzIuMzEyIDMuOTQ2IDEuMjY1IDUuNDY4IDIuNzc0Ljg2OC44NiAxLjUyNSAxLjg4NyAyLjIwMiAyLjg5MS43MiAxLjA2NiAxLjQ5NCAyLjA4MiAyLjQ4IDIuOTE0LjM0OC4yOTIuNjI1LjUxNC44OTEuNjc3LS44MDIuMDktMi4xNC4xMS0zLjA1NC0uNjE0eiIgZmlsbD0iIzRkNmJmZSIvPjxwYXRoIGZpbGw9IiM0ZDZiZmUiIGQ9Ik0xMi41ODEgMTEuNTZhLjMwNi4zMDYgMCAwMS40MTUtLjI4Ny4zMDIuMzAyIDAgMDEuMi4yODguMzA2LjMwNiAwIDAxLS4zMS4zMDcuMzAzLjMwMyAwIDAxLS4zMDQtLjMwOHptMy4xMSAxLjU5NmMtLjIuMDgxLS4zOTkuMTUxLS41OS4xNmExLjI0NSAxLjI0NSAwIDAxLS43OTgtLjI1NGMtLjI3NC0uMjMtLjQ3LS4zNTgtLjU1Mi0uNzU4YTEuNzMgMS43MyAwIDAxLjAxNi0uNTg4Yy4wNy0uMzI3LS4wMDgtLjUzNy0uMjM5LS43MjctLjE4Ny0uMTU2LS40MjYtLjE5OS0uNjg4LS4xOTlhLjU1OS41NTkgMCAwMS0uMjU0LS4wNzhjLS4xMS0uMDU0LS4yLS4xOS0uMTE0LS4zNTguMDI4LS4wNTQuMTYtLjE4Ni4xOTItLjIxLjM1Ni0uMjAyLjc2Ny0uMTM2IDEuMTQ2LjAxNi4zNTIuMTQ0LjYxOC40MDggMS4wMDEuNzgyLjM5MS40NTEuNDYyLjU3Ni42ODUuOTE0LjE3Ni4yNjUuMzM2LjUzNy40NDUuODQ4LjA2Ny4xOTUtLjAxOS4zNTQtLjI1LjQ1MnoiLz48L3N2Zz4K", "doubao-color": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiPjx0aXRsZT5Eb3ViYW88L3RpdGxlPjxwYXRoIGQ9Ik01LjMxIDE1Ljc1NmMuMTcyLTMuNzUgMS44ODMtNS45OTkgMi41NDktNi43MzktMy4yNiAyLjA1OC01LjQyNSA1LjY1OC02LjM1OCA4LjMwOHYxLjEyQzEuNTAxIDIxLjUxMyA0LjIyNiAyNCA3LjU5IDI0YTYuNTkgNi41OSAwIDAwMi4yLS4zNzVjLjM1My0uMTIuNy0uMjQ4IDEuMDM5LS4zNzguOTEzLS44OTkgMS42NS0xLjkxIDIuMjQzLTIuOTkyLTQuODc3IDIuNDMxLTcuOTc0LjA3Mi03Ljc2My00LjVsLjAwMi4wMDF6IiBmaWxsPSIjMUUzN0ZDIi8+PHBhdGggZD0iTTIyLjU3IDEwLjI4M2MtMS4yMTItLjkwMS00LjEwOS0yLjQwNC03LjM5Ny0yLjguMjk1IDMuNzkyLjA5MyA4Ljc2Ni0yLjEgMTIuNzczYTEyLjc4MiAxMi43ODIgMCAwMS0yLjI0NCAyLjk5MmMzLjc2NC0xLjQ0OCA2Ljc0Ni0zLjQ1NyA4LjU5Ni01LjIxOSAyLjgyLTIuNjgzIDMuMzUzLTUuMTc4IDMuMzYxLTYuNjZhMi43MzcgMi43MzcgMCAwMC0uMjE2LTEuMDg0di0uMDAyeiIgZmlsbD0iIzM3RTFCRSIvPjxwYXRoIGQ9Ik0xNC4zMDMgMS44NjdDMTIuOTU1LjcgMTEuMjQ4IDAgOS4zOSAwIDcuNTMyIDAgNS44ODMuNjc3IDQuNTQ1IDEuODA3IDIuNzkxIDMuMjkgMS42MjcgNS41NTcgMS41IDguMTI1djkuMjAxYy45MzItMi42NSAzLjA5Ny02LjI1IDYuMzU3LTguMzA3LjUtLjMxOCAxLjAyNS0uNTk1IDEuNTY5LS44MjkgMS44ODMtLjgwMSAzLjg3OC0uOTMyIDUuNzQ2LS43MDYtLjIyMi0yLjgzLS43MTgtNS4wMDItLjg3LTUuNjE3aC4wMDF6IiBmaWxsPSIjQTU2OUZGIi8+PHBhdGggZD0iTTE3LjMwNSA0Ljk2MWExOTkuNDcgMTk5LjQ3IDAgMDEtMS4wOC0xLjA5NGMtLjIwMi0uMjEzLS4zOTgtLjQxOS0uNTg2LS42MjJsLTEuMzMzLTEuMzc4Yy4xNTEuNjE1LjY0OCAyLjc4Ni44NjkgNS42MTcgMy4yODguMzk1IDYuMTg1IDEuODk4IDcuMzk2IDIuOC0xLjMwNi0xLjI3NS0zLjQ3NS0zLjQ4Ny01LjI2Ni01LjMyM3oiIGZpbGw9IiMxRTM3RkMiLz48L3N2Zz4K", "gemini-color": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiPjx0aXRsZT5HZW1pbmk8L3RpdGxlPjxwYXRoIGQ9Ik0yMC42MTYgMTAuODM1YTE0LjE0NyAxNC4xNDcgMCAwMS00LjQ1LTMuMDAxIDE0LjExMSAxNC4xMTEgMCAwMS0zLjY3OC02LjQ1Mi41MDMuNTAzIDAgMDAtLjk3NSAwIDE0LjEzNCAxNC4xMzQgMCAwMS0zLjY3OSA2LjQ1MiAxNC4xNTUgMTQuMTU1IDAgMDEtNC40NSAzLjAwMWMtLjY1LjI4LTEuMzE4LjUwNS0yLjAwMi42NzhhLjUwMi41MDIgMCAwMDAgLjk3NWMuNjg0LjE3MiAxLjM1LjM5NyAyLjAwMi42NzdhMTQuMTQ3IDE0LjE0NyAwIDAxNC40NSAzLjAwMSAxNC4xMTIgMTQuMTEyIDAgMDEzLjY3OSA2LjQ1My41MDIuNTAyIDAgMDAuOTc1IDBjLjE3Mi0uNjg1LjM5Ny0xLjM1MS42NzctMi4wMDNhMTQuMTQ1IDE0LjE0NSAwIDAxMy4wMDEtNC40NSAxNC4xMTMgMTQuMTEzIDAgMDE2LjQ1My0zLjY3OC41MDMuNTAzIDAgMDAwLS45NzUgMTMuMjQ1IDEzLjI0NSAwIDAxLTIuMDAzLS42Nzh6IiBmaWxsPSIjMzE4NkZGIi8+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9InVybCgjZzApIi8+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9InVybCgjZzEpIi8+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9InVybCgjZzIpIi8+PGRlZnM+PGxpbmVhckdyYWRpZW50IGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0iZzAiIHgxPSI3IiB4Mj0iMTEiIHkxPSIxNS41IiB5Mj0iMTIiPjxzdG9wIHN0b3AtY29sb3I9IiMwOEI5NjIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwOEI5NjIiIHN0b3Atb3BhY2l0eT0iMCIvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50IGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiBpZD0iZzEiIHgxPSI4IiB4Mj0iMTEuNSIgeTE9IjUuNSIgeTI9IjExIj48c3RvcCBzdG9wLWNvbG9yPSIjRjk0NTQzIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjk0NTQzIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImcyIiB4MT0iMy41IiB4Mj0iMTcuNSIgeTE9IjEzLjUiIHkyPSIxMiI+PHN0b3Agc3RvcC1jb2xvcj0iI0ZBQkMxMiIvPjxzdG9wIG9mZnNldD0iLjQ2IiBzdG9wLWNvbG9yPSIjRkFCQzEyIiBzdG9wLW9wYWNpdHk9IjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=", "grok": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIGZpbGw9IiMxODE4MWIiPjx0aXRsZT5Hcm9rPC90aXRsZT48cGF0aCBkPSJNOS4yNyAxNS4yOWw3Ljk3OC01Ljg5N2MuMzkxLS4yOS45NS0uMTc3IDEuMTM3LjI3Mi45OCAyLjM2OS41NDIgNS4yMTUtMS40MSA3LjE2OS0xLjk1MSAxLjk1NC00LjY2NyAyLjM4Mi03LjE0OSAxLjQwNmwtMi43MTEgMS4yNTdjMy44ODkgMi42NjEgOC42MTEgMi4wMDMgMTEuNTYyLS45NTMgMi4zNDEtMi4zNDQgMy4wNjYtNS41MzkgMi4zODgtOC40MmwuMDA2LjAwN2MtLjk4My00LjIzMi4yNDItNS45MjQgMi43NS05LjM4My4wNi0uMDgyLjEyLS4xNjQuMTc5LS4yNDhsLTMuMzAxIDMuMzA1di0uMDFMOS4yNjcgMTUuMjkyTTcuNjIzIDE2LjcyM2MtMi43OTItMi42Ny0yLjMxLTYuODAxLjA3MS05LjE4NCAxLjc2MS0xLjc2MyA0LjY0Ny0yLjQ4MyA3LjE2Ni0xLjQyNWwyLjcwNS0xLjI1YTcuODA4IDcuODA4IDAgMDAtMS44MjktMUE4Ljk3NSA4Ljk3NSAwIDAwNS45ODQgNS44M2MtMi41MzMgMi41MzYtMy4zMyA2LjQzNi0xLjk2MiA5Ljc2NCAxLjAyMiAyLjQ4Ny0uNjUzIDQuMjQ2LTIuMzQgNi4wMjItLjU5OS42My0xLjE5OSAxLjI1OS0xLjY4MiAxLjkyNWw3LjYyLTYuODE1Ii8+PC9zdmc+Cg==", "openai": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIGZpbGw9IiMxODE4MWIiPjx0aXRsZT5PcGVuQUk8L3RpdGxlPjxwYXRoIGQ9Ik05LjIwNSA4LjY1OHYtMi4yNmMwLS4xOS4wNzItLjMzMy4yMzgtLjQyOGw0LjU0My0yLjYxNmMuNjE5LS4zNTcgMS4zNTYtLjUyMyAyLjExNy0uNTIzIDIuODU0IDAgNC42NjIgMi4yMTIgNC42NjIgNC41NjYgMCAuMTY3IDAgLjM1Ny0uMDI0LjU0N2wtNC43MS0yLjc1OWEuNzk3Ljc5NyAwIDAwLS44NTYgMGwtNS45NyAzLjQ3M3ptMTAuNjA5IDguOFYxMi4wNmMwLS4zMzMtLjE0My0uNTctLjQyOS0uNzM3bC01Ljk3LTMuNDczIDEuOTUtMS4xMThhLjQzMy40MzMgMCAwMS40NzYgMGw0LjU0MyAyLjYxN2MxLjMwOS43NiAyLjE4OSAyLjM3OCAyLjE4OSAzLjk0OCAwIDEuODA4LTEuMDcgMy40NzMtMi43NiA0LjE2M3pNNy44MDIgMTIuNzAzbC0xLjk1LTEuMTQyYy0uMTY3LS4wOTUtLjIzOS0uMjM4LS4yMzktLjQyOFY1Ljg5OWMwLTIuNTQ1IDEuOTUtNC40NzIgNC41OTEtNC40NzIgMSAwIDEuOTI3LjMzMyAyLjcxMi45MjhMOC4yMyA1LjA2N2MtLjI4NS4xNjYtLjQyOC40MDQtLjQyOC43Mzd2Ni44OTh6TTEyIDE1LjEyOGwtMi43OTUtMS41N3YtMy4zM0wxMiA4LjY1OGwyLjc5NSAxLjU3djMuMzNMMTIgMTUuMTI4em0xLjc5NiA3LjIzYy0xIDAtMS45MjctLjMzMi0yLjcxMi0uOTI3bDQuNjg2LTIuNzEyYy4yODUtLjE2Ni40MjgtLjQwNC40MjgtLjczN3YtNi44OThsMS45NzQgMS4xNDJjLjE2Ny4wOTUuMjM4LjIzOC4yMzguNDI4djUuMjMzYzAgMi41NDUtMS45NzQgNC40NzItNC42MTQgNC40NzJ6bS01LjYzNy01LjMwM2wtNC41NDQtMi42MTdjLTEuMzA4LS43NjEtMi4xODgtMi4zNzgtMi4xODgtMy45NDhBNC40ODIgNC40ODIgMCAwMTQuMjEgNi4zMjd2NS40MjNjMCAuMzMzLjE0My41NzEuNDI4LjczOGw1Ljk0NyAzLjQ0OS0xLjk1IDEuMTE4YS40MzIuNDMyIDAgMDEtLjQ3NiAwem0tLjI2MiAzLjljLTIuNjg4IDAtNC42NjItMi4wMjEtNC42NjItNC41MTkgMC0uMTkuMDI0LS4zOC4wNDctLjU3bDQuNjg2IDIuNzFjLjI4Ni4xNjcuNTcxLjE2Ny44NTYgMGw1Ljk3LTMuNDQ4djIuMjZjMCAuMTktLjA3LjMzMy0uMjM3LjQyOGwtNC41NDMgMi42MTZjLS42MTkuMzU3LTEuMzU2LjUyMy0yLjExNy41MjN6bTUuODk5IDIuODNhNS45NDcgNS45NDcgMCAwMDUuODI3LTQuNzU2QzIyLjI4NyAxOC4zMzkgMjQgMTUuODQgMjQgMTMuMjk2YzAtMS42NjUtLjcxMy0zLjI4Mi0xLjk5OC00LjQ0OC4xMTktLjUuMTktLjk5OS4xOS0xLjQ5OCAwLTMuNDAxLTIuNzU5LTUuOTQ3LTUuOTQ2LTUuOTQ3LS42NDIgMC0xLjI2LjA5NS0xLjg4LjMxQTUuOTYyIDUuOTYyIDAgMDAxMC4yMDUgMGE1Ljk0NyA1Ljk0NyAwIDAwLTUuODI3IDQuNzU3QzEuNzEzIDUuNDQ3IDAgNy45NDUgMCAxMC40OWMwIDEuNjY2LjcxMyAzLjI4MyAxLjk5OCA0LjQ0OC0uMTE5LjUtLjE5IDEtLjE5IDEuNDk5IDAgMy40MDEgMi43NTkgNS45NDYgNS45NDYgNS45NDYuNjQyIDAgMS4yNi0uMDk1IDEuODgtLjMwOWE1Ljk2IDUuOTYgMCAwMDQuMTYyIDEuNzEzeiIvPjwvc3ZnPgo="};</script><script>/* Ball Arena deterministic simulation. No browser or network dependencies. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.Arena=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
@@ -598,12 +644,41 @@ class Timeline{
 return{Timeline};
 });
 </script>
-<script>(function(){'use strict';
+<script>/* Pure camera and live-scoreboard helpers. Never changes the game simulation. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.ArenaDirector=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ function sortDisplayPlayers(players){
+  return players.filter(p=>p.active).slice().sort((a,b)=>{
+   const liveA=+(a.cells.length>0),liveB=+(b.cells.length>0);
+   return liveB-liveA || b.mass-a.mass || a.id-b.id;
+  });
+ }
+ function shotForCells(cells,{width,height,mapWidth=2600,mapHeight=1800,zoom=1}={}){
+  width=Math.max(1,width||1400);height=Math.max(1,height||900);
+  if(!cells.length){return {x:mapWidth/2,y:mapHeight/2,zoom:Math.min(width/mapWidth,height/mapHeight)*.96*zoom};}
+  let left=Infinity,right=-Infinity,top=Infinity,bottom=-Infinity;
+  for(const c of cells){if(!Number.isFinite(c.x)||!Number.isFinite(c.y)||!Number.isFinite(c.mass))continue;
+   const r=3*Math.sqrt(Math.max(1,c.mass));left=Math.min(left,c.x-r);right=Math.max(right,c.x+r);top=Math.min(top,c.y-r);bottom=Math.max(bottom,c.y+r);
+  }
+  if(!Number.isFinite(left))return {x:mapWidth/2,y:mapHeight/2,zoom:Math.min(width/mapWidth,height/mapHeight)*.96};
+  const marginWorld=135,padX=Math.max(50,width*.08),padY=Math.max(60,height*.11);
+  const widthFor=Math.max(220,right-left+2*marginWorld),heightFor=Math.max(220,bottom-top+2*marginWorld);
+  const minimumFullMapZoom=Math.min(width/mapWidth,height/mapHeight)*.985*zoom;
+  const targetZoom=clamp(Math.max(minimumFullMapZoom,Math.min((width-2*padX)/widthFor,(height-2*padY)/heightFor)*zoom),.16,1.45);
+  const halfW=width/(2*targetZoom),halfH=height/(2*targetZoom);
+  const midX=(left+right)/2,midY=(top+bottom)/2;
+  return {x:halfW<mapWidth/2?clamp(midX,halfW,mapWidth-halfW):mapWidth/2,
+          y:halfH<mapHeight/2?clamp(midY,halfH,mapHeight-halfH):mapHeight/2,zoom:targetZoom};
+ }
+ return{sortDisplayPlayers,shotForCells};
+});
+</script><script>(function(){'use strict';
 const $=id=>document.getElementById(id),{CFG,BRANDS,radius,clamp,norm}=Arena;
 const canvas=$('arena'),ctx=canvas.getContext('2d'),mini=$('mini'),mc=mini.getContext('2d');
 const colors=['#e6b35b','#e98083','#7ca9e3','#a38ad2','#79bea7','#dc9bc4','#96b97a'];
 const controller=new ArenaInput.Controller(),sfx=new ArenaSound.SoundBank(),timeline=new ArenaRender.Timeline();
-const state={world:null,human:0,humanEnabled:false,starting:false,started:false,paused:true,freeze:false,showGuides:true,clean:false,speed:1,mode:'solo',seed:20261107,view:'follow',zoom:1,camera:{x:1300,y:900,z:.6},pointer:{x:0,y:0,active:false},keys:controller.keys,input:controller,sfx,splitQueued:false,mouseEject:false,sound:true,audio:null,images:[],eventsSeen:new Set(),fx:[],record:[],pendingCommands:[],replay:null,replayIndex:0,testTools:0,frameCount:0};
+const state={world:null,human:0,humanEnabled:false,starting:false,started:false,paused:true,freeze:false,showGuides:false,clean:false,speed:1,mode:'solo',seed:20261107,view:'follow',zoom:1,camera:{x:1300,y:900,z:.6},pointer:{x:0,y:0,active:false},keys:controller.keys,input:controller,sfx,splitQueued:false,mouseEject:false,sound:true,audio:null,images:[],eventsSeen:new Set(),fx:[],record:[],pendingCommands:[],replay:null,replayIndex:0,testTools:0,frameCount:0};
 window.game=state;state.render=timeline;state.performance={fps:0,frameMs:0};
 const pool=new ArenaAgents.Pool(error=>{state.agentErrors.push(error);lobby.runtimeError(state.mode,error);toast(`${BRANDS[error.player].name} 脚本停止：${error.message.split('\n')[0]}`);});
 state.agents=pool;state.agentErrors=[];
@@ -615,7 +690,7 @@ function logoHTML(id,cls=''){return `<img class="${cls}" src="${ASSETS[BRANDS[id
 function initPicker(){
  const select=$('humanSeat');select.innerHTML=BRANDS.map((b,i)=>`<option value="${i}">${b.name}</option>`).join('');select.value=String(state.human);
 }
-function updateEntrySummary(){const mode=state.mode,human=$('humanEnabled').checked,id=+$('humanSeat').value,entries=lobby.entries(mode,human,id);$('entrySummary').textContent=`${{solo:'个人赛',team:'团队赛',storm:'缩圈赛'}[mode]}：${entries.length} 位已导入 AI${human?' + 你':''}。未导入的席位不生成球。${mode==='team'?'两位时 1V1，四位 2V2，六位 3V3。':''}`;}
+function updateEntrySummary(){const mode=state.mode,human=$('humanEnabled').checked,id=+$('humanSeat').value,entries=lobby.entries(mode,human,id);$('entrySummary').textContent=`${{solo:'个人赛',team:'团队赛',storm:'大逃杀'}[mode]}：${entries.length} 位已导入 AI${human?' + 你':''}。未导入的席位不生成球。${mode==='team'?'两位时 1V1，四位 2V2，六位 3V3。':''}`;}
 function openEntries(){state.paused=true;clearControls();sfx.stopAll();$('welcome').classList.remove('hidden');lobby.render();updateEntrySummary();updateHUD();}
 async function startMatch(mode=state.mode,seed=state.seed){
  if(lobby.busy||state.starting)return;state.starting=true;
@@ -626,7 +701,7 @@ async function startMatch(mode=state.mode,seed=state.seed){
  state.agentErrors=[];newGame(mode,seed,true,{activeIds});state.paused=true;
  $('welcome').classList.add('hidden');$('startGame').disabled=true;await unlockAudio();
  await pool.start(entries,state.world);state.starting=false;$('startGame').disabled=false;
- state.paused=false;state.view=state.humanEnabled?'follow':'all';last=performance.now();accumulator=0;updateHUD();
+ state.paused=false;state.view=state.humanEnabled?'follow':'auto';last=performance.now();accumulator=0;updateHUD();
  toast(`${activeIds.length} 位选手已入场；${entries.length} 份 ${mode}.js 已加载`);
 }
 state.startMatch=startMatch;
@@ -636,12 +711,28 @@ function saveAudioSettings(){try{localStorage.setItem('ball-arena-audio-v02',JSO
 async function unlockAudio(){const ok=await sfx.unlock();state.audio=sfx.context;return ok;}
 function clearControls(){controller.clear();state.pointer.active=false;state.splitQueued=false;state.mouseEject=false;}
 function canControl(){return state.humanEnabled&&state.started&&!state.paused&&!state.world.finished&&state.world.players[state.human].cells.length>0&&!state.replay&&$('help').classList.contains('hidden')&&$('welcome').classList.contains('hidden')&&$('resultOverlay').classList.contains('hidden');}
-function newGame(mode=state.mode,seed=state.seed,start=state.started,extra={}){pool.stop();state.mode=mode;state.seed=(Number(seed)||20261107)>>>0;recordOptions={mode,seed:state.seed,foodCount:1050,thornCount:18,respawn:true,duration:180,activeIds:[],...extra};state.world=new Arena.World(recordOptions);timeline.reset(state.world);state.record=[];state.pendingCommands=[];state.replay=null;state.replayIndex=0;state.eventsSeen.clear();state.fx=[];state.started=start;state.paused=!start;clearControls();state.testTools=0;state.freeze=false;$('freezeBots').checked=false;state.speed=1;$('speedSelect').value='1';resultShown=false;accumulator=0;$('seedInput').value=state.seed;$('resultOverlay').classList.add('hidden');$('centerMessage').classList.add('hidden');$('pausedBadge').classList.add('hidden');$('welcome').classList.toggle('hidden',start);document.querySelectorAll('.modes [data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const c=state.world.center(state.human);state.camera={x:start?c.x:1300,y:start?c.y:900,z:start?.92:Math.min(W/2600,H/1800)*.9};state.view=start?'follow':'all';state.zoom=1;updateEntrySummary();updateHUD();}
+function newGame(mode=state.mode,seed=state.seed,start=state.started,extra={}){pool.stop();state.mode=mode;state.seed=(Number(seed)||20261107)>>>0;recordOptions={mode,seed:state.seed,foodCount:1050,thornCount:18,respawn:true,duration:180,activeIds:[],...extra};state.world=new Arena.World(recordOptions);timeline.reset(state.world);state.record=[];state.pendingCommands=[];state.replay=null;state.replayIndex=0;state.eventsSeen.clear();state.fx=[];state.started=start;state.paused=!start;clearControls();state.testTools=0;state.freeze=false;$('freezeBots').checked=false;state.speed=1;$('speedSelect').value='1';resultShown=false;accumulator=0;$('seedInput').value=state.seed;$('resultOverlay').classList.add('hidden');$('centerMessage').classList.add('hidden');$('pausedBadge').classList.add('hidden');$('welcome').classList.toggle('hidden',start);document.querySelectorAll('.modes [data-mode]').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));const c=state.world.center(state.human);const shot=start&&!state.humanEnabled?ArenaDirector.shotForCells(state.world.players.filter(q=>q.active).flatMap(q=>q.cells),{width:W,height:H,mapWidth:CFG.width,mapHeight:CFG.height}):null;state.camera=shot?{x:shot.x,y:shot.y,z:shot.zoom}:{x:start?c.x:1300,y:start?c.y:900,z:start?.92:Math.min(W/2600,H/1800)*.9};state.view=start?(state.humanEnabled?'follow':'auto'):'all';state.zoom=1;$('victoryBanner').classList.add('hidden');$('setupMode').value=mode;updateEntrySummary();updateHUD();}
 function resize(){const r=canvas.getBoundingClientRect();W=Math.max(1,r.width);H=Math.max(1,r.height);DPR=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(W*DPR);canvas.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);}
 function screen(x,y){return{x:(x-state.camera.x)*state.camera.z+W/2,y:(y-state.camera.y)*state.camera.z+H/2};}
 function worldPoint(x,y){return{x:(x-W/2)/state.camera.z+state.camera.x,y:(y-H/2)/state.camera.z+state.camera.y};}
-function updateCamera(dt){let tx,ty,tz;const w=state.world,cells=w.players[state.human].cells;if(state.view==='all'||!state.started||!cells.length){tx=1300;ty=900;tz=Math.min((W-90)/2600,(H-80)/1800)*state.zoom;}else{const c=timeline.center(w,state.human);tx=c.x;ty=c.y;let extentX=160,extentY=160;for(const raw of cells){const b=timeline.cell(raw);extentX=Math.max(extentX,Math.abs(b.x-c.x)+radius(b.mass)+60);extentY=Math.max(extentY,Math.abs(b.y-c.y)+radius(b.mass)+60);}tz=Math.min(.96*Math.pow(240/Math.max(240,w.mass(state.human)),.08),Math.max(250,W-360)/(extentX*2),Math.max(230,H-180)/(extentY*2))*state.zoom;tz=clamp(tz,.22,2.3);const hx=W/2/tz,hy=H/2/tz;tx=hx<1300?clamp(tx,hx,2600-hx):1300;ty=hy<900?clamp(ty,hy,1800-hy):900;}
- const a=1-Math.exp(-dt*7);state.camera.x+=(tx-state.camera.x)*a;state.camera.y+=(ty-state.camera.y)*a;state.camera.z+=(tz-state.camera.z)*a;
+function updateCamera(dt){
+ const w=state.world,players=w.players,activeCells=players.filter(p=>p.active).flatMap(p=>p.cells.map(c=>timeline.cell(c)));
+ let shot;
+ if(state.view==='all'||!state.started||!activeCells.length){
+  shot={x:CFG.width/2,y:CFG.height/2,zoom:Math.min((W-12)/CFG.width,(H-12)/CFG.height)*state.zoom};
+ }else if(state.view==='follow'&&state.humanEnabled&&players[state.human].cells.length){
+  const cells=players[state.human].cells.map(c=>timeline.cell(c));
+  shot=ArenaDirector.shotForCells(cells,{width:W,height:H,mapWidth:CFG.width,mapHeight:CFG.height,zoom:state.zoom});
+ }else{
+  shot=ArenaDirector.shotForCells(activeCells,{width:W,height:H,mapWidth:CFG.width,mapHeight:CFG.height,zoom:state.zoom});
+ }
+ // Ease zoom-out faster than zoom-in: a split or a new distant target must remain visible.
+ const targetZoom=clamp(shot.zoom,.16,2.3),out=targetZoom<state.camera.z;
+ const az=1-Math.exp(-(out?6.5:1.75)*Math.max(0,dt));
+ const ap=1-Math.exp(-(out?5.5:2.7)*Math.max(0,dt));
+ state.camera.z+=(targetZoom-state.camera.z)*az;
+ state.camera.x+=(shot.x-state.camera.x)*ap;
+ state.camera.y+=(shot.y-state.camera.y)*ap;
 }
 function humanAction(){const w=state.world,p=w.players[state.human];if(!p.cells.length)return{};const c=w.center(state.human),a=controller.sample(screen(c.x,c.y),performance.now());state.aimSource=a.aimSource;delete a.aimSource;for(const prefix of ['aimAt','gatherAt']){if(Number.isFinite(a[prefix+'X'])&&Number.isFinite(a[prefix+'Y'])){const pt=worldPoint(a[prefix+'X'],a[prefix+'Y']);a[prefix+'X']=pt.x;a[prefix+'Y']=pt.y;}}return a;}
 function step(){
@@ -694,10 +785,36 @@ function draw(dt){ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);ctx.f
  }
  const cells=w.players.flatMap(p=>p.cells.map(c=>({p,c}))).sort((a,b)=>a.c.mass-b.c.mass);for(const{p,c}of cells)drawCell(c,p,z);
  for(const f of state.fx){f.life-=dt;const s=screen(f.x,f.y),u=1-f.life/f.max;ctx.globalAlpha=Math.max(0,1-u);circle(s.x,s.y,(f.r+u*45)*z,null,f.type==='burst'?'#9b9c93':'#76be9e',2);ctx.globalAlpha=1;}state.fx=state.fx.filter(f=>f.life>0);
- // Subtle arena coordinates help identify map edges without adding a grid.
- if(state.view==='all'){ctx.fillStyle='#b4c2b7';ctx.font=`9px ${getFont()}`;ctx.textAlign='left';ctx.fillText('0, 0',a.x+8,a.y+15);ctx.textAlign='right';ctx.fillText('2600, 1800',b.x-8,b.y-9);}
+ // Clean broadcast: no map-coordinate labels overlay the playfield.
  drawMini();}
-function drawMini(){const w=state.world,s=330/2600;mc.clearRect(0,0,330,228);mc.fillStyle='#f5f8f5';mc.fillRect(0,0,330,228);mc.strokeStyle='#e4ebe4';mc.strokeRect(.5,.5,329,227);if(state.mode==='storm'){mc.beginPath();mc.rect(0,0,330,228);mc.arc(w.zone.x*s,w.zone.y*s,w.zone.r*s,0,Math.PI*2,true);mc.fillStyle='#c5b9e33d';mc.fill('evenodd');mc.beginPath();mc.arc(w.zone.x*s,w.zone.y*s,w.zone.r*s,0,Math.PI*2);mc.strokeStyle='#a99ccb';mc.lineWidth=2;mc.stroke();}for(const p of w.players)for(const raw of p.cells){const c=timeline.cell(raw);mc.beginPath();mc.arc(c.x*s,c.y*s,Math.max(p.id===state.human?4:2.5,radius(c.mass)*s*.5),0,Math.PI*2);mc.fillStyle=p.color;mc.fill();if(p.id===state.human){mc.lineWidth=2;mc.strokeStyle='#60b28a';mc.stroke();}}const cam=state.camera;mc.strokeStyle='#86ae9555';mc.lineWidth=1;mc.strokeRect((cam.x-W/2/cam.z)*s,(cam.y-H/2/cam.z)*s,W/cam.z*s,H/cam.z*s);}
+function drawMini(){
+ const w=state.world,mw=mini.width,mh=mini.height,s=mw/CFG.width;
+ mc.clearRect(0,0,mw,mh);mc.fillStyle='#ffffff';mc.fillRect(0,0,mw,mh);
+ mc.strokeStyle='#dde8e0';mc.lineWidth=2;mc.strokeRect(1,1,mw-2,mh-2);
+ if(state.mode==='storm'&&w.zone){
+  const z=timeline.zone(w.zone);
+  mc.beginPath();mc.rect(0,0,mw,mh);mc.arc(z.x*s,z.y*s,z.r*s,0,Math.PI*2,true);
+  mc.fillStyle='#a89add36';mc.fill('evenodd');
+  mc.beginPath();mc.arc(z.x*s,z.y*s,z.r*s,0,Math.PI*2);mc.strokeStyle='#9e8acb';mc.lineWidth=3;mc.stroke();
+ }
+ // Thorns only. Ordinary food dots and ejected pellets are intentionally absent.
+ for(const t of w.thorns){const pt=timeline.entity(t),x=pt.x*s,y=pt.y*s,r=8;
+  mc.beginPath();for(let k=0;k<12;k++){const a=k*Math.PI/6,rr=k%2?r*.67:r;
+   const px=x+Math.cos(a)*rr,py=y+Math.sin(a)*rr;k?mc.lineTo(px,py):mc.moveTo(px,py);}
+  mc.closePath();mc.fillStyle='#a4b3a8';mc.fill();mc.strokeStyle='#7e9684';mc.lineWidth=1.2;mc.stroke();
+ }
+ // Every individual surviving fragment is visible with its own player emblem.
+ for(const p of w.players){if(!p.active)continue;for(const raw of p.cells){
+  const c=timeline.cell(raw),x=c.x*s,y=c.y*s,r=Math.min(22,Math.max(10,3*Math.sqrt(c.mass)*s*.64));
+  mc.beginPath();mc.arc(x,y,r,0,Math.PI*2);mc.fillStyle='#ffffff';mc.fill();
+  mc.strokeStyle=p.color;mc.lineWidth=2;mc.stroke();
+  const icon=imgs[p.id];if(icon.complete&&icon.naturalWidth){mc.save();mc.beginPath();mc.arc(x,y,r-1,0,Math.PI*2);mc.clip();mc.drawImage(icon,x-r*.82,y-r*.82,r*1.64,r*1.64);mc.restore();}
+ }}
+ const cam=state.camera;
+ mc.strokeStyle='#61a18599';mc.lineWidth=2;mc.setLineDash([6,5]);
+ mc.strokeRect((cam.x-W/(2*cam.z))*s,(cam.y-H/(2*cam.z))*s,W/cam.z*s,H/cam.z*s);
+ mc.setLineDash([]);
+}
 function rankText(entry){return state.world.mode!=='team'&&!state.world.finished&&entry.alive?'●':String(entry.rank);}
 function rankStatus(entry){return entry.alive?Math.round(entry.mass).toLocaleString('en-US'):(state.world.mode==='team'&&!state.world.finished?'待重生':'已淘汰');}
 function rankingHTML(){const w=state.world,rows=w.result?.ranking||w.standings();return rows.map(entry=>{const p=w.players[entry.id];return `<div data-player="${p.id}" class="rank-row ${state.humanEnabled&&p.id===state.human?'you':''} ${!entry.alive?'dead':''}"><span class="rank-num">${rankText(entry)}</span>${logoHTML(p.id)}<span class="rank-name">${p.name}${state.humanEnabled&&p.id===state.human?'<em>你</em>':''}</span>${w.mode==='team'?`<i class="team-dot" style="background:${p.team===0?'#79aeda':'#e6a55e'}"></i>`:''}<span class="rank-score">${rankStatus(entry)}</span></div>`;}).join('');}
@@ -719,33 +836,36 @@ function updateRanking(){
 
 function updateBroadcast(){
  const w=state.world;if(!w)return;
- const modeNames={solo:'个人赛',team:'团队赛',storm:'缩圈生存'},objectives={solo:'最后存活者获胜',team:'总质量 / 团灭获胜',storm:'跑圈生存到最后'};
- $('broadcastMode').textContent=modeNames[w.mode];$('broadcastObjective').textContent=objectives[w.mode];
- const left=Math.max(0,Math.ceil(w.options.duration-w.time));$('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
- $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length;
+ const modeNames={solo:'个人赛',team:'团队赛',storm:'大逃杀'};
+ $('broadcastMode').textContent=modeNames[w.mode];
+ $('broadcastObjective').textContent={solo:'最后存活者获胜',team:'团队对抗',storm:'缩圈生存'}[w.mode];
+ const left=Math.max(0,Math.ceil(w.options.duration-w.time));
+ $('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+ $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length+' 存活';
  $('broadcastFps').textContent=state.performance.fps?state.performance.fps+' FPS':'—';
  $('broadcastFaults').textContent=String(state.agentErrors.length);
- const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
- const list=$('broadcastRows');if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small></small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
- const active=w.players.filter(p=>p.active),high=Math.max(240,...active.map(p=>w.mass(p.id)));
- const order=w.result?.ranking||w.standings();for(const [ix,item] of order.entries()){
-  const p=w.players[item.id],r=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!r)continue;
-  const stateAlive=p.cells.length>0,m=w.mass(p.id);if(list.children[ix]!==r)list.insertBefore(r,list.children[ix]);
-  r.hidden=!p.active;r.classList.toggle('is-dead',!stateAlive);r.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
-  const img=r.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
-  r.querySelector('.broadcast-entry-name').textContent=p.name;
-  r.querySelector('.broadcast-entry-detail').textContent=!stateAlive?(w.mode==='team'?'待重生 / 已淘汰':'已淘汰'):('分身 '+p.cells.length+' · 击杀 '+p.kills+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):''));
-  r.querySelector('b').textContent=Math.round(m).toLocaleString('en-US');r.querySelector('small').textContent='质量';
-  r.querySelector('.broadcast-entry-bar').style.width=clamp(m/high*100,0,100)+'%';r.querySelector('.broadcast-entry-bar').style.background=p.color;
+ const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';
+ if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
+ const list=$('broadcastRows');
+ if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<span class="broadcast-rank"></span><img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
+ const active=w.players.filter(p=>p.active).map(p=>({...p,mass:w.mass(p.id)}));
+ const order=ArenaDirector.sortDisplayPlayers(active);
+ const high=Math.max(240,...active.map(p=>p.mass));
+ for(let ix=0;ix<order.length;ix++){
+  const p=order[ix],row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!row)continue;
+  if(list.children[ix]!==row)list.insertBefore(row,list.children[ix]||null);
+  row.hidden=false;row.classList.toggle('is-dead',!p.cells.length);row.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
+  row.querySelector('.broadcast-rank').textContent=String(ix+1).padStart(2,'0');
+  const img=row.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
+  row.querySelector('.broadcast-entry-name').textContent=p.name;
+  row.querySelector('.broadcast-entry-detail').textContent=!p.cells.length?(w.mode==='team'?'等待重生':'已淘汰'):'分身 '+p.cells.length+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):'')+' · 击杀 '+p.kills;
+  row.querySelector('b').textContent=Math.round(p.mass).toLocaleString('en-US');
+  row.querySelector('.broadcast-entry-bar').style.width=clamp(p.mass/high*100,0,100)+'%';
+  row.querySelector('.broadcast-entry-bar').style.background=p.color;
  }
- for(const p of w.players.filter(p=>!p.active)){
-  const row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(row)row.hidden=true;
- }
- const ev=w.events.filter(e=>['death','burst','respawn','teamFeed'].includes(e.type)).slice(-3);
- $('broadcastEvents').textContent=ev.length?ev.map(e=>e.type==='death'?(BRANDS[e.player]?.name+' 出局'):e.type==='burst'?(BRANDS[e.player]?.name+' 吃刺四分'):e.type==='teamFeed'?'队友吞噬分身':'重新入场').join(' · '):'等待比赛开始';
- $('broadcastStatus').textContent=state.paused?'当前已暂停':state.agentErrors.length?'有脚本异常，查看选手导入报告':'视觉匀速 '+((state.simulationRate||1)*100).toFixed(0)+'% · 慢决策 '+pool.slowDecisions+' 次 · 等待帧 '+pool.waitFrames;
+ for(const p of w.players.filter(p=>!p.active)){const row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(row)row.hidden=true;}
 }
-function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hidden',!state.humanEnabled);document.querySelector('.controls-bar').classList.toggle('hidden',!state.humanEnabled);const w=state.world,p=w.players[state.human],m=w.mass(state.human),remain=Math.max(0,Math.ceil(w.options.duration-w.time));if($('humanIcon').dataset.brand!==p.icon){$('humanIcon').src=ASSETS[p.icon];$('humanIcon').dataset.brand=p.icon;}$('humanName').textContent=p.name;$('humanTeam').textContent=w.mode==='team'?(p.team===0?'蓝队 · 最后一球保护':'橙队 · 最后一球保护'):(state.replay?'回放中的玩家':'手动操作');$('massValue').textContent=Math.round(m).toLocaleString('en-US');$('cellCount').textContent=`${p.cells.length} / 16`;const cooldown=Math.max(0,...p.cells.map(c=>c.mergeAt-w.time));$('mergeInfo').textContent=p.cells.length>1?(cooldown>0?`${cooldown.toFixed(1)}s 可合并`:'按空格聚拢合并'):'完整球体';$('massMeter').style.width=`${clamp(m/1000*100,0,100)}%`;$('timerValue').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;$('modeLabel').textContent={solo:'个人赛',team:'随机团队赛',storm:'缩圈生存'}[w.mode];$('aliveCount').textContent=`${w.players.filter(p=>p.cells.length).length} 位${w.mode!=='team'?'存活':'选手'}`;updateRanking();$('teamScores').classList.toggle('hidden',w.mode!=='team');if(w.mode==='team'){$('teamScores').innerHTML=[0,1].map(t=>`<span>${t===0?'蓝队':'橙队'} <b>${Math.round(w.players.filter(p=>p.team===t).reduce((s,p)=>s+w.mass(p.id),0))}</b></span>`).join('');}
+function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hidden',!state.humanEnabled);document.querySelector('.controls-bar').classList.toggle('hidden',!state.humanEnabled);const w=state.world,p=w.players[state.human],m=w.mass(state.human),remain=Math.max(0,Math.ceil(w.options.duration-w.time));if($('humanIcon').dataset.brand!==p.icon){$('humanIcon').src=ASSETS[p.icon];$('humanIcon').dataset.brand=p.icon;}$('humanName').textContent=p.name;$('humanTeam').textContent=w.mode==='team'?(p.team===0?'蓝队 · 最后一球保护':'橙队 · 最后一球保护'):(state.replay?'回放中的玩家':'手动操作');$('massValue').textContent=Math.round(m).toLocaleString('en-US');$('cellCount').textContent=`${p.cells.length} / 16`;const cooldown=Math.max(0,...p.cells.map(c=>c.mergeAt-w.time));$('mergeInfo').textContent=p.cells.length>1?(cooldown>0?`${cooldown.toFixed(1)}s 可合并`:'按空格聚拢合并'):'完整球体';$('massMeter').style.width=`${clamp(m/1000*100,0,100)}%`;$('timerValue').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;$('modeLabel').textContent={solo:'个人赛',team:'随机团队赛',storm:'大逃杀'}[w.mode];$('aliveCount').textContent=`${w.players.filter(p=>p.cells.length).length} 位${w.mode!=='team'?'存活':'选手'}`;updateRanking();$('teamScores').classList.toggle('hidden',w.mode!=='team');if(w.mode==='team'){$('teamScores').innerHTML=[0,1].map(t=>`<span>${t===0?'蓝队':'橙队'} <b>${Math.round(w.players.filter(p=>p.team===t).reduce((s,p)=>s+w.mass(p.id),0))}</b></span>`).join('');}
  $('zoneStatus').classList.toggle('hidden',w.mode!=='storm');if(w.mode==='storm'){const danger=p.cells.some(c=>w.outside(c.x,c.y));$('zoneStatus').classList.toggle('danger',danger);$('zoneStatus').textContent=danger?'你有分身在圈外，正在损失质量':`第 ${w.zone.phase} 圈 · ${w.zone.shrinking?'正在收缩':'下一次收缩'} ${Math.ceil(w.zone.remaining)}s`;}
  const speeds=p.cells.map(c=>Arena.moveSpeed(c.mass)/CFG.baseMoveSpeed*100);$('speedInfo').textContent=speeds.length?'基础移速 · '+(Math.max(...speeds)-Math.min(...speeds)<.05?Math.min(...speeds).toFixed(1):Math.min(...speeds).toFixed(1)+'–'+Math.max(...speeds).toFixed(1))+'%':'基础移速 · —';
  const aim=controller.sample(screen(w.center(state.human).x,w.center(state.human).y),performance.now(),false);$('aimStatus').textContent=state.replay?'正在回放':aim.gather?'聚拢 · '+(controller.pointer.inside?'鼠标位置':'移动方向前方'):aim.aimSource==='mouse'?'瞄准 · 每颗球 → 鼠标':'瞄准 · '+(aim.aimSource==='keys'?'WASD 八向':'最后移动方向');
@@ -768,10 +888,12 @@ function showResult(){
   detail=r.status==='undecided'?'仍存活的选手并列，总质量不决定冠军；其余按淘汰先后排名。':'按存活顺序排名，同帧淘汰并列；总质量仅用于体量和展示。';
  }
  $('resultTitle').textContent=title;$('resultSub').textContent=detail+(state.replay?' 当前为回放。':'')+(state.testTools?' 本局使用过测试工具。':'');
- $('resultRanks').innerHTML=rankingHTML();$('resultOverlay').classList.remove('hidden');
+ $('resultRanks').innerHTML=rankingHTML();
+ if(!state.humanEnabled){$('victoryLabel').textContent=w.mode==='team'?'TEAM MATCH · FULL TIME':w.mode==='storm'?'BATTLE ROYALE · FINAL':'SOLO MATCH · FINAL';$('victoryTitle').textContent=title;$('victoryDetail').textContent=detail;$('victoryBanner').classList.remove('hidden');return;}
+ $('resultOverlay').classList.remove('hidden');
 }
 function togglePause(){if(!state.started||state.world.finished||!$('welcome').classList.contains('hidden'))return;state.paused=!state.paused;clearControls();sfx.stopAll();accumulator=0;timeline.reset(state.world);updateHUD();}
-function toggleView(){state.view=state.view==='all'?'follow':'all';state.zoom=1;updateHUD();}
+function toggleView(){state.view=state.view==='all'?(state.humanEnabled?'follow':'auto'):'all';state.zoom=1;updateHUD();}
 function toggleTools(){$('tools').classList.toggle('hidden');}
 function toolParams(){const c=state.world.center(state.human),a=controller.sample(screen(c.x,c.y),performance.now(),false);return{human:state.human,dx:a.aimX,dy:a.aimY};}
 const allowedTools=new Set(['massPlus','massMinus','food','thorn','prey','predator','merge','respawn','zone','stormOutside']);
@@ -791,10 +913,11 @@ function replayData(){return state.replay||{format:'ball-arena-replay',version:1
 state.exportReplay=replayData;
 function saveReplay(){download(`球球回放_${state.mode}_${state.seed}.json`,JSON.stringify(replayData()));toast('已导出回放文件；可在本测试版中导入播放。');}
 function importReplay(data){if(!data||data.format!=='ball-arena-replay'||data.version!==1||data.engine!=='0.6.0'||!Array.isArray(data.frames)||data.frames.length>60000||!data.options||!['solo','team','storm'].includes(data.options.mode))throw Error('不是此版本支持的回放文件');if(!Number.isInteger(data.human)||data.human<0||data.human>5)throw Error('回放角色编号不合法');const checkCommands=commands=>{if(!Array.isArray(commands)||commands.length>100)throw Error('回放工具命令不合法');for(const cmd of commands){const p=cmd?.[1];if(!Array.isArray(cmd)||!allowedTools.has(cmd[0])||!p||typeof p!=='object'||!Number.isInteger(p.human)||p.human<0||p.human>5||!Number.isFinite(p.dx)||!Number.isFinite(p.dy))throw Error('回放工具命令不合法');}};checkCommands(data.finalCommands||[]);for(const f of data.frames){if(!f||!f.actions||typeof f.actions!=='object'||Array.isArray(f.actions))throw Error('回放帧格式不正确');checkCommands(f.commands||[]);for(const [id,a] of Object.entries(f.actions)){if(!/^[0-5]$/.test(id)||!a||typeof a!=='object')throw Error('回放行动格式不正确');for(const k of ['dx','dy','aimX','aimY','aimAtX','aimAtY','gatherAtX','gatherAtY','tx','ty','throttle'])if(a[k]!==undefined&&!Number.isFinite(a[k]))throw Error('回放行动包含无效数字');}}
- if(!Array.isArray(data.options.activeIds)||data.options.activeIds.some(id=>!Number.isInteger(id)||id<0||id>5))throw Error('回放名单不合法');state.human=data.human;state.humanEnabled=!!data.humanEnabled;newGame(data.options.mode,data.options.seed,true,{activeIds:data.options.activeIds});pool.stop();state.replay=data;state.testTools=data.testTools||0;state.replayIndex=0;state.view='all';state.freeze=true;$('freezeBots').checked=true;$('replayStatus').textContent='正在播放回放';state.paused=false;toast('回放已载入。操作键不会改变记录中的比赛。');}
+ if(!Array.isArray(data.options.activeIds)||data.options.activeIds.some(id=>!Number.isInteger(id)||id<0||id>5))throw Error('回放名单不合法');state.human=data.human;state.humanEnabled=!!data.humanEnabled;newGame(data.options.mode,data.options.seed,true,{activeIds:data.options.activeIds});pool.stop();state.replay=data;state.testTools=data.testTools||0;state.replayIndex=0;state.view='auto';state.freeze=true;$('freezeBots').checked=true;$('replayStatus').textContent='正在播放回放';state.paused=false;toast('回放已载入。操作键不会改变记录中的比赛。');}
 state.importReplay=importReplay;
 function openHelp(){helpPaused=state.paused;state.paused=true;clearControls();sfx.stopAll();$('help').classList.remove('hidden');updateHUD();}function closeHelp(){$('help').classList.add('hidden');state.paused=helpPaused;accumulator=0;updateHUD();}
 $('startGame').onclick=()=>startMatch();
+$('setupMode').onchange=e=>newGame(e.target.value,state.seed,false);
 $('entriesToggle').onclick=openEntries;$('lobbyClose').onclick=()=>{if(state.started){$('welcome').classList.add('hidden');state.paused=false;last=performance.now();accumulator=0;}else toast('先导入选手或选择手动测试');};
 $('humanEnabled').onchange=updateEntrySummary;$('humanSeat').onchange=updateEntrySummary;
 $('exportAgentReport').onclick=()=>download('选手错误与提交记录.json',JSON.stringify(lobby.audit(),null,2));
@@ -824,12 +947,12 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=clamp(state.zoom*Math.exp(-e.deltaY*.001),.45,2.3);},{passive:false});
 window.addEventListener('keydown',e=>{
  if(['SELECT','TEXTAREA'].includes(document.activeElement.tagName)||(document.activeElement.tagName==='INPUT'&&!['checkbox','button'].includes(document.activeElement.type)))return;
- const code=e.code||e.key,k=e.key.toLowerCase(),shortcuts=['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD','KeyE','KeyP','KeyV','KeyT','KeyH'];
+ const code=e.code||e.key,k=e.key.toLowerCase(),shortcuts=['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD','KeyE','KeyP','KeyV','KeyT','KeyH','KeyL'];
  if(shortcuts.includes(code))e.preventDefault();
  if(!$('help').classList.contains('hidden')){if(k==='escape'||k==='?')closeHelp();return;}
  if(!$('welcome').classList.contains('hidden')){if(k==='enter')$('startGame').click();return;}
  if(k==='escape'){$('tools').classList.add('hidden');return;}
- if(!e.repeat){if(code==='KeyP')togglePause();if(code==='KeyV')toggleView();if(code==='KeyT')toggleTools();if(code==='KeyH'){$('cleanView').checked=!$('cleanView').checked;$('cleanView').dispatchEvent(new Event('change'));}}
+ if(!e.repeat){if(code==='KeyP')togglePause();if(code==='KeyV')toggleView();if(code==='KeyT')toggleTools();if(code==='KeyL')openEntries();if(code==='KeyH'){$('cleanView').checked=!$('cleanView').checked;$('cleanView').dispatchEvent(new Event('change'));}}
  if(canControl()){controller.key(code,true);unlockAudio();}
 });
 window.addEventListener('keyup',e=>controller.key(e.code||e.key,false));
