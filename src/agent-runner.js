@@ -36,7 +36,7 @@ function frameMain(){
     worker.onmessage=x=>{if(!x.data||x.data.id!==waiting)return;clearTimeout(timer);waiting=null;reply(x.data);};
     worker.onerror=x=>{x.preventDefault();stop(x.message||'Worker 执行失败');};
    }
-   waiting=m.id;timer=setTimeout(()=>stop(m.type==='load'?'加载超过 2 秒，已终止脚本':'单次决策超过 100ms，已终止脚本'),m.budget);
+   waiting=m.id;timer=setTimeout(()=>stop(m.type==='load'?'加载超过 2 秒，已终止脚本':'单次决策超过 '+m.budget+'ms，已终止脚本'),m.budget);
    worker.postMessage(m);
   };port.start();reply({ready:true});
  });
@@ -63,11 +63,11 @@ class Runner{
   const id=this.serial++;
   return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(Error('隔离运行器未响应，已停止'));this.dispose();},budget+1200);this.pending.set(id,{resolve,reject,timer});this.port.postMessage({...message,id,budget});});
  }
- async act(observation){const r=await this.request({type:'act',observation},API.LIMITS.actionMs);return API.validateAction(r.action);}
+ async act(observation){const r=await this.request({type:'act',observation},API.LIMITS.hardActionMs);this.lastElapsed=Number.isFinite(r.elapsed)?r.elapsed:0;return API.validateAction(r.action);}
  dispose(){if(this.closed)return;this.closed=true;if(this.port){this.port.postMessage({type:'dispose'});this.port.close();}if(this.frame)this.frame.remove();for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(Error('运行器已重置'));}this.pending.clear();}
 }
 class Pool{
- constructor(onError=()=>{}){this.onError=onError;this.runners=new Map();this.actions={};this.pending=null;this.generation=0;this.ready=false;this.errors=[];}
+ constructor(onError=()=>{}){this.onError=onError;this.runners=new Map();this.actions={};this.pending=null;this.generation=0;this.ready=false;this.errors=[];this.latencyMs=0;this.waitFrames=0;this.slowDecisions=0;}
  async start(entries,world){
   this.stop();const gen=this.generation;
   await Promise.all(entries.map(async entry=>{
@@ -82,21 +82,21 @@ class Pool{
   if(!this.ready)return null;
   if(!this.runners.size&&!this.pending)return this.actions;
   if(this.pending&&world.tick>=this.pending.target){
-   if(!this.pending.done)return null;
+   if(!this.pending.done){this.waitFrames++;return null;}
    this.actions=this.pending.actions;this.pending=null;
   }
   if(!this.pending){
-   const batch={target:world.tick+API.LIMITS.decisionTicks,done:false,actions:{}},gen=this.generation;this.pending=batch;
+   const batch={target:world.tick+API.LIMITS.decisionTicks,done:false,actions:{},startedAt:performance.now()},gen=this.generation;this.pending=batch;
    const tasks=[...this.runners].map(async([id,r])=>{
     if(!world.players[id].cells.length){batch.actions[id]={};return;}
-    try{batch.actions[id]=await r.act(API.observation(world,id));}
+    try{batch.actions[id]=await r.act(API.observation(world,id));if(r.lastElapsed>API.LIMITS.actionMs)this.slowDecisions++;}
     catch(e){if(gen!==this.generation)return;r.dispose();this.runners.delete(id);batch.actions[id]={};this.fail(id,e,world.tick);}
    });
-   Promise.all(tasks).then(()=>{if(gen===this.generation)batch.done=true;});
+   Promise.all(tasks).then(()=>{if(gen===this.generation){const latency=performance.now()-batch.startedAt;this.latencyMs=this.latencyMs?this.latencyMs*.83+latency*.17:latency;batch.done=true;}});
   }
   return this.actions;
  }
- stop(){this.generation++;for(const r of this.runners.values())r.dispose();this.runners.clear();this.actions={};this.pending=null;this.ready=false;this.errors=[];}
+ stop(){this.generation++;for(const r of this.runners.values())r.dispose();this.runners.clear();this.actions={};this.pending=null;this.ready=false;this.errors=[];this.latencyMs=0;this.waitFrames=0;this.slowDecisions=0;}
 }
 root.ArenaAgents={Runner,Pool};
 })(typeof globalThis!=='undefined'?globalThis:this);

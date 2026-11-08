@@ -117,6 +117,34 @@ function updateRanking(){
  }
 }
 
+function updateBroadcast(){
+ const w=state.world;if(!w)return;
+ const modeNames={solo:'个人赛',team:'团队赛',storm:'缩圈生存'},objectives={solo:'最后存活者获胜',team:'总质量 / 团灭获胜',storm:'跑圈生存到最后'};
+ $('broadcastMode').textContent=modeNames[w.mode];$('broadcastObjective').textContent=objectives[w.mode];
+ const left=Math.max(0,Math.ceil(w.options.duration-w.time));$('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+ $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length;
+ $('broadcastFps').textContent=state.performance.fps?state.performance.fps+' FPS':'—';
+ $('broadcastFaults').textContent=String(state.agentErrors.length);
+ const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
+ const list=$('broadcastRows');if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small></small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
+ const active=w.players.filter(p=>p.active),high=Math.max(240,...active.map(p=>w.mass(p.id)));
+ const order=w.result?.ranking||w.standings();for(const [ix,item] of order.entries()){
+  const p=w.players[item.id],r=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!r)continue;
+  const stateAlive=p.cells.length>0,m=w.mass(p.id);if(list.children[ix]!==r)list.insertBefore(r,list.children[ix]);
+  r.hidden=!p.active;r.classList.toggle('is-dead',!stateAlive);r.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
+  const img=r.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
+  r.querySelector('.broadcast-entry-name').textContent=p.name;
+  r.querySelector('.broadcast-entry-detail').textContent=!stateAlive?(w.mode==='team'?'待重生 / 已淘汰':'已淘汰'):('分身 '+p.cells.length+' · 击杀 '+p.kills+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):''));
+  r.querySelector('b').textContent=Math.round(m).toLocaleString('en-US');r.querySelector('small').textContent='质量';
+  r.querySelector('.broadcast-entry-bar').style.width=clamp(m/high*100,0,100)+'%';r.querySelector('.broadcast-entry-bar').style.background=p.color;
+ }
+ for(const p of w.players.filter(p=>!p.active)){
+  const row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(row)row.hidden=true;
+ }
+ const ev=w.events.filter(e=>['death','burst','respawn','teamFeed'].includes(e.type)).slice(-3);
+ $('broadcastEvents').textContent=ev.length?ev.map(e=>e.type==='death'?(BRANDS[e.player]?.name+' 出局'):e.type==='burst'?(BRANDS[e.player]?.name+' 吃刺四分'):e.type==='teamFeed'?'队友吞噬分身':'重新入场').join(' · '):'等待比赛开始';
+ $('broadcastStatus').textContent=state.paused?'当前已暂停':state.agentErrors.length?'有脚本异常，查看选手导入报告':'视觉匀速 '+((state.simulationRate||1)*100).toFixed(0)+'% · 慢决策 '+pool.slowDecisions+' 次 · 等待帧 '+pool.waitFrames;
+}
 function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hidden',!state.humanEnabled);document.querySelector('.controls-bar').classList.toggle('hidden',!state.humanEnabled);const w=state.world,p=w.players[state.human],m=w.mass(state.human),remain=Math.max(0,Math.ceil(w.options.duration-w.time));if($('humanIcon').dataset.brand!==p.icon){$('humanIcon').src=ASSETS[p.icon];$('humanIcon').dataset.brand=p.icon;}$('humanName').textContent=p.name;$('humanTeam').textContent=w.mode==='team'?(p.team===0?'蓝队 · 最后一球保护':'橙队 · 最后一球保护'):(state.replay?'回放中的玩家':'手动操作');$('massValue').textContent=Math.round(m).toLocaleString('en-US');$('cellCount').textContent=`${p.cells.length} / 16`;const cooldown=Math.max(0,...p.cells.map(c=>c.mergeAt-w.time));$('mergeInfo').textContent=p.cells.length>1?(cooldown>0?`${cooldown.toFixed(1)}s 可合并`:'按空格聚拢合并'):'完整球体';$('massMeter').style.width=`${clamp(m/1000*100,0,100)}%`;$('timerValue').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;$('modeLabel').textContent={solo:'个人赛',team:'随机团队赛',storm:'缩圈生存'}[w.mode];$('aliveCount').textContent=`${w.players.filter(p=>p.cells.length).length} 位${w.mode!=='team'?'存活':'选手'}`;updateRanking();$('teamScores').classList.toggle('hidden',w.mode!=='team');if(w.mode==='team'){$('teamScores').innerHTML=[0,1].map(t=>`<span>${t===0?'蓝队':'橙队'} <b>${Math.round(w.players.filter(p=>p.team===t).reduce((s,p)=>s+w.mass(p.id),0))}</b></span>`).join('');}
  $('zoneStatus').classList.toggle('hidden',w.mode!=='storm');if(w.mode==='storm'){const danger=p.cells.some(c=>w.outside(c.x,c.y));$('zoneStatus').classList.toggle('danger',danger);$('zoneStatus').textContent=danger?'你有分身在圈外，正在损失质量':`第 ${w.zone.phase} 圈 · ${w.zone.shrinking?'正在收缩':'下一次收缩'} ${Math.ceil(w.zone.remaining)}s`;}
  const speeds=p.cells.map(c=>Arena.moveSpeed(c.mass)/CFG.baseMoveSpeed*100);$('speedInfo').textContent=speeds.length?'基础移速 · '+(Math.max(...speeds)-Math.min(...speeds)<.05?Math.min(...speeds).toFixed(1):Math.min(...speeds).toFixed(1)+'–'+Math.max(...speeds).toFixed(1))+'%':'基础移速 · —';
@@ -126,6 +154,7 @@ function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hi
  const ev=w.events.filter(e=>['death','burst','respawn'].includes(e.type)&&w.time-e.t<12).slice(-4);$('events').innerHTML=ev.map(e=>`<div class="event-line">${e.type==='death'?(e.killer!==null?`<b>${BRANDS[e.killer].name}</b> 吞噬了 ${BRANDS[e.player].name}`:`${BRANDS[e.player].name} 在圈外出局`):e.type==='burst'?`${BRANDS[e.player].name} 吃刺 +20% · 四分`:`${BRANDS[e.player].name} 重新入场`}</div>`).join('');
  $('objectiveStatus').textContent=w.mode==='team'?'终局比全队总质量 · 团灭提前结束':'活到最后才获胜 · 质量不是积分';
  if(state.humanEnabled&&state.started&&!p.cells.length&&!w.finished){$('centerMessage').classList.remove('hidden');$('centerMessage').innerHTML=w.mode!=='team'?'<strong>你已出局</strong><span>本局不复活，继续观战；工具重生仅限机制测试</span>':`<strong>被吞噬了</strong><span>${Math.max(0,Math.ceil(p.respawnAt-w.time))} 秒后重新入场</span>`;}else $('centerMessage').classList.add('hidden');
+ updateBroadcast();
 }
 function showResult(){
  resultShown=true;const w=state.world,r=w.result;if(!r)return;
@@ -215,15 +244,24 @@ window.addEventListener('resize',resize);
 function frame(now){
  const elapsed=Math.max(0,(now-last)/1000),dt=Math.min(.1,elapsed);last=now;
  if(state.started&&!state.paused&&!state.world.finished){
-  accumulator+=dt*state.speed;let n=0;
+  // Apply one uniform rate to the entire arena under heavy strategy computation.
+  // Logical step size, decisions, collisions and replay remain unchanged.
+  const latency=pool.latencyMs||0;
+  state.simulationRate=state.humanEnabled||state.replay?1:clamp(44/Math.max(44,latency),.18,1);
+  accumulator+=dt*state.speed*state.simulationRate;let n=0;
   while(accumulator+1e-12>=1/60&&n<12){if(!step()){accumulator=Math.min(accumulator,1/60);break;}accumulator=Math.max(0,accumulator-1/60);n++;if(state.paused||state.world.finished)break;}
-  timeline.begin(state.world,accumulator*60);
+  timeline.begin(state.world,accumulator*60,dt);
  }else{accumulator=0;timeline.reset(state.world);}
  updateCamera(dt);draw(dt);
  perfTime+=elapsed;perfFrames++;if(perfTime>=.5){state.performance={fps:Math.round(perfFrames/perfTime),frameMs:perfTime*1000/perfFrames};perfTime=0;perfFrames=0;}
  state.frameCount++;uiClock+=dt;if(uiClock>.1){uiClock=0;updateHUD();if($('performanceStatus'))$('performanceStatus').textContent=`画面 ${state.performance.fps} FPS · 物理 60 Hz · 平滑插值开启`;}
  requestAnimationFrame(frame);
 }
+// Move the existing mini map into the spectator column; the map still uses the same simulation.
+$('broadcastMapSlot').appendChild(document.querySelector('.minimap'));
+$('broadcastEntries').onclick=()=>document.getElementById('entriesToggle').click();
+$('broadcastCamera').onclick=()=>document.getElementById('cameraToggle').click();
+$('broadcastPause').onclick=()=>document.getElementById('pauseToggle').click();
 state.screenPoint=(x,y)=>screen(x,y);
 try{const a=JSON.parse(localStorage.getItem('ball-arena-audio-v02')||'null');if(a){sfx.setEnabled(a.enabled!==false);sfx.setVolume(a.volume??.35);}}catch{}syncAudioUI();initPicker();resize();newGame();requestAnimationFrame(frame);
 })();

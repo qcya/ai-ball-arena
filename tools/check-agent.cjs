@@ -12,7 +12,7 @@ for(const filename of files){try{
  const meta=API.validateModule(context.module.exports);if(modes.has(meta.mode))throw Error('Duplicate mode '+meta.mode);modes.add(meta.mode);
  const w=new A.World({mode:meta.mode,seed:12345,foodCount:200,thornCount:6,activeIds:[0,1,2,3]});let memory={};
  for(let i=0;i<80;i++){context.obs=API.observation(w,0);context.memory=memory;
-  const result=API.validateResult(vm.runInContext('module.exports.act(obs,memory)',context,{timeout:100}));memory=result.memory;
+  const result=API.validateResult(vm.runInContext('module.exports.act(obs,memory)',context,{timeout:API.LIMITS.hardActionMs||1000}));memory=result.memory;
   for(let tick=0;tick<3;tick++)w.step(1/60,{0:result.action});
  }
  console.log('PASS',meta.mode,filename,'(80 decisions; contract only, not strategy rating)');

@@ -3,7 +3,7 @@
 'use strict';
 const lerp=(a,b,t)=>a+(b-a)*t;
 class Timeline{
- constructor(){this.previous=new Map();this.cache=new Map();this.alpha=1;this.previousZone=null;}
+ constructor(){this.previous=new Map();this.cache=new Map();this.alpha=1;this.previousZone=null;this.visuals=new Map();this.frameDt=0;this.frames=0;}
  capture(world){
   this.previous.clear();
   for(const p of world.players)for(const c of p.cells)this.save(c);
@@ -12,8 +12,10 @@ class Timeline{
   this.previousZone={x:world.zone.x,y:world.zone.y,r:world.zone.r};
  }
  save(o){this.previous.set(o.id,{x:o.x,y:o.y,mass:o.mass});}
- reset(world){this.capture(world);this.begin(world,1);}
- begin(world,alpha){this.alpha=Math.max(0,Math.min(1,Number.isFinite(alpha)?alpha:1));this.cache.clear();this.world=world;}
+ reset(world){this.visuals.clear();this.capture(world);this.begin(world,1);}
+ begin(world,alpha,frameDt=0){this.alpha=Math.max(0,Math.min(1,Number.isFinite(alpha)?alpha:1));this.frameDt=Math.max(0,Math.min(.1,Number(frameDt)||0));this.cache.clear();this.world=world;
+  if(++this.frames%120===0&&this.visuals.size){const ids=new Set();for(const p of world.players)for(const c of p.cells)ids.add(c.id);for(const q of [...world.pellets,...world.thorns])ids.add(q.id);for(const id of this.visuals.keys())if(!ids.has(id))this.visuals.delete(id);}
+ }
  entity(o){
   if(this.cache.has(o.id))return this.cache.get(o.id);
   const prev=this.previous.get(o.id);let result=o;
@@ -21,6 +23,12 @@ class Timeline{
   if(prev&&Math.hypot(o.x-prev.x,o.y-prev.y)<200){
    result={...o,x:lerp(prev.x,o.x,this.alpha),y:lerp(prev.y,o.y,this.alpha)};
    if(Number.isFinite(prev.mass)&&Number.isFinite(o.mass))result.mass=lerp(prev.mass,o.mass,this.alpha);
+  }
+  // Cosmetic only: soften a rapid direction reversal at 60+ FPS without
+  // changing the authoritative ball positions, hits, paths, or stored replays.
+  if(this.frameDt>0){const old=this.visuals.get(o.id);
+   if(old&&Math.hypot(result.x-old.x,result.y-old.y)<80){const k=1-Math.exp(-32*this.frameDt);result={...result,x:lerp(old.x,result.x,k),y:lerp(old.y,result.y,k)};}
+   this.visuals.set(o.id,{x:result.x,y:result.y});
   }
   this.cache.set(o.id,result);return result;
  }

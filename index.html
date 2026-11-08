@@ -7,6 +7,51 @@
 
 /* v0.6 objectives: no misleading individual mass leaderboard. */
 .objective-status{font-size:11px;line-height:1.6;color:#547967;margin:8px auto 0;background:#fffffff0;border:1px solid #e5eee7;border-radius:8px;padding:4px 10px;width:max-content;max-width:290px}.rank-row .rank-num{width:16px;text-align:center;flex-shrink:0}.rank-row .rank-score{white-space:nowrap}.result-card #resultSub{line-height:1.8}.leaderboard-foot{line-height:1.65}@media(max-width:700px){.objective-status{max-width:160px;font-size:8px;padding:3px 5px}.rank-row .rank-num{width:12px}.rank-row .rank-score{font-size:9px}}
+
+
+/* v0.7: spectator screen, separate presentation from the unchanged world simulation. */
+:root{--broadcastWidth:clamp(310px,25vw,480px)}
+#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:calc(100dvh - 78px)}
+#broadcastPanel{position:fixed;right:0;top:78px;bottom:0;width:var(--broadcastWidth);z-index:12;background:#fff;border-left:1px solid #e6ece8;box-shadow:-10px 0 32px #1b332508;overflow:auto;scrollbar-width:thin;padding:24px 23px 20px;display:flex;flex-direction:column;gap:0}
+#arenaWrap>.leaderboard,#arenaWrap>.match-top,#arenaWrap>.minimap,#arenaWrap>.event-feed{display:none!important}
+.broadcast-brand{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ecf1ed;padding-bottom:17px}
+.broadcast-kicker{font-size:9px;font-weight:700;letter-spacing:1.9px;color:#93a19a}
+.broadcast-brand h2{font-size:21px;letter-spacing:.4px;margin:6px 0 0;color:#243e32;font-weight:650}
+.broadcast-live{display:flex;gap:5px;align-items:center;font-size:10px;font-weight:750;color:#218a67;background:#eaf8ef;padding:7px 9px;border-radius:7px}
+.broadcast-live i{width:6px;height:6px;background:#25a779;border-radius:50%}
+.broadcast-clock{display:flex;justify-content:space-between;align-items:flex-start;margin:19px 0 17px;gap:15px}
+.broadcast-field-label{display:block;color:#95a39b;letter-spacing:.3px;font-size:10px;margin-bottom:7px}
+.broadcast-clock strong{font-size:15px;font-weight:650;display:block;color:#314d3f}
+.broadcast-clock small{font-size:10px;color:#889c8e;display:block;margin-top:7px}
+.broadcast-countdown{text-align:right}
+.broadcast-countdown b{font-size:34px;font-weight:670;line-height:1;letter-spacing:1px;font-variant-numeric:tabular-nums;color:#24382e}
+.broadcast-numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:17px}
+.broadcast-numbers>div{border-radius:9px;padding:12px 7px;background:#f5f8f6;text-align:center}
+.broadcast-numbers span{display:block;font-size:10px;color:#8a9b8f;margin-bottom:7px}
+.broadcast-numbers strong{font-weight:680;color:#3a6450;font-size:17px;font-variant-numeric:tabular-nums}
+.broadcast-team{display:flex;gap:8px;margin-bottom:15px}.broadcast-team>div{flex:1;padding:11px;border-radius:8px;background:#eef7ff;font-size:11px;color:#548bb6}.broadcast-team>div:last-child{background:#fff5e9;color:#b98343}.broadcast-team b{display:block;font-size:17px;margin-top:5px}
+.broadcast-section-head{display:flex;justify-content:space-between;align-items:baseline;gap:5px;margin-bottom:11px}.broadcast-section-head strong{font-size:12px;font-weight:650;color:#354b3e}.broadcast-section-head span{font-size:9px;color:#99a59d}
+.broadcast-rows{display:flex;flex-direction:column;gap:6px}
+.broadcast-entry{display:flex;align-items:center;gap:9px;padding:10px 10px;background:#fbfdfb;border:1px solid #edf1ed;border-radius:10px;min-height:59px;position:relative;overflow:hidden}
+.broadcast-entry.is-dead{opacity:.48}.broadcast-entry.is-human{border-color:#a6d8b8;background:#f0f9f2}
+.broadcast-entry>img{width:26px;height:26px;object-fit:contain;flex:none;z-index:1}
+.broadcast-entry-body{min-width:0;flex:1;z-index:1}.broadcast-entry-name{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.broadcast-entry-name .team-chip{width:6px;height:6px;border-radius:50%}.broadcast-entry-detail{font-size:10px;color:#97a39b;margin-top:5px}
+.broadcast-entry-numeric{text-align:right;min-width:48px;z-index:1;font-variant-numeric:tabular-nums}
+.broadcast-entry-numeric b{font-size:15px;display:block;font-weight:650;color:#3c5647}.broadcast-entry-numeric small{display:block;font-size:9px;color:#99a59d;margin-top:4px}
+.broadcast-entry-bar{position:absolute;height:3px;left:0;bottom:0;background:#7fc5a5;opacity:.65;transition:width .14s}
+.broadcast-bottom{margin-top:19px;border-top:1px solid #eef3ef;padding-top:15px}
+.broadcast-news{margin-bottom:12px}.broadcast-events{font-size:10px;line-height:1.7;min-height:22px;color:#84998a;max-height:60px;overflow:hidden}
+.broadcast-map-heading{display:flex;justify-content:space-between;font-size:10px;color:#536e5b;margin:10px 0}.broadcast-map-heading span{font-size:9px;color:#9da9a0}
+.broadcast-map-slot .minimap{position:static;display:block!important;width:100%!important;padding:9px;border:1px solid #edf1ef;border-radius:10px;box-shadow:none;background:#f8fbf8}
+.broadcast-map-slot .minimap>div{display:none}.broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;aspect-ratio:330/228}
+.broadcast-footer{display:flex;gap:7px;border-top:1px solid #edf1ed;margin-top:auto;padding-top:17px}
+.broadcast-footer button{border:1px solid #e0e9e3;background:#f7faf8;color:#507061;font-size:10px;font-weight:600;padding:10px 7px;border-radius:8px;flex:1}
+.broadcast-footer button:hover{background:#e9f5ec}
+.broadcast-fine{font-size:9px;color:#a0afa4;line-height:1.6;margin-top:11px}
+.clean #broadcastPanel{display:none}.clean #arenaWrap{width:100vw}
+@media(max-width:1050px){:root{--broadcastWidth:320px}#broadcastPanel{padding:14px 12px}.broadcast-brand h2{font-size:18px}.broadcast-clock{margin:13px 0}.broadcast-countdown b{font-size:26px}.broadcast-numbers{margin-bottom:9px}.broadcast-entry{min-height:53px;padding:7px}}
+@media(max-width:700px){#arenaWrap{width:100vw;height:55dvh}#broadcastPanel{position:relative;top:auto;right:auto;bottom:auto;width:100vw;height:calc(45dvh - 66px);border-left:0;border-top:1px solid #edf1ed}#arenaWrap>.camera-controls{display:none}body{overflow:auto}.broadcast-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.broadcast-entry{min-width:0}}
 </style><!--
 Brand icon assets: LobeHub lobe-icons.
 MIT License
@@ -33,7 +78,7 @@ SOFTWARE.
 </head>
 <body>
 <header class="topbar">
- <div class="brand"><div class="brandmark"><i></i><i></i><i></i></div><div><h1>球球竞技场</h1><span>BALL ARENA <b>/</b> TEST LAB</span></div><em class="version">v0.6</em></div>
+ <div class="brand"><div class="brandmark"><i></i><i></i><i></i></div><div><h1>球球竞技场</h1><span>BALL ARENA <b>/</b> TEST LAB</span></div><em class="version">v0.6.1 · 观战版</em></div>
  <nav class="modes" aria-label="比赛模式"><button class="mode active" data-mode="solo"><span>01</span>个人赛</button><button class="mode" data-mode="team"><span>02</span>团队赛</button><button class="mode" data-mode="storm"><span>03</span>缩圈生存</button></nav>
  <div class="top-actions"><button id="entriesToggle" class="tools-button">选手 / 导入</button><button id="soundToggle" class="icon-btn" title="音效开关" aria-label="音效开关">♪</button><button id="helpToggle" class="icon-btn" title="操作和规则">?</button><button id="toolsToggle" class="tools-button">⚙ <span>测试工具</span><kbd>T</kbd></button></div>
 </header>
@@ -50,6 +95,17 @@ SOFTWARE.
  <div id="pausedBadge" class="paused-badge hidden">已暂停 <small>按 P 继续</small></div>
  <div class="touch-controls"><button id="touchSplit">分裂</button><button id="touchEject">吐球</button><button id="touchGather">聚拢</button></div>
 </main>
+<aside id="broadcastPanel" aria-label="赛事直播信息">
+ <div class="broadcast-brand"><div><span class="broadcast-kicker">AI BALL ARENA / SPECTATOR</span><h2>赛事控制台</h2></div><span class="broadcast-live"><i></i> LIVE</span></div>
+ <div class="broadcast-clock"><div><span class="broadcast-field-label">当前模式</span><strong id="broadcastMode">个人赛</strong><small id="broadcastObjective">最后存活者获胜</small></div><div class="broadcast-countdown"><span class="broadcast-field-label">剩余时间</span><b id="broadcastTime">03:00</b></div></div>
+ <div class="broadcast-numbers"><div><span>存活 / 入场</span><strong id="broadcastAlive">0 / 0</strong></div><div><span>画面刷新率</span><strong id="broadcastFps">—</strong></div><div><span>脚本异常</span><strong id="broadcastFaults">0</strong></div></div>
+ <div id="broadcastTeam" class="broadcast-team" hidden></div>
+ <div class="broadcast-section-head"><strong>选手状态</strong><span>质量仅作参考 · 按存活显示</span></div>
+ <div id="broadcastRows" class="broadcast-rows"></div>
+ <div class="broadcast-bottom"><section class="broadcast-news"><div class="broadcast-section-head"><strong>比赛事件</strong><span>最近发生</span></div><div id="broadcastEvents" class="broadcast-events">还没有比赛事件</div></section><div class="broadcast-map-heading"><strong>全场分布</strong><span>2600 × 1800</span></div><div id="broadcastMapSlot" class="broadcast-map-slot"></div></div>
+ <div class="broadcast-footer"><button id="broadcastEntries">选手 / 导入</button><button id="broadcastCamera">切换镜头</button><button id="broadcastPause">暂停 / 继续</button></div>
+ <div class="broadcast-fine" id="broadcastStatus">脚本与引擎保持隔离 · 本面板仅显示数据</div>
+</aside>
 <aside id="tools" class="tools-panel hidden"><div class="panel-head"><div><span>DEVELOPER TOOLS</span><h2>机制试验台</h2></div><button id="closeTools" class="icon-btn">×</button></div><p>这些按钮只用于测机制；使用后会在回放中记录。</p><label class="switch-row"><span>冻结已导入 AI<small>毒圈和碰撞仍然生效</small></span><input id="freezeBots" type="checkbox"></label><label class="switch-row"><span>显示攻击方向辅助线</span><input id="showGuides" type="checkbox" checked></label><label class="switch-row"><span>纯净画面<small>H 键也可以切换</small></span><input id="cleanView" type="checkbox"></label><div class="tool-grid"><button data-tool="massPlus">＋ 250 质量</button><button data-tool="massMinus">− 100 质量</button><button data-tool="food">生成一圈食物</button><button data-tool="thorn">前方生成刺球</button><button data-tool="prey">放一个小陪练</button><button data-tool="predator">放一个大陪练</button><button data-tool="merge">立即合并</button><button data-tool="respawn">测试重生</button><button data-tool="zone">跳到下个圈</button><button data-tool="stormOutside">移到圈外</button></div><div class="tool-divider"></div><div class="audio-heading">音效 <span>原创合成 · 无背景音乐</span></div><label class="audio-volume">音量 <input id="volumeSlider" type="range" min="0" max="100" value="35" aria-label="音效音量"><output id="volumeValue">35%</output></label><div class="tool-grid sound-grid"><button data-sfx="pelletEat">试听 · 吃质量球</button><button data-sfx="eat">试听 · 吞球</button><button data-sfx="eject">试听 · 吐球</button><button data-sfx="split">试听 · 分裂</button><button data-sfx="burst">试听 · 扎刺</button><button data-sfx="merge">试听 · 合并</button></div><div class="tool-divider"></div><label class="select-row">模拟速度<select id="speedSelect"><option value="0.5">0.5 × 慢放</option><option value="1" selected>1 × 正常</option><option value="2">2 × 加速</option></select></label><label class="select-row">地图种子<input id="seedInput" type="number" value="20261107"></label><div class="tool-grid"><button id="restartGame">↻ 同种子重开</button><button id="shuffleGame">随机新一局</button><button id="saveReplay">导出回放</button><button id="loadReplay">导入回放</button><button id="saveState">导出问题快照</button><button id="saveImage">截取游戏画面</button></div><input type="file" id="replayInput" accept=".json" hidden><div id="performanceStatus" class="replay-status">平滑插值开启 · 物理 60 Hz</div><div id="replayStatus" class="replay-status">正在记录行动 · 脚本离线运行</div><p class="tools-fine">本地运行，不上传任何文件。回放记录动作与工具操作，不是视频文件。</p></aside>
 <div id="welcome" class="overlay"><section class="welcome-card entry-card">
 <div class="panel-head"><span class="eyebrow"><i></i> AI BALL ARENA / 参赛准备</span><button id="lobbyClose" class="icon-btn" title="返回比赛">×</button></div>
@@ -202,7 +258,7 @@ return{World,CFG,BRANDS,radius,moveSpeed,norm,rng,clamp,cellBounds,reachableTarg
 (function(root,factory){const api=factory();api.factorySource=factory.toString();if(typeof module==='object'&&module.exports)module.exports=api;else root.ArenaAgentAPI=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const VERSION='1.0',ENGINE='0.6.0',MODES=['solo','team','storm'];
-const LIMITS={sourceBytes:262144,memoryBytes:65536,actionMs:100,loadMs:2000,decisionTicks:3};
+const LIMITS={sourceBytes:262144,memoryBytes:65536,actionMs:100,hardActionMs:1000,loadMs:2000,decisionTicks:3};
 function validateModule(m){
  if(!m||m.apiVersion!==VERSION)throw Error('apiVersion 必须为 "1.0"');
  if(!MODES.includes(m.mode))throw Error('mode 必须是 solo / team / storm');
@@ -287,7 +343,7 @@ function frameMain(){
     worker.onmessage=x=>{if(!x.data||x.data.id!==waiting)return;clearTimeout(timer);waiting=null;reply(x.data);};
     worker.onerror=x=>{x.preventDefault();stop(x.message||'Worker 执行失败');};
    }
-   waiting=m.id;timer=setTimeout(()=>stop(m.type==='load'?'加载超过 2 秒，已终止脚本':'单次决策超过 100ms，已终止脚本'),m.budget);
+   waiting=m.id;timer=setTimeout(()=>stop(m.type==='load'?'加载超过 2 秒，已终止脚本':'单次决策超过 '+m.budget+'ms，已终止脚本'),m.budget);
    worker.postMessage(m);
   };port.start();reply({ready:true});
  });
@@ -314,11 +370,11 @@ class Runner{
   const id=this.serial++;
   return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(Error('隔离运行器未响应，已停止'));this.dispose();},budget+1200);this.pending.set(id,{resolve,reject,timer});this.port.postMessage({...message,id,budget});});
  }
- async act(observation){const r=await this.request({type:'act',observation},API.LIMITS.actionMs);return API.validateAction(r.action);}
+ async act(observation){const r=await this.request({type:'act',observation},API.LIMITS.hardActionMs);this.lastElapsed=Number.isFinite(r.elapsed)?r.elapsed:0;return API.validateAction(r.action);}
  dispose(){if(this.closed)return;this.closed=true;if(this.port){this.port.postMessage({type:'dispose'});this.port.close();}if(this.frame)this.frame.remove();for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(Error('运行器已重置'));}this.pending.clear();}
 }
 class Pool{
- constructor(onError=()=>{}){this.onError=onError;this.runners=new Map();this.actions={};this.pending=null;this.generation=0;this.ready=false;this.errors=[];}
+ constructor(onError=()=>{}){this.onError=onError;this.runners=new Map();this.actions={};this.pending=null;this.generation=0;this.ready=false;this.errors=[];this.latencyMs=0;this.waitFrames=0;this.slowDecisions=0;}
  async start(entries,world){
   this.stop();const gen=this.generation;
   await Promise.all(entries.map(async entry=>{
@@ -333,21 +389,21 @@ class Pool{
   if(!this.ready)return null;
   if(!this.runners.size&&!this.pending)return this.actions;
   if(this.pending&&world.tick>=this.pending.target){
-   if(!this.pending.done)return null;
+   if(!this.pending.done){this.waitFrames++;return null;}
    this.actions=this.pending.actions;this.pending=null;
   }
   if(!this.pending){
-   const batch={target:world.tick+API.LIMITS.decisionTicks,done:false,actions:{}},gen=this.generation;this.pending=batch;
+   const batch={target:world.tick+API.LIMITS.decisionTicks,done:false,actions:{},startedAt:performance.now()},gen=this.generation;this.pending=batch;
    const tasks=[...this.runners].map(async([id,r])=>{
     if(!world.players[id].cells.length){batch.actions[id]={};return;}
-    try{batch.actions[id]=await r.act(API.observation(world,id));}
+    try{batch.actions[id]=await r.act(API.observation(world,id));if(r.lastElapsed>API.LIMITS.actionMs)this.slowDecisions++;}
     catch(e){if(gen!==this.generation)return;r.dispose();this.runners.delete(id);batch.actions[id]={};this.fail(id,e,world.tick);}
    });
-   Promise.all(tasks).then(()=>{if(gen===this.generation)batch.done=true;});
+   Promise.all(tasks).then(()=>{if(gen===this.generation){const latency=performance.now()-batch.startedAt;this.latencyMs=this.latencyMs?this.latencyMs*.83+latency*.17:latency;batch.done=true;}});
   }
   return this.actions;
  }
- stop(){this.generation++;for(const r of this.runners.values())r.dispose();this.runners.clear();this.actions={};this.pending=null;this.ready=false;this.errors=[];}
+ stop(){this.generation++;for(const r of this.runners.values())r.dispose();this.runners.clear();this.actions={};this.pending=null;this.ready=false;this.errors=[];this.latencyMs=0;this.waitFrames=0;this.slowDecisions=0;}
 }
 root.ArenaAgents={Runner,Pool};
 })(typeof globalThis!=='undefined'?globalThis:this);
@@ -413,7 +469,7 @@ class Lobby{
 }
 root.ArenaAgentLobby={Lobby};
 })(typeof globalThis!=='undefined'?globalThis:this);
-</script><script>const AI_BRIEF="# AI 球球竞技场：一次会话、三份独立参赛脚本\n\n你是参赛选手，不是游戏引擎维护者。请阅读这份完整任务书，再检查同目录的 `src/engine.js`、`src/agent-api.js` 与 `RULES_AND_INTERFACE.md`（能访问源码时）。用你当前可用的最强推理与编程能力，独立设计争胜策略，一次性交付 `solo.js`、`team.js`、`storm.js` 三个可直接下载的 JavaScript 文件。不要向主办人提问，不要要求 API 密钥，不要重做游戏，不要只描述思路。没有文件工具时，给三个清楚标明文件名的完整代码块。\n\n项目：https://github.com/qcya/ai-ball-arena 。本任务书对应引擎 0.6.0、策略 API 1.0。只收到本文件也足以完成任务。若仓库有不同版本，明确说明差异，不要混用规则。\n\n## 0. 胜利目标优先于发育\n\n**个人赛 solo、缩圈赛 storm：活到最后才获胜，不是质量最高获胜。** 全部分身消失才出局，不能复活。至少两位参赛时，消灭所有其他选手即可立即获胜；同帧出局并列。质量决定体积、吞噬能力、常规移速，并在界面展示，但不能作为个人名次或超时破平局的依据。\n**团队赛 team：** 到时比较全队总质量；敌队全部分身消失则提前胜利。队友尚存活时，死亡队员 3 秒后重生；整队同时无球则直接输，不等重生。\n吃刺、吃食物、分裂、吐球都是达成上述目标的手段，不设“吃刺次数分数”。不要把增加质量误当成个人赛最终胜利；选择哪种策略由你独立决定。\n\n这是主办方更新规则后的新版本任务，不是针对旧比赛成绩的策略修补。统一使用本版本重新生成三份文件，后续仍按首份可运行提交加最多一次技术修复执行。\n\n## 1. 提交与重试\n\n同一会话内生成三份独立文件，每个文件包含其全部逻辑，不相互导入、不依赖公共文件。三种规则现在一次性全部交给你；不能打完个人赛再重新问你团队策略。以首份可运行提交参赛，不按输赢返工或调参。仅语法/加载/接口/运行异常允许一次修复，最多原提交加一次修复。你可以在首次交付前自主推理、自查和用现有工具运行契约测试，但不要要求主办人多轮反馈或给你对手代码。\n\n不用训练神经网络，不调用大模型 API。你写的程序将离线控制球。不得改引擎、网页、对手代码、比赛结果或伪造数据。品牌名称与界面图标不代表模型版本；可以在脚本 name 中写明真实模型/版本，不要编造。\n\n## 2. 文件格式（必须完全遵守）\n\n```javascript\n'use strict';\nmodule.exports = {\n  apiVersion: '1.0',\n  name: '你的模型或策略名称',\n  mode: 'solo', // 另一文件分别为 'team'、'storm'\n  act(observation, memory) {\n    // memory 初次为 {}，可以用 JSON 数据保存本选手的策略状态。\n    // 此处只是接口占位，不是推荐策略。请实现你自己的完整策略。\n    return {\n      action: {dx: 0, dy: 0, throttle: 1, split: false, eject: false, gather: false},\n      memory: {}\n    };\n  }\n};\n```\n\n必须同步返回 `{action, memory}`。不用 export/import、require、Promise、async/await、setTimeout、fetch 或第三方依赖。单文件最多 256 KiB；memory 为纯 JSON，最多 64 KiB，不得包含函数、循环引用、NaN、Infinity。单次决策的运行器等待预算 100ms，模块加载预算 2 秒。100ms 包括 Worker 消息排队/传递、act 计算和结果校验，不等于单独的 CPU 用时；请留出余量，不要用满预算。超时/异常停用该脚本，本局球停止主动操作但仍会碰撞、受毒圈影响和被吞噬；不是自动修复或自动替换为陪练。\n\n`name` 为 1–80 字字符串。`mode` 决定分配到哪场；文件名建议固定为 solo.js/team.js/storm.js。首次导入会在隔离环境执行少量接口冒烟检查，不等于证明策略强弱。正式开局会创建全新脚本实例、清空 memory 和模块变量。\n\n## 3. 时钟与信息\n\n地图宽 2600、高 1800，左上角(0,0)，x 向右，y 向下。物理 60Hz；脚本每 3 个物理步决策一次（20Hz）。所有选手在同一 tick 读取状态，动作统一延迟 3 tick（0.05秒）生效，并保持到下一次提交。慢脚本会让整局等待同一提交屏障，不让快响应的选手多走一步。不要使用显示器帧数推算游戏时间。\n\n观察对象完整字段：\n\n```text\napiVersion:'1.0', engineVersion:'0.6.0'\ntick: 当前物理帧，time: 已过秒数，remaining: 剩余秒数\nmode:'solo'|'team'|'storm', playerId:0..5, team:0|1\nmap:{width:2600,height:1800}\nactionInterval:0.05, actionDelay:0.05\nself: 与 players[playerId] 内容相同\nplayers: 固定长度6，索引就是playerId，包括未报名席位\n  每位:{id,team,active,nextSplit,nextEject,mass,deaths,eliminatedAt,eliminatedTick,respawnAt,cells}\n  active=false 表示没有参加本局，绝不能当作可攻击或喂养的选手\n  mass为所有分身总质量，nextSplit/nextEject是下次可操作的绝对游戏时间\n  eliminatedAt/eliminatedTick为本次淘汰时间/帧或null；同帧淘汰并列\n  respawnAt为重生时间或null；solo/storm淘汰无重生，team仅非团灭时可等待重生\n  每颗分身:{id,owner,x,y,mass,r,vx,vy,mergeAt,shieldUntil,thornUntil}\nfood: [{id,x,y,mass,color,shape,angle}]\npellets: [{id,x,y,mass,owner,vx,vy,born}]\nthorns: [{id,x,y,r,vx,vy,fed}]\nzone: 非缩圈为null；缩圈时见后文\nrules: 当前引擎数值，包括分裂/吞噬/吐球/刺球等参数\n  objective: solo/storm 为 last-survivor，team 为 team-mass\n  ranking: solo/storm 为 survival-order，team 为 team-mass\n  respawn: 布尔；timeout: draw-survivors 或 team-mass\n  baseMoveSpeed:176.65175237370477, speedMassDoublingFactor:0.9, startMass:240\n```\n\n`vx/vy` 是分裂等造成的附加冲量速度，不包含操作产生的步行速度。需要预测总运动时自行根据历史位置估计。全场信息相同公开，但不提供对手代码、memory 或动作。所有观察都是副本，修改它不能改变真实世界。每颗分身能不能吃谁，取决于该颗分身，不取决于整队或全体分身总质量。\n\n内置 `sdk` 在模块作用域可用：`sdk.norm(x,y)` 返回归一化 `[dx,dy]`；`sdk.radius(mass)`；`sdk.moveSpeed(mass, observation.rules)` 返回该颗常规移速；`sdk.clamp(v,min,max)`；`sdk.random()` 为每位独立的种子随机数；`sdk.cellBounds(cell,map)`；`sdk.reachableTarget(cell,target,kind,map)`，kind 为 food/pellet/enemy，不可达返回 null，否则 `{x,y,reach}`。Math.random 也映射到此种子随机流。不要按品牌编号硬编码队友。\n\n## 4. 返回动作\n\n`action` 只能包含这些字段，其他字段会被视为接口错误：\n\n```javascript\n{\n  dx:1, dy:0, throttle:1, // 所有分身朝此方向主动移动；方向归一化\n  aimX:0, aimY:-1,        // 吐球/分裂方向，可与移动不同\n  aimAtX:1200, aimAtY:900, // 可选世界目标点，逐颗从自身圆心朝此点瞄准\n  split:false, eject:false,\n  gather:false,\n  gatherAtX:1200, gatherAtY:900, // 可选聚拢位置，gather=true才生效\n  tx:1200, ty:900 // 可选普通移动目标；不要与其他移动方式混淆\n}\n```\n\n所有坐标必须成对提供且为有限数；布尔量必须是 true/false。throttle 钳制到[0,1]；dx/dy 是方向而非速度，非零方向会归一化，变成很小的非零数不等于减速。需要减速请使用 throttle。dx=dy=0表示不主动移动（现有冲量仍会衰减滑行）。无需输出全部字段，`{}`为合法等待。**没有独立控制某一分身的接口**，但目标坐标会让各分身分别朝目标移动/攻击。\n\n移动优先级：显式 gatherAt + gather → tx/ty → gather向本方质量重心 → dx/dy。aimAt 优先于 aimX/Y，后者缺失时回退dx/dy，零向量安全回退向右。操作可组合，分裂先于吐球，均受冷却约束。聚拢不会跳过8秒合并冷却。\n\n## 5. 吞噬、质量和边界\n\n半径 `r=3*sqrt(mass)`。每位初始质量240。普通食物质量2，没有音效。单颗质量严格大于食物/质量球才可吃；玩家球需至少目标单颗质量1.2倍。需要覆盖到目标圆心距离：食物 `<自己r`，质量球 `<自己r-0.25*对方r`，玩家分身 `<自己r-0.35*对方r`。新出生2秒保护；主动分裂会结束自己的出生保护。\n\n每颗分身的**基础移动速度**：\n\n```javascript\nconst speed = rules.baseMoveSpeed * Math.pow(\n  Math.max(1, cell.mass / rules.startMass),\n  Math.log2(rules.speedMassDoublingFactor)\n);\n// 等价于 sdk.moveSpeed(cell.mass, rules)\n```\n\n初始质量240，初始速度176.65175237370477世界单位/秒（显示为100%）；更轻仍是100%。每次质量翻倍速度乘0.9，1.1倍约98.56%、2倍90%、4倍81%，非整数倍连续变化，没有固定速度下限。吐球或分裂后按减少后的单颗质量加速，但常规移速不超过初生速度；吃回质量或合并又会变慢。不是按所有分身总质量算。分裂、撞刺的瞬间冲量另行叠加；最高常规速度不是取消冲刺。\n\n圆心不能越出 `[r,width-r] × [r,height-r]`；球过大时沿对应轴居中。角落小点可见不一定可达，检查投影后的可吞距离，不可达就换目标；避墙距离随半径变化。持续受阻应放弃目标或绕行，不要永久追逐墙角一个食物。\n\n## 6. 分裂、诱饵与团队转移\n\n主动分裂：单颗至少80；满足门槛的分身依质量优先顺序二分，新增分身朝瞄准方向冲出。总质量守恒，最多16颗，操作冷却0.35秒。分裂后8秒才可靠近合并。分裂冲量为690世界单位/秒，按 `exp(-4*dt)` 衰减；冲量与常规移动叠加。注意分裂后能否吞到目标，也要考虑被其他球反吃的风险。\n\n吐球：满足至少30质量的每颗分身各吐10、自身扣10，冷却0.12秒。吐出球初始冲量340，按 `exp(-3.2*dt)` 衰减，初始位置在分身边缘外。无定时过期；自己0.5秒后可回吃，别人可立即吃，仍要满足尺寸和覆盖条件。吐出球也可喂队友、推动刺球、被对手抢走或被毒圈清除。\n\n诱饵机制真实存在：200吐80变120，收回地面80恢复200，可能反吃150。回收没有“每帧只能一颗”限制，当前逻辑步吃质量球后按增长后的质量与敌人判定。**不是远程收回，也没有对手必须上钩的保证。** 你应自行决定如何利用或识破诱饵；不要把地面owner当作独占保护。\n\n**团队赛的关键补充：被吃的队友只要仍有多颗分身，你可以吞下其中一颗或多颗；只剩最后一颗时受队友保护。** 即使同一帧很多分身重叠，也至少留一颗。接受方可以原本只有一颗；判断的是被吃方剩余数量。仍需1.2倍质量、足够覆盖，出生保护仍生效。队友之间转移不增加全队质量，不记击杀、不记死亡；不要求等待同一玩家的8秒合并冷却。吐球和喂分身都是可选的合作工具。敌人可吞最后一颗，没有队友保护。\n\n## 7. 刺球是奖励，不是扣血障碍\n\n吃到刺的那颗须至少120质量，刺球保护已结束，且能空出3个分身位置。该颗 `M → 4颗 × 0.30M = 总质量1.20M`。例如400→4×120=480。每份多出的0.05M是原球质量的5%，不是分裂后再乘1.05。其他原有分身不涨。四颗8秒合并冷却、1秒刺保护；刺被消耗。不足3个空位，不消费刺也不给奖励。\n\n碰刺触发距离 `<球半径+刺半径*0.15`。刺半径27。风险是你变成容易被吞的小碎片；安全时可用于发育，附近有人能吞碎片时应评估风险。吐球能推动刺，团队仍可能把刺推到队友身上。\n\n## 8. 三场独立规则\n\nsolo：180秒上限，无复活。所有分身消失才淘汰，最后存活者立即胜。按淘汰帧先后排名，越晚出局越靠前；同帧淘汰并列。到时仍存活多人则显示未分胜负，存活者并列，不按质量、击杀或席位破平局。\nteam：只在本场已导入的席位中随机均衡分队，两人1V1、四人2V2、六人3V3。180秒；按全队当前总质量判胜。队友尚有球时死亡3秒后重生；若某队所有队员都无分身，则另一支仍存活队伍立即胜，不能靠待重生拖延。双方同帧全灭或到时两队质量相同为平局。不预设固定队友，按 observation.team / player.team 判断。没有额外通讯API；可通过观察、位置与喂球协调。\nstorm：180秒、不重生，所有分身都消失才出局。>=2名选手时只剩一位立即胜；排名/同帧并列/超时未分胜负与solo相同，不按剩余质量。每颗球中心在圈外时按 `max(2,质量*zone.damage)` 每秒扣质量，扣完归零死亡。圈外食物、质量球和刺球清除，不能在外囤粮。圈内食物仍按区域预算补充。\n\n个人赛和缩圈赛全员死亡则无冠军，最后同帧死亡者并列。只有零或一位参赛属于机制测试，不自动授予冠军。质量数值仍显示，但不是胜负裁判。\n\n`zone` 来自引擎，包含 `x,y,r,damage,phase,shrinking,remaining,next`。next 为下一圈 `{x,y,r,...}` 或 null；remaining 为当前等待/收缩阶段剩余秒数。请根据当前/下一圈安排路线，不要假设一直同心或跟随现实时间。\n\n## 9. 自查清单与交付\n\n认真推演边界、分裂后体量、刺球四分收益、团队最后一球保护、跑圈和诱饵，不要把上面的建议拼成一个无优先级条件堆。只要遵守接口，可以使用状态机、搜索、局面评分、轨迹预测等自己的方法。\n\n请在最终交付前自查连续行动是否稳定、目标消失后是否更换、循环是否有上限、减速是否正确使用throttle。默认地图有1050个食物与18个刺球，另需考虑多分身/大量质量球的开销。不要仅凭几条小数据判定100ms预算合格。\n\n有执行环境时可运行 `node tools/check-agent.cjs /path/to/solo.js /path/to/team.js /path/to/storm.js` 做可信代码的契约检查。没有工具时自行检查语法和字段；不要声称运行过未实际运行的测试。这个Node检查器不是恶意代码安全沙盒，不用于运行来源不明文件。\n\n最后交付三个完整文件，外加很短的策略概述、真实模型标识和已做的检查。不要只交统一的一个脚本，也不要只给主办人一份如何实现的教程。\n";</script><script>/* Input policy is pure and testable. Coordinates passed here use canvas CSS pixels. */
+</script><script>const AI_BRIEF="# AI 球球竞技场：一次会话、三份独立参赛脚本\n\n你是参赛选手，不是游戏引擎维护者。请阅读这份完整任务书，再检查同目录的 `src/engine.js`、`src/agent-api.js` 与 `RULES_AND_INTERFACE.md`（能访问源码时）。用你当前可用的最强推理与编程能力，独立设计争胜策略，一次性交付 `solo.js`、`team.js`、`storm.js` 三个可直接下载的 JavaScript 文件。不要向主办人提问，不要要求 API 密钥，不要重做游戏，不要只描述思路。没有文件工具时，给三个清楚标明文件名的完整代码块。\n\n项目：https://github.com/qcya/ai-ball-arena 。本任务书对应引擎 0.6.0、策略 API 1.0。只收到本文件也足以完成任务。若仓库有不同版本，明确说明差异，不要混用规则。\n\n## 0. 胜利目标优先于发育\n\n**个人赛 solo、缩圈赛 storm：活到最后才获胜，不是质量最高获胜。** 全部分身消失才出局，不能复活。至少两位参赛时，消灭所有其他选手即可立即获胜；同帧出局并列。质量决定体积、吞噬能力、常规移速，并在界面展示，但不能作为个人名次或超时破平局的依据。\n**团队赛 team：** 到时比较全队总质量；敌队全部分身消失则提前胜利。队友尚存活时，死亡队员 3 秒后重生；整队同时无球则直接输，不等重生。\n吃刺、吃食物、分裂、吐球都是达成上述目标的手段，不设“吃刺次数分数”。不要把增加质量误当成个人赛最终胜利；选择哪种策略由你独立决定。\n\n这是主办方更新规则后的新版本任务，不是针对旧比赛成绩的策略修补。统一使用本版本重新生成三份文件，后续仍按首份可运行提交加最多一次技术修复执行。\n\n浏览器联调备注：100ms 为脚本目标预算；为了防止浏览器线程调度和序列化造成误杀，当前观战运行器使用 1000ms 硬墙钟守护，超过 100ms 的决策会记录性能警告而非直接判出局。策略 API 仍为 1.0，正式比赛主办方可以统一调整执行预算，但不得只放宽个别选手。\n\n## 1. 提交与重试\n\n同一会话内生成三份独立文件，每个文件包含其全部逻辑，不相互导入、不依赖公共文件。三种规则现在一次性全部交给你；不能打完个人赛再重新问你团队策略。以首份可运行提交参赛，不按输赢返工或调参。仅语法/加载/接口/运行异常允许一次修复，最多原提交加一次修复。你可以在首次交付前自主推理、自查和用现有工具运行契约测试，但不要要求主办人多轮反馈或给你对手代码。\n\n不用训练神经网络，不调用大模型 API。你写的程序将离线控制球。不得改引擎、网页、对手代码、比赛结果或伪造数据。品牌名称与界面图标不代表模型版本；可以在脚本 name 中写明真实模型/版本，不要编造。\n\n## 2. 文件格式（必须完全遵守）\n\n```javascript\n'use strict';\nmodule.exports = {\n  apiVersion: '1.0',\n  name: '你的模型或策略名称',\n  mode: 'solo', // 另一文件分别为 'team'、'storm'\n  act(observation, memory) {\n    // memory 初次为 {}，可以用 JSON 数据保存本选手的策略状态。\n    // 此处只是接口占位，不是推荐策略。请实现你自己的完整策略。\n    return {\n      action: {dx: 0, dy: 0, throttle: 1, split: false, eject: false, gather: false},\n      memory: {}\n    };\n  }\n};\n```\n\n必须同步返回 `{action, memory}`。不用 export/import、require、Promise、async/await、setTimeout、fetch 或第三方依赖。单文件最多 256 KiB；memory 为纯 JSON，最多 64 KiB，不得包含函数、循环引用、NaN、Infinity。单次决策的运行器等待预算 100ms，模块加载预算 2 秒。100ms 包括 Worker 消息排队/传递、act 计算和结果校验，不等于单独的 CPU 用时；请留出余量，不要用满预算。超时/异常停用该脚本，本局球停止主动操作但仍会碰撞、受毒圈影响和被吞噬；不是自动修复或自动替换为陪练。\n\n`name` 为 1–80 字字符串。`mode` 决定分配到哪场；文件名建议固定为 solo.js/team.js/storm.js。首次导入会在隔离环境执行少量接口冒烟检查，不等于证明策略强弱。正式开局会创建全新脚本实例、清空 memory 和模块变量。\n\n## 3. 时钟与信息\n\n地图宽 2600、高 1800，左上角(0,0)，x 向右，y 向下。物理 60Hz；脚本每 3 个物理步决策一次（20Hz）。所有选手在同一 tick 读取状态，动作统一延迟 3 tick（0.05秒）生效，并保持到下一次提交。慢脚本会让整局等待同一提交屏障，不让快响应的选手多走一步。不要使用显示器帧数推算游戏时间。\n\n观察对象完整字段：\n\n```text\napiVersion:'1.0', engineVersion:'0.6.0'\ntick: 当前物理帧，time: 已过秒数，remaining: 剩余秒数\nmode:'solo'|'team'|'storm', playerId:0..5, team:0|1\nmap:{width:2600,height:1800}\nactionInterval:0.05, actionDelay:0.05\nself: 与 players[playerId] 内容相同\nplayers: 固定长度6，索引就是playerId，包括未报名席位\n  每位:{id,team,active,nextSplit,nextEject,mass,deaths,eliminatedAt,eliminatedTick,respawnAt,cells}\n  active=false 表示没有参加本局，绝不能当作可攻击或喂养的选手\n  mass为所有分身总质量，nextSplit/nextEject是下次可操作的绝对游戏时间\n  eliminatedAt/eliminatedTick为本次淘汰时间/帧或null；同帧淘汰并列\n  respawnAt为重生时间或null；solo/storm淘汰无重生，team仅非团灭时可等待重生\n  每颗分身:{id,owner,x,y,mass,r,vx,vy,mergeAt,shieldUntil,thornUntil}\nfood: [{id,x,y,mass,color,shape,angle}]\npellets: [{id,x,y,mass,owner,vx,vy,born}]\nthorns: [{id,x,y,r,vx,vy,fed}]\nzone: 非缩圈为null；缩圈时见后文\nrules: 当前引擎数值，包括分裂/吞噬/吐球/刺球等参数\n  objective: solo/storm 为 last-survivor，team 为 team-mass\n  ranking: solo/storm 为 survival-order，team 为 team-mass\n  respawn: 布尔；timeout: draw-survivors 或 team-mass\n  baseMoveSpeed:176.65175237370477, speedMassDoublingFactor:0.9, startMass:240\n```\n\n`vx/vy` 是分裂等造成的附加冲量速度，不包含操作产生的步行速度。需要预测总运动时自行根据历史位置估计。全场信息相同公开，但不提供对手代码、memory 或动作。所有观察都是副本，修改它不能改变真实世界。每颗分身能不能吃谁，取决于该颗分身，不取决于整队或全体分身总质量。\n\n内置 `sdk` 在模块作用域可用：`sdk.norm(x,y)` 返回归一化 `[dx,dy]`；`sdk.radius(mass)`；`sdk.moveSpeed(mass, observation.rules)` 返回该颗常规移速；`sdk.clamp(v,min,max)`；`sdk.random()` 为每位独立的种子随机数；`sdk.cellBounds(cell,map)`；`sdk.reachableTarget(cell,target,kind,map)`，kind 为 food/pellet/enemy，不可达返回 null，否则 `{x,y,reach}`。Math.random 也映射到此种子随机流。不要按品牌编号硬编码队友。\n\n## 4. 返回动作\n\n`action` 只能包含这些字段，其他字段会被视为接口错误：\n\n```javascript\n{\n  dx:1, dy:0, throttle:1, // 所有分身朝此方向主动移动；方向归一化\n  aimX:0, aimY:-1,        // 吐球/分裂方向，可与移动不同\n  aimAtX:1200, aimAtY:900, // 可选世界目标点，逐颗从自身圆心朝此点瞄准\n  split:false, eject:false,\n  gather:false,\n  gatherAtX:1200, gatherAtY:900, // 可选聚拢位置，gather=true才生效\n  tx:1200, ty:900 // 可选普通移动目标；不要与其他移动方式混淆\n}\n```\n\n所有坐标必须成对提供且为有限数；布尔量必须是 true/false。throttle 钳制到[0,1]；dx/dy 是方向而非速度，非零方向会归一化，变成很小的非零数不等于减速。需要减速请使用 throttle。dx=dy=0表示不主动移动（现有冲量仍会衰减滑行）。无需输出全部字段，`{}`为合法等待。**没有独立控制某一分身的接口**，但目标坐标会让各分身分别朝目标移动/攻击。\n\n移动优先级：显式 gatherAt + gather → tx/ty → gather向本方质量重心 → dx/dy。aimAt 优先于 aimX/Y，后者缺失时回退dx/dy，零向量安全回退向右。操作可组合，分裂先于吐球，均受冷却约束。聚拢不会跳过8秒合并冷却。\n\n## 5. 吞噬、质量和边界\n\n半径 `r=3*sqrt(mass)`。每位初始质量240。普通食物质量2，没有音效。单颗质量严格大于食物/质量球才可吃；玩家球需至少目标单颗质量1.2倍。需要覆盖到目标圆心距离：食物 `<自己r`，质量球 `<自己r-0.25*对方r`，玩家分身 `<自己r-0.35*对方r`。新出生2秒保护；主动分裂会结束自己的出生保护。\n\n每颗分身的**基础移动速度**：\n\n```javascript\nconst speed = rules.baseMoveSpeed * Math.pow(\n  Math.max(1, cell.mass / rules.startMass),\n  Math.log2(rules.speedMassDoublingFactor)\n);\n// 等价于 sdk.moveSpeed(cell.mass, rules)\n```\n\n初始质量240，初始速度176.65175237370477世界单位/秒（显示为100%）；更轻仍是100%。每次质量翻倍速度乘0.9，1.1倍约98.56%、2倍90%、4倍81%，非整数倍连续变化，没有固定速度下限。吐球或分裂后按减少后的单颗质量加速，但常规移速不超过初生速度；吃回质量或合并又会变慢。不是按所有分身总质量算。分裂、撞刺的瞬间冲量另行叠加；最高常规速度不是取消冲刺。\n\n圆心不能越出 `[r,width-r] × [r,height-r]`；球过大时沿对应轴居中。角落小点可见不一定可达，检查投影后的可吞距离，不可达就换目标；避墙距离随半径变化。持续受阻应放弃目标或绕行，不要永久追逐墙角一个食物。\n\n## 6. 分裂、诱饵与团队转移\n\n主动分裂：单颗至少80；满足门槛的分身依质量优先顺序二分，新增分身朝瞄准方向冲出。总质量守恒，最多16颗，操作冷却0.35秒。分裂后8秒才可靠近合并。分裂冲量为690世界单位/秒，按 `exp(-4*dt)` 衰减；冲量与常规移动叠加。注意分裂后能否吞到目标，也要考虑被其他球反吃的风险。\n\n吐球：满足至少30质量的每颗分身各吐10、自身扣10，冷却0.12秒。吐出球初始冲量340，按 `exp(-3.2*dt)` 衰减，初始位置在分身边缘外。无定时过期；自己0.5秒后可回吃，别人可立即吃，仍要满足尺寸和覆盖条件。吐出球也可喂队友、推动刺球、被对手抢走或被毒圈清除。\n\n诱饵机制真实存在：200吐80变120，收回地面80恢复200，可能反吃150。回收没有“每帧只能一颗”限制，当前逻辑步吃质量球后按增长后的质量与敌人判定。**不是远程收回，也没有对手必须上钩的保证。** 你应自行决定如何利用或识破诱饵；不要把地面owner当作独占保护。\n\n**团队赛的关键补充：被吃的队友只要仍有多颗分身，你可以吞下其中一颗或多颗；只剩最后一颗时受队友保护。** 即使同一帧很多分身重叠，也至少留一颗。接受方可以原本只有一颗；判断的是被吃方剩余数量。仍需1.2倍质量、足够覆盖，出生保护仍生效。队友之间转移不增加全队质量，不记击杀、不记死亡；不要求等待同一玩家的8秒合并冷却。吐球和喂分身都是可选的合作工具。敌人可吞最后一颗，没有队友保护。\n\n## 7. 刺球是奖励，不是扣血障碍\n\n吃到刺的那颗须至少120质量，刺球保护已结束，且能空出3个分身位置。该颗 `M → 4颗 × 0.30M = 总质量1.20M`。例如400→4×120=480。每份多出的0.05M是原球质量的5%，不是分裂后再乘1.05。其他原有分身不涨。四颗8秒合并冷却、1秒刺保护；刺被消耗。不足3个空位，不消费刺也不给奖励。\n\n碰刺触发距离 `<球半径+刺半径*0.15`。刺半径27。风险是你变成容易被吞的小碎片；安全时可用于发育，附近有人能吞碎片时应评估风险。吐球能推动刺，团队仍可能把刺推到队友身上。\n\n## 8. 三场独立规则\n\nsolo：180秒上限，无复活。所有分身消失才淘汰，最后存活者立即胜。按淘汰帧先后排名，越晚出局越靠前；同帧淘汰并列。到时仍存活多人则显示未分胜负，存活者并列，不按质量、击杀或席位破平局。\nteam：只在本场已导入的席位中随机均衡分队，两人1V1、四人2V2、六人3V3。180秒；按全队当前总质量判胜。队友尚有球时死亡3秒后重生；若某队所有队员都无分身，则另一支仍存活队伍立即胜，不能靠待重生拖延。双方同帧全灭或到时两队质量相同为平局。不预设固定队友，按 observation.team / player.team 判断。没有额外通讯API；可通过观察、位置与喂球协调。\nstorm：180秒、不重生，所有分身都消失才出局。>=2名选手时只剩一位立即胜；排名/同帧并列/超时未分胜负与solo相同，不按剩余质量。每颗球中心在圈外时按 `max(2,质量*zone.damage)` 每秒扣质量，扣完归零死亡。圈外食物、质量球和刺球清除，不能在外囤粮。圈内食物仍按区域预算补充。\n\n个人赛和缩圈赛全员死亡则无冠军，最后同帧死亡者并列。只有零或一位参赛属于机制测试，不自动授予冠军。质量数值仍显示，但不是胜负裁判。\n\n`zone` 来自引擎，包含 `x,y,r,damage,phase,shrinking,remaining,next`。next 为下一圈 `{x,y,r,...}` 或 null；remaining 为当前等待/收缩阶段剩余秒数。请根据当前/下一圈安排路线，不要假设一直同心或跟随现实时间。\n\n## 9. 自查清单与交付\n\n认真推演边界、分裂后体量、刺球四分收益、团队最后一球保护、跑圈和诱饵，不要把上面的建议拼成一个无优先级条件堆。只要遵守接口，可以使用状态机、搜索、局面评分、轨迹预测等自己的方法。\n\n请在最终交付前自查连续行动是否稳定、目标消失后是否更换、循环是否有上限、减速是否正确使用throttle。默认地图有1050个食物与18个刺球，另需考虑多分身/大量质量球的开销。不要仅凭几条小数据判定100ms预算合格。\n\n有执行环境时可运行 `node tools/check-agent.cjs /path/to/solo.js /path/to/team.js /path/to/storm.js` 做可信代码的契约检查。没有工具时自行检查语法和字段；不要声称运行过未实际运行的测试。这个Node检查器不是恶意代码安全沙盒，不用于运行来源不明文件。\n\n最后交付三个完整文件，外加很短的策略概述、真实模型标识和已做的检查。不要只交统一的一个脚本，也不要只给主办人一份如何实现的教程。\n";</script><script>/* Input policy is pure and testable. Coordinates passed here use canvas CSS pixels. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.ArenaInput=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const MOUSE_IDLE_MS=800;
@@ -506,7 +562,7 @@ return{PRESETS,makeClip,SoundBank};
 'use strict';
 const lerp=(a,b,t)=>a+(b-a)*t;
 class Timeline{
- constructor(){this.previous=new Map();this.cache=new Map();this.alpha=1;this.previousZone=null;}
+ constructor(){this.previous=new Map();this.cache=new Map();this.alpha=1;this.previousZone=null;this.visuals=new Map();this.frameDt=0;this.frames=0;}
  capture(world){
   this.previous.clear();
   for(const p of world.players)for(const c of p.cells)this.save(c);
@@ -515,8 +571,10 @@ class Timeline{
   this.previousZone={x:world.zone.x,y:world.zone.y,r:world.zone.r};
  }
  save(o){this.previous.set(o.id,{x:o.x,y:o.y,mass:o.mass});}
- reset(world){this.capture(world);this.begin(world,1);}
- begin(world,alpha){this.alpha=Math.max(0,Math.min(1,Number.isFinite(alpha)?alpha:1));this.cache.clear();this.world=world;}
+ reset(world){this.visuals.clear();this.capture(world);this.begin(world,1);}
+ begin(world,alpha,frameDt=0){this.alpha=Math.max(0,Math.min(1,Number.isFinite(alpha)?alpha:1));this.frameDt=Math.max(0,Math.min(.1,Number(frameDt)||0));this.cache.clear();this.world=world;
+  if(++this.frames%120===0&&this.visuals.size){const ids=new Set();for(const p of world.players)for(const c of p.cells)ids.add(c.id);for(const q of [...world.pellets,...world.thorns])ids.add(q.id);for(const id of this.visuals.keys())if(!ids.has(id))this.visuals.delete(id);}
+ }
  entity(o){
   if(this.cache.has(o.id))return this.cache.get(o.id);
   const prev=this.previous.get(o.id);let result=o;
@@ -524,6 +582,12 @@ class Timeline{
   if(prev&&Math.hypot(o.x-prev.x,o.y-prev.y)<200){
    result={...o,x:lerp(prev.x,o.x,this.alpha),y:lerp(prev.y,o.y,this.alpha)};
    if(Number.isFinite(prev.mass)&&Number.isFinite(o.mass))result.mass=lerp(prev.mass,o.mass,this.alpha);
+  }
+  // Cosmetic only: soften a rapid direction reversal at 60+ FPS without
+  // changing the authoritative ball positions, hits, paths, or stored replays.
+  if(this.frameDt>0){const old=this.visuals.get(o.id);
+   if(old&&Math.hypot(result.x-old.x,result.y-old.y)<80){const k=1-Math.exp(-32*this.frameDt);result={...result,x:lerp(old.x,result.x,k),y:lerp(old.y,result.y,k)};}
+   this.visuals.set(o.id,{x:result.x,y:result.y});
   }
   this.cache.set(o.id,result);return result;
  }
@@ -653,6 +717,34 @@ function updateRanking(){
  }
 }
 
+function updateBroadcast(){
+ const w=state.world;if(!w)return;
+ const modeNames={solo:'个人赛',team:'团队赛',storm:'缩圈生存'},objectives={solo:'最后存活者获胜',team:'总质量 / 团灭获胜',storm:'跑圈生存到最后'};
+ $('broadcastMode').textContent=modeNames[w.mode];$('broadcastObjective').textContent=objectives[w.mode];
+ const left=Math.max(0,Math.ceil(w.options.duration-w.time));$('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
+ $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length;
+ $('broadcastFps').textContent=state.performance.fps?state.performance.fps+' FPS':'—';
+ $('broadcastFaults').textContent=String(state.agentErrors.length);
+ const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';if(w.mode==='team')teams.innerHTML=[0,1].map(t=>'<div>'+(t===0?'蓝队':'橙队')+'<b>'+Math.round(w.players.filter(p=>p.active&&p.team===t).reduce((sum,p)=>sum+w.mass(p.id),0)).toLocaleString('en-US')+'</b></div>').join('');
+ const list=$('broadcastRows');if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small></small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
+ const active=w.players.filter(p=>p.active),high=Math.max(240,...active.map(p=>w.mass(p.id)));
+ const order=w.result?.ranking||w.standings();for(const [ix,item] of order.entries()){
+  const p=w.players[item.id],r=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!r)continue;
+  const stateAlive=p.cells.length>0,m=w.mass(p.id);if(list.children[ix]!==r)list.insertBefore(r,list.children[ix]);
+  r.hidden=!p.active;r.classList.toggle('is-dead',!stateAlive);r.classList.toggle('is-human',state.humanEnabled&&p.id===state.human);
+  const img=r.querySelector('img');if(img.dataset.brand!==p.icon){img.src=ASSETS[p.icon];img.dataset.brand=p.icon;}
+  r.querySelector('.broadcast-entry-name').textContent=p.name;
+  r.querySelector('.broadcast-entry-detail').textContent=!stateAlive?(w.mode==='team'?'待重生 / 已淘汰':'已淘汰'):('分身 '+p.cells.length+' · 击杀 '+p.kills+(w.mode==='team'?' · '+(p.team===0?'蓝队':'橙队'):''));
+  r.querySelector('b').textContent=Math.round(m).toLocaleString('en-US');r.querySelector('small').textContent='质量';
+  r.querySelector('.broadcast-entry-bar').style.width=clamp(m/high*100,0,100)+'%';r.querySelector('.broadcast-entry-bar').style.background=p.color;
+ }
+ for(const p of w.players.filter(p=>!p.active)){
+  const row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(row)row.hidden=true;
+ }
+ const ev=w.events.filter(e=>['death','burst','respawn','teamFeed'].includes(e.type)).slice(-3);
+ $('broadcastEvents').textContent=ev.length?ev.map(e=>e.type==='death'?(BRANDS[e.player]?.name+' 出局'):e.type==='burst'?(BRANDS[e.player]?.name+' 吃刺四分'):e.type==='teamFeed'?'队友吞噬分身':'重新入场').join(' · '):'等待比赛开始';
+ $('broadcastStatus').textContent=state.paused?'当前已暂停':state.agentErrors.length?'有脚本异常，查看选手导入报告':'视觉匀速 '+((state.simulationRate||1)*100).toFixed(0)+'% · 慢决策 '+pool.slowDecisions+' 次 · 等待帧 '+pool.waitFrames;
+}
 function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hidden',!state.humanEnabled);document.querySelector('.controls-bar').classList.toggle('hidden',!state.humanEnabled);const w=state.world,p=w.players[state.human],m=w.mass(state.human),remain=Math.max(0,Math.ceil(w.options.duration-w.time));if($('humanIcon').dataset.brand!==p.icon){$('humanIcon').src=ASSETS[p.icon];$('humanIcon').dataset.brand=p.icon;}$('humanName').textContent=p.name;$('humanTeam').textContent=w.mode==='team'?(p.team===0?'蓝队 · 最后一球保护':'橙队 · 最后一球保护'):(state.replay?'回放中的玩家':'手动操作');$('massValue').textContent=Math.round(m).toLocaleString('en-US');$('cellCount').textContent=`${p.cells.length} / 16`;const cooldown=Math.max(0,...p.cells.map(c=>c.mergeAt-w.time));$('mergeInfo').textContent=p.cells.length>1?(cooldown>0?`${cooldown.toFixed(1)}s 可合并`:'按空格聚拢合并'):'完整球体';$('massMeter').style.width=`${clamp(m/1000*100,0,100)}%`;$('timerValue').textContent=`${String(Math.floor(remain/60)).padStart(2,'0')}:${String(remain%60).padStart(2,'0')}`;$('modeLabel').textContent={solo:'个人赛',team:'随机团队赛',storm:'缩圈生存'}[w.mode];$('aliveCount').textContent=`${w.players.filter(p=>p.cells.length).length} 位${w.mode!=='team'?'存活':'选手'}`;updateRanking();$('teamScores').classList.toggle('hidden',w.mode!=='team');if(w.mode==='team'){$('teamScores').innerHTML=[0,1].map(t=>`<span>${t===0?'蓝队':'橙队'} <b>${Math.round(w.players.filter(p=>p.team===t).reduce((s,p)=>s+w.mass(p.id),0))}</b></span>`).join('');}
  $('zoneStatus').classList.toggle('hidden',w.mode!=='storm');if(w.mode==='storm'){const danger=p.cells.some(c=>w.outside(c.x,c.y));$('zoneStatus').classList.toggle('danger',danger);$('zoneStatus').textContent=danger?'你有分身在圈外，正在损失质量':`第 ${w.zone.phase} 圈 · ${w.zone.shrinking?'正在收缩':'下一次收缩'} ${Math.ceil(w.zone.remaining)}s`;}
  const speeds=p.cells.map(c=>Arena.moveSpeed(c.mass)/CFG.baseMoveSpeed*100);$('speedInfo').textContent=speeds.length?'基础移速 · '+(Math.max(...speeds)-Math.min(...speeds)<.05?Math.min(...speeds).toFixed(1):Math.min(...speeds).toFixed(1)+'–'+Math.max(...speeds).toFixed(1))+'%':'基础移速 · —';
@@ -662,6 +754,7 @@ function updateHUD(){if(!state.world)return;$('playerCard').classList.toggle('hi
  const ev=w.events.filter(e=>['death','burst','respawn'].includes(e.type)&&w.time-e.t<12).slice(-4);$('events').innerHTML=ev.map(e=>`<div class="event-line">${e.type==='death'?(e.killer!==null?`<b>${BRANDS[e.killer].name}</b> 吞噬了 ${BRANDS[e.player].name}`:`${BRANDS[e.player].name} 在圈外出局`):e.type==='burst'?`${BRANDS[e.player].name} 吃刺 +20% · 四分`:`${BRANDS[e.player].name} 重新入场`}</div>`).join('');
  $('objectiveStatus').textContent=w.mode==='team'?'终局比全队总质量 · 团灭提前结束':'活到最后才获胜 · 质量不是积分';
  if(state.humanEnabled&&state.started&&!p.cells.length&&!w.finished){$('centerMessage').classList.remove('hidden');$('centerMessage').innerHTML=w.mode!=='team'?'<strong>你已出局</strong><span>本局不复活，继续观战；工具重生仅限机制测试</span>':`<strong>被吞噬了</strong><span>${Math.max(0,Math.ceil(p.respawnAt-w.time))} 秒后重新入场</span>`;}else $('centerMessage').classList.add('hidden');
+ updateBroadcast();
 }
 function showResult(){
  resultShown=true;const w=state.world,r=w.result;if(!r)return;
@@ -751,15 +844,24 @@ window.addEventListener('resize',resize);
 function frame(now){
  const elapsed=Math.max(0,(now-last)/1000),dt=Math.min(.1,elapsed);last=now;
  if(state.started&&!state.paused&&!state.world.finished){
-  accumulator+=dt*state.speed;let n=0;
+  // Apply one uniform rate to the entire arena under heavy strategy computation.
+  // Logical step size, decisions, collisions and replay remain unchanged.
+  const latency=pool.latencyMs||0;
+  state.simulationRate=state.humanEnabled||state.replay?1:clamp(44/Math.max(44,latency),.18,1);
+  accumulator+=dt*state.speed*state.simulationRate;let n=0;
   while(accumulator+1e-12>=1/60&&n<12){if(!step()){accumulator=Math.min(accumulator,1/60);break;}accumulator=Math.max(0,accumulator-1/60);n++;if(state.paused||state.world.finished)break;}
-  timeline.begin(state.world,accumulator*60);
+  timeline.begin(state.world,accumulator*60,dt);
  }else{accumulator=0;timeline.reset(state.world);}
  updateCamera(dt);draw(dt);
  perfTime+=elapsed;perfFrames++;if(perfTime>=.5){state.performance={fps:Math.round(perfFrames/perfTime),frameMs:perfTime*1000/perfFrames};perfTime=0;perfFrames=0;}
  state.frameCount++;uiClock+=dt;if(uiClock>.1){uiClock=0;updateHUD();if($('performanceStatus'))$('performanceStatus').textContent=`画面 ${state.performance.fps} FPS · 物理 60 Hz · 平滑插值开启`;}
  requestAnimationFrame(frame);
 }
+// Move the existing mini map into the spectator column; the map still uses the same simulation.
+$('broadcastMapSlot').appendChild(document.querySelector('.minimap'));
+$('broadcastEntries').onclick=()=>document.getElementById('entriesToggle').click();
+$('broadcastCamera').onclick=()=>document.getElementById('cameraToggle').click();
+$('broadcastPause').onclick=()=>document.getElementById('pauseToggle').click();
 state.screenPoint=(x,y)=>screen(x,y);
 try{const a=JSON.parse(localStorage.getItem('ball-arena-audio-v02')||'null');if(a){sfx.setEnabled(a.enabled!==false);sfx.setVolume(a.volume??.35);}}catch{}syncAudioUI();initPicker();resize();newGame();requestAnimationFrame(frame);
 })();

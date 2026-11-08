@@ -2,7 +2,7 @@
 (function(root,factory){const api=factory();api.factorySource=factory.toString();if(typeof module==='object'&&module.exports)module.exports=api;else root.ArenaAgentAPI=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
 'use strict';
 const VERSION='1.0',ENGINE='0.6.0',MODES=['solo','team','storm'];
-const LIMITS={sourceBytes:262144,memoryBytes:65536,actionMs:100,loadMs:2000,decisionTicks:3};
+const LIMITS={sourceBytes:262144,memoryBytes:65536,actionMs:100,hardActionMs:1000,loadMs:2000,decisionTicks:3};
 function validateModule(m){
  if(!m||m.apiVersion!==VERSION)throw Error('apiVersion 必须为 "1.0"');
  if(!MODES.includes(m.mode))throw Error('mode 必须是 solo / team / storm');

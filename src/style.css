@@ -7,3 +7,48 @@
 
 /* v0.6 objectives: no misleading individual mass leaderboard. */
 .objective-status{font-size:11px;line-height:1.6;color:#547967;margin:8px auto 0;background:#fffffff0;border:1px solid #e5eee7;border-radius:8px;padding:4px 10px;width:max-content;max-width:290px}.rank-row .rank-num{width:16px;text-align:center;flex-shrink:0}.rank-row .rank-score{white-space:nowrap}.result-card #resultSub{line-height:1.8}.leaderboard-foot{line-height:1.65}@media(max-width:700px){.objective-status{max-width:160px;font-size:8px;padding:3px 5px}.rank-row .rank-num{width:12px}.rank-row .rank-score{font-size:9px}}
+
+
+/* v0.7: spectator screen, separate presentation from the unchanged world simulation. */
+:root{--broadcastWidth:clamp(310px,25vw,480px)}
+#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:calc(100dvh - 78px)}
+#broadcastPanel{position:fixed;right:0;top:78px;bottom:0;width:var(--broadcastWidth);z-index:12;background:#fff;border-left:1px solid #e6ece8;box-shadow:-10px 0 32px #1b332508;overflow:auto;scrollbar-width:thin;padding:24px 23px 20px;display:flex;flex-direction:column;gap:0}
+#arenaWrap>.leaderboard,#arenaWrap>.match-top,#arenaWrap>.minimap,#arenaWrap>.event-feed{display:none!important}
+.broadcast-brand{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ecf1ed;padding-bottom:17px}
+.broadcast-kicker{font-size:9px;font-weight:700;letter-spacing:1.9px;color:#93a19a}
+.broadcast-brand h2{font-size:21px;letter-spacing:.4px;margin:6px 0 0;color:#243e32;font-weight:650}
+.broadcast-live{display:flex;gap:5px;align-items:center;font-size:10px;font-weight:750;color:#218a67;background:#eaf8ef;padding:7px 9px;border-radius:7px}
+.broadcast-live i{width:6px;height:6px;background:#25a779;border-radius:50%}
+.broadcast-clock{display:flex;justify-content:space-between;align-items:flex-start;margin:19px 0 17px;gap:15px}
+.broadcast-field-label{display:block;color:#95a39b;letter-spacing:.3px;font-size:10px;margin-bottom:7px}
+.broadcast-clock strong{font-size:15px;font-weight:650;display:block;color:#314d3f}
+.broadcast-clock small{font-size:10px;color:#889c8e;display:block;margin-top:7px}
+.broadcast-countdown{text-align:right}
+.broadcast-countdown b{font-size:34px;font-weight:670;line-height:1;letter-spacing:1px;font-variant-numeric:tabular-nums;color:#24382e}
+.broadcast-numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:17px}
+.broadcast-numbers>div{border-radius:9px;padding:12px 7px;background:#f5f8f6;text-align:center}
+.broadcast-numbers span{display:block;font-size:10px;color:#8a9b8f;margin-bottom:7px}
+.broadcast-numbers strong{font-weight:680;color:#3a6450;font-size:17px;font-variant-numeric:tabular-nums}
+.broadcast-team{display:flex;gap:8px;margin-bottom:15px}.broadcast-team>div{flex:1;padding:11px;border-radius:8px;background:#eef7ff;font-size:11px;color:#548bb6}.broadcast-team>div:last-child{background:#fff5e9;color:#b98343}.broadcast-team b{display:block;font-size:17px;margin-top:5px}
+.broadcast-section-head{display:flex;justify-content:space-between;align-items:baseline;gap:5px;margin-bottom:11px}.broadcast-section-head strong{font-size:12px;font-weight:650;color:#354b3e}.broadcast-section-head span{font-size:9px;color:#99a59d}
+.broadcast-rows{display:flex;flex-direction:column;gap:6px}
+.broadcast-entry{display:flex;align-items:center;gap:9px;padding:10px 10px;background:#fbfdfb;border:1px solid #edf1ed;border-radius:10px;min-height:59px;position:relative;overflow:hidden}
+.broadcast-entry.is-dead{opacity:.48}.broadcast-entry.is-human{border-color:#a6d8b8;background:#f0f9f2}
+.broadcast-entry>img{width:26px;height:26px;object-fit:contain;flex:none;z-index:1}
+.broadcast-entry-body{min-width:0;flex:1;z-index:1}.broadcast-entry-name{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.broadcast-entry-name .team-chip{width:6px;height:6px;border-radius:50%}.broadcast-entry-detail{font-size:10px;color:#97a39b;margin-top:5px}
+.broadcast-entry-numeric{text-align:right;min-width:48px;z-index:1;font-variant-numeric:tabular-nums}
+.broadcast-entry-numeric b{font-size:15px;display:block;font-weight:650;color:#3c5647}.broadcast-entry-numeric small{display:block;font-size:9px;color:#99a59d;margin-top:4px}
+.broadcast-entry-bar{position:absolute;height:3px;left:0;bottom:0;background:#7fc5a5;opacity:.65;transition:width .14s}
+.broadcast-bottom{margin-top:19px;border-top:1px solid #eef3ef;padding-top:15px}
+.broadcast-news{margin-bottom:12px}.broadcast-events{font-size:10px;line-height:1.7;min-height:22px;color:#84998a;max-height:60px;overflow:hidden}
+.broadcast-map-heading{display:flex;justify-content:space-between;font-size:10px;color:#536e5b;margin:10px 0}.broadcast-map-heading span{font-size:9px;color:#9da9a0}
+.broadcast-map-slot .minimap{position:static;display:block!important;width:100%!important;padding:9px;border:1px solid #edf1ef;border-radius:10px;box-shadow:none;background:#f8fbf8}
+.broadcast-map-slot .minimap>div{display:none}.broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;aspect-ratio:330/228}
+.broadcast-footer{display:flex;gap:7px;border-top:1px solid #edf1ed;margin-top:auto;padding-top:17px}
+.broadcast-footer button{border:1px solid #e0e9e3;background:#f7faf8;color:#507061;font-size:10px;font-weight:600;padding:10px 7px;border-radius:8px;flex:1}
+.broadcast-footer button:hover{background:#e9f5ec}
+.broadcast-fine{font-size:9px;color:#a0afa4;line-height:1.6;margin-top:11px}
+.clean #broadcastPanel{display:none}.clean #arenaWrap{width:100vw}
+@media(max-width:1050px){:root{--broadcastWidth:320px}#broadcastPanel{padding:14px 12px}.broadcast-brand h2{font-size:18px}.broadcast-clock{margin:13px 0}.broadcast-countdown b{font-size:26px}.broadcast-numbers{margin-bottom:9px}.broadcast-entry{min-height:53px;padding:7px}}
+@media(max-width:700px){#arenaWrap{width:100vw;height:55dvh}#broadcastPanel{position:relative;top:auto;right:auto;bottom:auto;width:100vw;height:calc(45dvh - 66px);border-left:0;border-top:1px solid #edf1ed}#arenaWrap>.camera-controls{display:none}body{overflow:auto}.broadcast-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.broadcast-entry{min-width:0}}
