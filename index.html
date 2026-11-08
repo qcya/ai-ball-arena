@@ -100,6 +100,20 @@
 .entry-mode-choice label{font-weight:700;font-size:12px}.entry-mode-choice select{font-size:13px;border:1px solid #cbded0;padding:7px 12px;border-radius:7px;background:white}
 .entry-mode-choice span{margin-left:auto;font-size:10px;color:#889a8c}
 @media(max-width:900px){:root{--broadcastWidth:27vw}#broadcastPanel{position:fixed;top:0;right:0;width:var(--broadcastWidth);height:100dvh;overflow:hidden;padding:1.4vh 1vw}#arenaWrap{width:calc(100vw - var(--broadcastWidth));height:100dvh}#broadcastPanel .broadcast-entry{min-height:7vh;padding:.6vh .6vw}#broadcastPanel .broadcast-entry>img{width:2.6vh;height:2.6vh}#broadcastPanel .broadcast-entry-detail{font-size:.95vh}#broadcastPanel .broadcast-countdown b{font-size:2.5vh}}
+
+
+/* v0.8 video-clean HUD: fixed lineup, concise clock, larger edge-to-edge overview. */
+#broadcastPanel .broadcast-clock{min-height:7.2vh;align-items:center;margin-bottom:2vh;padding:1vh 0 1.8vh}
+#broadcastPanel .broadcast-clock strong{font-size:2.8vh;line-height:1.2}
+#broadcastPanel .broadcast-countdown b{font-size:3.75vh;line-height:1.18}
+#broadcastPanel>.broadcast-section-head{margin-bottom:1vh}
+#broadcastPanel .broadcast-section-head strong{font-size:1.58vh}
+#broadcastPanel .broadcast-rows{gap:.57vh}
+#broadcastPanel .broadcast-entry{min-height:6.8vh;padding:.7vh .75vw}
+#broadcastPanel .broadcast-map-area{margin-top:auto;border-top:1px solid #e5ece7;padding-top:.85vh;min-height:0;display:flex;flex-direction:column;justify-content:flex-end}
+#broadcastPanel .broadcast-map-slot{width:100%;display:flex;flex:0 1 auto;min-height:0}
+#broadcastPanel .broadcast-map-slot .minimap{display:block!important;position:static!important;width:100%!important;height:auto!important;margin:0!important;padding:0!important;background:#fff;border:1px solid #dce7df;border-radius:.75vh;box-shadow:none!important;overflow:hidden}
+#broadcastPanel .broadcast-map-slot .minimap canvas{width:100%!important;height:auto!important;display:block;aspect-ratio:13/9;border-radius:0}
 </style><!--
 Brand icon assets: LobeHub lobe-icons.
 MIT License
@@ -137,7 +151,7 @@ SOFTWARE.
  <section class="leaderboard glass"><div class="section-heading"><h2>存活与质量</h2><span id="rankKind">按存活顺序</span></div><div id="teamScores" class="team-scores hidden"></div><div id="rankList"></div><div class="leaderboard-foot" id="rankFoot">质量仅展示，不决定个人赛名次</div></section>
  <div id="events" class="event-feed"></div><div id="toast" class="toast hidden"></div>
  <div class="camera-controls glass"><button id="cameraToggle" title="跟随 / 全场 V">◎ 跟随</button><i></i><button id="zoomOut" title="缩小">−</button><span id="zoomLabel">100%</span><button id="zoomIn" title="放大">＋</button><i></i><button id="pauseToggle" title="暂停 P">Ⅱ</button><button id="fullscreenToggle" title="全屏">⛶</button></div>
- <div class="minimap glass"><div><span>全场地图</span><span id="mapSize">2600 × 1800</span></div><canvas id="mini" width="780" height="540"></canvas></div>
+ <div class="minimap glass"><canvas id="mini" width="1040" height="720"></canvas></div>
  <div class="controls-bar glass"><span><kbd>WASD</kbd>移动</span><span><kbd>左键</kbd>吐球</span><span><kbd>右键</kbd>分裂</span><span><kbd>空格</kbd>聚拢</span><span><kbd>P</kbd>暂停</span><span><kbd>V</kbd>全场</span><small>鼠标瞄准</small></div>
  <div id="centerMessage" class="center-message hidden"></div>
  <div id="victoryBanner" class="victory-banner hidden" aria-live="polite"><small id="victoryLabel">比赛结束</small><strong id="victoryTitle">本局结束</strong><span id="victoryDetail"></span></div>
@@ -145,11 +159,11 @@ SOFTWARE.
  <div class="touch-controls"><button id="touchSplit">分裂</button><button id="touchEject">吐球</button><button id="touchGather">聚拢</button></div>
 </main>
 <aside id="broadcastPanel" aria-label="直播选手列表">
- <div class="broadcast-clock"><div class="broadcast-match"><span class="broadcast-field-label">AI BALL ARENA <i class="on-air-dot"></i></span><strong id="broadcastMode">个人赛</strong><small id="broadcastObjective">最后存活者获胜</small></div><div class="broadcast-countdown"><span class="broadcast-field-label">剩余时间</span><b id="broadcastTime">03:00</b><span id="broadcastAlive" class="broadcast-survivors">0 / 6 存活</span></div></div>
+ <div class="broadcast-clock"><div class="broadcast-match"><strong id="broadcastMode">个人赛</strong></div><div class="broadcast-countdown"><b id="broadcastTime">03:00</b></div></div>
  <div id="broadcastTeam" class="broadcast-team" hidden></div>
- <div class="broadcast-section-head"><strong>选手列表</strong><span>存活优先 · 按当前质量排序</span></div>
+ <div class="broadcast-section-head"><strong>选手列表</strong></div>
  <div id="broadcastRows" class="broadcast-rows"></div>
- <section class="broadcast-map-area"><div class="broadcast-map-heading"><strong>全场地图</strong><span>选手分身 · 刺球 · 安全区</span></div><div id="broadcastMapSlot" class="broadcast-map-slot"></div></section>
+ <section class="broadcast-map-area"><div id="broadcastMapSlot" class="broadcast-map-slot"></div></section>
  <div class="technical-telemetry" hidden><strong id="broadcastFps">—</strong><strong id="broadcastFaults">0</strong><div id="broadcastEvents"></div><div id="broadcastStatus"></div><button id="broadcastEntries">导入</button><button id="broadcastCamera">切镜头</button><button id="broadcastPause">暂停</button></div>
 </aside>
 <aside id="tools" class="tools-panel hidden"><div class="panel-head"><div><span>DEVELOPER TOOLS</span><h2>机制试验台</h2></div><button id="closeTools" class="icon-btn">×</button></div><p>这些按钮只用于测机制；使用后会在回放中记录。</p><label class="switch-row"><span>冻结已导入 AI<small>毒圈和碰撞仍然生效</small></span><input id="freezeBots" type="checkbox"></label><label class="switch-row"><span>显示攻击方向辅助线</span><input id="showGuides" type="checkbox"></label><label class="switch-row"><span>纯净画面<small>H 键也可以切换</small></span><input id="cleanView" type="checkbox"></label><div class="tool-grid"><button data-tool="massPlus">＋ 250 质量</button><button data-tool="massMinus">− 100 质量</button><button data-tool="food">生成一圈食物</button><button data-tool="thorn">前方生成刺球</button><button data-tool="prey">放一个小陪练</button><button data-tool="predator">放一个大陪练</button><button data-tool="merge">立即合并</button><button data-tool="respawn">测试重生</button><button data-tool="zone">跳到下个圈</button><button data-tool="stormOutside">移到圈外</button></div><div class="tool-divider"></div><div class="audio-heading">音效 <span>原创合成 · 无背景音乐</span></div><label class="audio-volume">音量 <input id="volumeSlider" type="range" min="0" max="100" value="35" aria-label="音效音量"><output id="volumeValue">35%</output></label><div class="tool-grid sound-grid"><button data-sfx="pelletEat">试听 · 吃质量球</button><button data-sfx="eat">试听 · 吞球</button><button data-sfx="eject">试听 · 吐球</button><button data-sfx="split">试听 · 分裂</button><button data-sfx="burst">试听 · 扎刺</button><button data-sfx="merge">试听 · 合并</button></div><div class="tool-divider"></div><label class="select-row">模拟速度<select id="speedSelect"><option value="0.5">0.5 × 慢放</option><option value="1" selected>1 × 正常</option><option value="2">2 × 加速</option></select></label><label class="select-row">地图种子<input id="seedInput" type="number" value="20261107"></label><div class="tool-grid"><button id="restartGame">↻ 同种子重开</button><button id="shuffleGame">随机新一局</button><button id="saveReplay">导出回放</button><button id="loadReplay">导入回放</button><button id="saveState">导出问题快照</button><button id="saveImage">截取游戏画面</button></div><input type="file" id="replayInput" accept=".json" hidden><div id="performanceStatus" class="replay-status">平滑插值开启 · 物理 60 Hz</div><div id="replayStatus" class="replay-status">正在记录行动 · 脚本离线运行</div><p class="tools-fine">本地运行，不上传任何文件。回放记录动作与工具操作，不是视频文件。</p></aside>
@@ -654,6 +668,11 @@ return{Timeline};
    return liveB-liveA || b.mass-a.mass || a.id-b.id;
   });
  }
+ const BROADCAST_ORDER=Object.freeze([2,0,5,4,3,1]); // Claude, GPT, Gemini, 豆包, Grok, DeepSeek
+ function fixedBroadcastPlayers(players){
+  const byId=new Map(players.filter(p=>p.active).map(p=>[p.id,p]));
+  return BROADCAST_ORDER.map(id=>byId.get(id)).filter(Boolean);
+ }
  function shotForCells(cells,{width,height,mapWidth=2600,mapHeight=1800,zoom=1}={}){
   width=Math.max(1,width||1400);height=Math.max(1,height||900);
   if(!cells.length){return {x:mapWidth/2,y:mapHeight/2,zoom:Math.min(width/mapWidth,height/mapHeight)*.96*zoom};}
@@ -671,7 +690,7 @@ return{Timeline};
   return {x:halfW<mapWidth/2?clamp(midX,halfW,mapWidth-halfW):mapWidth/2,
           y:halfH<mapHeight/2?clamp(midY,halfH,mapHeight-halfH):mapHeight/2,zoom:targetZoom};
  }
- return{sortDisplayPlayers,shotForCells};
+ return{sortDisplayPlayers,fixedBroadcastPlayers,shotForCells,BROADCAST_ORDER};
 });
 </script><script>(function(){'use strict';
 const $=id=>document.getElementById(id),{CFG,BRANDS,radius,clamp,norm}=Arena;
@@ -838,10 +857,8 @@ function updateBroadcast(){
  const w=state.world;if(!w)return;
  const modeNames={solo:'个人赛',team:'团队赛',storm:'大逃杀'};
  $('broadcastMode').textContent=modeNames[w.mode];
- $('broadcastObjective').textContent={solo:'最后存活者获胜',team:'团队对抗',storm:'缩圈生存'}[w.mode];
  const left=Math.max(0,Math.ceil(w.options.duration-w.time));
  $('broadcastTime').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');
- $('broadcastAlive').textContent=w.players.filter(p=>p.active&&p.cells.length).length+' / '+w.activeIds.length+' 存活';
  $('broadcastFps').textContent=state.performance.fps?state.performance.fps+' FPS':'—';
  $('broadcastFaults').textContent=String(state.agentErrors.length);
  const teams=$('broadcastTeam');teams.hidden=w.mode!=='team';
@@ -849,7 +866,7 @@ function updateBroadcast(){
  const list=$('broadcastRows');
  if(!list.children.length){for(const b of BRANDS){const el=document.createElement('div');el.className='broadcast-entry';el.dataset.broadcastId=String(BRANDS.indexOf(b));el.innerHTML='<span class="broadcast-rank"></span><img><div class="broadcast-entry-body"><div class="broadcast-entry-name"></div><div class="broadcast-entry-detail"></div></div><div class="broadcast-entry-numeric"><b></b><small>质量</small></div><div class="broadcast-entry-bar"></div>';list.appendChild(el);}}
  const active=w.players.filter(p=>p.active).map(p=>({...p,mass:w.mass(p.id)}));
- const order=ArenaDirector.sortDisplayPlayers(active);
+ const order=ArenaDirector.fixedBroadcastPlayers(active);
  const high=Math.max(240,...active.map(p=>p.mass));
  for(let ix=0;ix<order.length;ix++){
   const p=order[ix],row=list.querySelector('[data-broadcast-id="'+p.id+'"]');if(!row)continue;
